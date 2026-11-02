@@ -1,0 +1,4 @@
+const noticeBox=document.getElementById('notice');function notify(message){noticeBox.textContent=message;noticeBox.style.display='block';noticeBox.scrollIntoView({behavior:'smooth',block:'nearest'})}
+document.getElementById('year').textContent=new Date().getFullYear();
+document.getElementById('linkForm').addEventListener('submit',e=>{e.preventDefault();const value=document.getElementById('productUrl').value.trim();try{const u=new URL(value);if(!['https:','http:'].includes(u.protocol))throw new Error();notify('تم استلام الرابط على الواجهة التجريبية. يلزم ربط خدمة الطلبات والتسعير لإتمام الشراء.')}catch{notify('يرجى إدخال رابط صحيح يبدأ بـ https://')}});
+document.querySelectorAll('.shop').forEach(button=>button.addEventListener('click',()=>{const shop=button.dataset.shop;if(shop==='المزيد'){notify('ستضاف متاجر أخرى هنا لاحقاً');return}document.getElementById('productUrl').focus();notify('اختر منتجاً من '+shop+' ثم الصق رابطه في الحقل أعلاه.')}));
