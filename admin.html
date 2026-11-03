@@ -54,7 +54,8 @@ $('quoteForm').addEventListener('submit',async e=>{
  try{
   const payload={action:'create_quote',requestId:$('requestId').value.trim(),currency:$('currency').value,productCost:Number($('productCost').value),shippingCost:Number($('shippingCost').value),customsEstimate:$('customsEstimate').value===''?0:Number($('customsEstimate').value),notes:$('notes').value.trim()||null,expiresAt:$('expiresAt').value?new Date($('expiresAt').value).toISOString():null};
   const result=await invoke(payload);
-  notice('تم إنشاء عرض سعر كمسودة. الإجمالي: '+money(result.quote.total,result.quote.currency)+' — لم يُرسل للعميل بعد.','success');
+  if(result.quote?.id){$('quoteId').value=result.quote.id}
+  notice('تم إنشاء عرض سعر كمسودة. رقم العرض: '+(result.quote?.id||'غير متاح')+' · الإجمالي: '+money(result.quote.total,result.quote.currency)+' — لم يُرسل للعميل بعد.','success');
   $('quoteForm').reset();$('currency').value='USD';await loadRequests()
  }catch(err){notice(err.message||'تعذّر إنشاء عرض السعر.','error')}finally{btn.disabled=false}
 });
