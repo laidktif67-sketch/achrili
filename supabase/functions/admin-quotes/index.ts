@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import { calculateQuoteAmounts } from "./quote-domain.js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -96,23 +97,27 @@ Deno.serve(async (req) => {
     if (settingsError || !settingRows) return json(500, { error: "Could not load pricing settings" });
     const settings = new Map(settingRows.map((row) => [row.key, Number(row.value)]));
     const serviceFeeDzd = settings.get("service_fee_dzd");
-    const currencyRate = currency === "DZD" ? 1
-      : currency === "USD" ? settings.get("usd_to_dzd_rate")
-      : settings.get("eur_to_dzd_rate");
-    if (!Number.isFinite(serviceFeeDzd) || serviceFeeDzd! < 0 ||
-        !Number.isFinite(currencyRate) || currencyRate! <= 0) {
+    try {
+      const amounts = calculateQuoteAmounts({
+        currency,
+        productCost: productCost as number,
+        shippingCost: shippingCost as number,
+        customsEstimate: customsEstimate as number,
+        serviceFeeDzd: serviceFeeDzd as number,
+        usdToDzdRate: settings.get("usd_to_dzd_rate") as number,
+        eurToDzdRate: settings.get("eur_to_dzd_rate") as number,
+      });
+      const { serviceFee, total } = amounts;
+
+      const { data: quote, error: insertError } = await admin.from("Quote").insert({
+        requestId, currency, productCost, shippingCost, serviceFee, customsEstimate,
+        total, notes, expiresAt, status: "DRAFT",
+      }).select("id,requestId,currency,productCost,shippingCost,serviceFee,customsEstimate,total,notes,expiresAt,status,createdAt").single();
+      if (insertError) return json(500, { error: "Could not create quote" });
+      return json(201, { quote });
+    } catch {
       return json(500, { error: "Pricing settings are missing or invalid" });
     }
-    // Quote line items are denominated in quote.currency; convert the fixed DZD fee.
-    const serviceFee = Math.round((serviceFeeDzd! / currencyRate!) * 100) / 100;
-    const total = Math.round((productCost + shippingCost + serviceFee + customsEstimate) * 100) / 100;
-
-    const { data: quote, error: insertError } = await admin.from("Quote").insert({
-      requestId, currency, productCost, shippingCost, serviceFee, customsEstimate,
-      total, notes, expiresAt, status: "DRAFT",
-    }).select("id,requestId,currency,productCost,shippingCost,serviceFee,customsEstimate,total,notes,expiresAt,status,createdAt").single();
-    if (insertError) return json(500, { error: "Could not create quote" });
-    return json(201, { quote });
   }
 
   if (body.action === "send_quote") {
