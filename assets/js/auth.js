@@ -77,7 +77,23 @@ $('loginTab').addEventListener('click',()=>setMode('login'));
 $('signupTab').addEventListener('click',()=>setMode('signup'));
 $('forgot').addEventListener('click',()=>setMode('reset'));
 $('google').addEventListener('click',async()=>{if(busy)return;clear();busy=true;$('google').disabled=true;try{const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)throw error;}catch(err){notify(err?.message||t('googleErr'));busy=false;$('google').disabled=false;}});
-document.querySelectorAll('.eye').forEach(button=>button.addEventListener('click',()=>{const input=$(button.dataset.target);input.type=input.type==='password'?'text':'password';}));
+const eyeIcons = {
+  show: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
+  hide: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.1 3.8"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10 10 0 0 0 4-.8"/></svg>'
+};
+document.querySelectorAll('.eye').forEach(button=>{
+  const input=$(button.dataset.target);
+  button.innerHTML=eyeIcons.show;
+  button.setAttribute('aria-label',lang==='ar'?'إظهار كلمة المرور':'Afficher le mot de passe');
+  button.setAttribute('aria-pressed','false');
+  button.addEventListener('click',()=>{
+    const visible=input.type==='password';
+    input.type=visible?'text':'password';
+    button.innerHTML=visible?eyeIcons.hide:eyeIcons.show;
+    button.setAttribute('aria-pressed',String(visible));
+    button.setAttribute('aria-label',visible?(lang==='ar'?'إخفاء كلمة المرور':'Masquer le mot de passe'):(lang==='ar'?'إظهار كلمة المرور':'Afficher le mot de passe'));
+  });
+});
 function changeLang(){lang=lang==='ar'?'fr':'ar';localStorage.setItem('achrili-language',lang);render();}
 $('lang').addEventListener('click',changeLang);$('langDesk').addEventListener('click',changeLang);
 $('year').textContent=new Date().getFullYear();
