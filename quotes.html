@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071f5c">
+<title>عروض الأسعار | AchriLi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#071f5c;--blue:#16458f;--orange:#f59a23;--ink:#172744;--muted:#7b879c;--line:#e6ebf3;--bg:#f5f7fb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:13px Alexandria,system-ui,sans-serif}.top{height:70px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(16px,calc((100% - 900px)/2))}.brand{font-size:22px;font-weight:800;color:var(--navy);text-decoration:none;direction:ltr}.brand span{color:var(--orange)}a{color:var(--blue);text-decoration:none}.page{max-width:900px;margin:auto;padding:28px 16px}.intro{margin:16px 0 24px}.intro h1{font-size:26px;color:var(--navy);margin:8px 0}.muted{color:var(--muted);font-size:11px;line-height:1.9}.notice,.card{background:white;border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:14px}.notice{line-height:1.9}.quote{border:1px solid var(--line);border-radius:13px;padding:16px;margin-top:12px;background:#fbfcff}.quote h3{margin:0 0 8px;font-size:14px}.pill{display:inline-block;background:#fff4df;color:#86540c;border-radius:99px;padding:5px 9px;font-size:10px;font-weight:700}.line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #edf0f5;font-size:11px}.line strong{direction:ltr;text-align:left}.total{font-size:15px;color:var(--navy);font-weight:800}.small{font-size:10px;line-height:1.9;color:var(--muted)}button{border:0;background:var(--navy);color:white;border-radius:9px;padding:11px 14px;font:700 11px Alexandria,system-ui,sans-serif;cursor:pointer}button:disabled{opacity:.5}footer{text-align:center;color:var(--muted);font-size:10px;padding:24px}@media(max-width:520px){.top{height:62px;padding:0 14px}.page{padding:20px 12px}.intro h1{font-size:22px}.card{padding:14px}.line{align-items:flex-start}}
+</style>
+<script type="module">
+import { supabase } from '/src/shared/services/supabase/client.js';
+const $=id=>document.getElementById(id);
+const money=(v,currency='DZD')=>Number(v).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+currency;
+const statusNames={SUBMITTED:'تم الإرسال',UNDER_REVIEW:'قيد المراجعة',NEEDS_INFORMATION:'معلومات إضافية مطلوبة',QUOTED:'عرض سعر متاح',REJECTED:'مرفوض',ACCEPTED:'مقبول',CANCELLED:'ملغى',PURCHASED:'تم الشراء',SHIPPED:'تم الشحن',DELIVERED:'تم التسليم'};
+const quoteStatusNames={DRAFT:'مسودة',SENT:'أُرسل للعميل',ACCEPTED:'مقبول',REJECTED:'مرفوض',EXPIRED:'انتهت صلاحيته'};
+function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n}
+async function init(){
+ const {data,error}=await supabase.auth.getSession();
+ if(error||!data.session){location.replace('auth.html?next='+encodeURIComponent('quotes.html'));return}
+ const user=data.session.user;
+ $('loading').hidden=true;
+ const {data:requests,error:reqError}=await supabase.from('ProductRequest').select('id,productUrl,productName,quantity,status,createdAt').eq('customerId',user.id).order('createdAt',{ascending:false}).limit(50);
+ if(reqError){$('error').hidden=false;return}
+ if(!requests?.length){$('empty').hidden=false;return}
+ const ids=requests.map(r=>r.id);
+ const {data:quotes,error:qError}=await supabase.from('Quote').select('id,requestId,currency,productCost,shippingCost,serviceFee,customsEstimate,total,notes,expiresAt,status,createdAt').in('requestId',ids).order('createdAt',{ascending:false});
+ if(qError){$('error').hidden=false;return}
+ const byRequest=new Map();
+ for(const q of quotes||[]){if(!byRequest.has(q.requestId))byRequest.set(q.requestId,[]);byRequest.get(q.requestId).push(q)}
+ for(const req of requests){
+  const card=el('article','card');
+  card.append(el('h2','',req.productName||'طلب منتج'),el('p','muted','الكمية: '+req.quantity+' · الحالة: '+(statusNames[req.status]||req.status)));
+  const link=el('a','', 'فتح رابط المنتج');link.href=req.productUrl;link.target='_blank';link.rel='noopener noreferrer';card.append(link);
+  const list=byRequest.get(req.id)||[];
+  if(!list.length){card.append(el('p','small','لم يصدر عرض سعر لهذا الطلب بعد. سنعرضه هنا بعد مراجعته.'))}
+  for(const q of list){
+   const quote=el('section','quote');quote.append(el('h3','','عرض السعر'));
+   quote.append(el('span','pill',quoteStatusNames[q.status]||q.status||'—'));
+   const currency=q.currency||'DZD';
+   const rows=[['سعر المنتج',q.productCost,currency],['الشحن',q.shippingCost,currency],['رسوم خدمة AchriLi',q.serviceFee,currency]];
+   if(q.customsEstimate!==null&&q.customsEstimate!==undefined)rows.push(['تقدير الرسوم الجمركية',q.customsEstimate,currency]);
+   for(const [label,value,cur] of rows){const row=el('div','line');row.append(el('span','',label),el('strong','',money(value,cur)));quote.append(row)}
+   const total=el('div','line total');total.append(el('span','','الإجمالي المسجل'),el('strong','',money(q.total,currency)));quote.append(total);
+   if(q.notes)quote.append(el('p','small',q.notes));
+   if(q.expiresAt)quote.append(el('p','small','صلاحية العرض حتى: '+new Date(q.expiresAt).toLocaleString('ar-DZ')));
+   quote.append(el('p','small','هذه الصفحة للعرض فقط حاليًا. قبول العرض وتأكيد الشراء غير متاحين إلكترونيًا إلى أن تُضاف عملية آمنة تتحقق من صلاحيات الإدارة وحالة العرض.'));
+   card.append(quote);
+  }
+  $('list').append(card);
+ }
+}
+init().catch(err=>{console.error(err);$('loading').hidden=true;$('error').hidden=false});
+</script>
+</head>
+<body><header class="top"><a class="brand" href="index.html">Achri<span>Li</span></a><a href="profile.html">حسابي</a></header>
+<main class="page"><div class="intro"><p class="muted">حساب الزبون / عروض الأسعار</p><h1>طلباتي وعروض الأسعار</h1><p class="muted">راجع تفاصيل طلباتك والعروض المسجلة، مع فصل سعر المنتج والشحن ورسوم الخدمة.</p></div>
+<div id="loading" class="notice">جارٍ تحميل طلباتك وعروض الأسعار...</div><div id="error" class="notice" hidden>تعذّر تحميل البيانات. تحقق من تسجيل الدخول واتصالك ثم أعد المحاولة.</div><div id="empty" class="notice" hidden>لا توجد طلبات حتى الآن. <a href="request.html">أرسل رابط منتج جديد</a>.</div><div id="list"></div></main><footer>© AchriLi · التسوّق من العالم إلى الجزائر</footer></body></html>
