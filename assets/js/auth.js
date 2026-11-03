@@ -129,5 +129,5 @@ document.querySelectorAll('.eye').forEach(button=>{
 function changeLang(){lang=lang==='ar'?'fr':'ar';localStorage.setItem('achrili-language',lang);render();}
 $('lang').addEventListener('click',changeLang);$('langDesk').addEventListener('click',changeLang);
 $('year').textContent=new Date().getFullYear();
-supabase.auth.onAuthStateChange(event=>{if(event==='PASSWORD_RECOVERY'&&mode!=='new-password')setMode('new-password');});
+supabase.auth.onAuthStateChange(event=>{if(event==='PASSWORD_RECOVERY'&&mode!=='new-password'){setMode('new-password');return;}if(event==='SIGNED_IN'&&requestedNext==='profile.html'){location.replace('profile.html');}});
 render();
