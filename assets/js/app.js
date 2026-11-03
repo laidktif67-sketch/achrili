@@ -55,7 +55,9 @@ document.getElementById('linkForm').addEventListener('submit', event => {
     return;
   }
 
-  notify('الرابط يبدو صالحاً ومن متجر ' + shop + '. هذه نسخة تجريبية: لم يُنشأ طلب ولم يتم تأكيد السعر أو الشحن.', 'success');
+  notify('الرابط صالح مبدئياً من متجر ' + shop + '. سيتم فتح نموذج إرسال الطلب؛ لا يتم الشراء أو تأكيد السعر والشحن تلقائياً.', 'success');
+  const continueUrl = 'request.html?url=' + encodeURIComponent(url.href);
+  window.location.href = continueUrl;
 });
 
 document.querySelectorAll('.shop').forEach(button => {
