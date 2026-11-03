@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071f5c">
+<title>ملفي الشخصي | AchriLi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/profile.css"><script type="module" src="assets/js/profile.js"></script></head>
+<body><header class="topbar"><a class="brand" href="index.html"><b>Achri<span>Li</span></b><small>اشريلي</small></a><div><button id="langToggle" class="ghost">FR</button> <a href="index.html" data-i18n="backHome">العودة للرئيسية</a></div></header>
+<main class="page"><div class="heading"><div><p class="eyebrow" data-i18n="eyebrow">حسابك في اشريلي</p><h1 data-i18n="title">ملفي الشخصي</h1><p class="muted" data-i18n="intro">حدّث معلوماتك لتكون تجربة التسوّق أسهل.</p></div><span class="secure"><i></i><span data-i18n="secure">حسابك آمن</span></span></div>
+<div id="notice" class="notice" role="status" aria-live="polite" hidden></div><div id="loading" class="loading"><span class="spinner"></span><span data-i18n="loading">جارٍ تحميل بيانات حسابك...</span></div>
+<div id="layout" class="layout" hidden><aside class="sidebar"><div class="avatar" id="avatar">A</div><h2 id="displayName">—</h2><p id="displayEmail" class="muted"></p><span class="member" data-i18n="member">عضو في اشريلي</span><hr><a class="navitem active" href="#personal" data-i18n="personal">المعلومات الشخصية</a><a class="navitem" href="#security" data-i18n="security">الأمان والحساب</a></aside>
+<div class="maincol"><section class="panel" id="personal"><div class="panelhead"><div class="panelicon">✳</div><div><h2 data-i18n="personalTitle">المعلومات الشخصية</h2><p data-i18n="personalSub">هذه المعلومات تساعدنا على التواصل معك بشأن طلباتك.</p></div></div>
+<form id="profileForm"><label for="fullName" data-i18n="name">الاسم الكامل</label><input id="fullName" autocomplete="name" maxlength="100" required>
+<label for="email" data-i18n="email">البريد الإلكتروني</label><input id="email" type="email" disabled><p class="hint" data-i18n="emailHint">لا يمكن تغيير البريد الإلكتروني من هذه الصفحة.</p>
+<label for="phone" data-i18n="phone">رقم الهاتف</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="24" placeholder="+213 ...">
+<div class="actions"><button id="save" class="primary" type="submit" data-i18n="save">حفظ التغييرات</button><span id="saveStatus" role="status" aria-live="polite"></span></div></form></section>
+<section class="panel" id="security"><div class="panelhead"><div class="panelicon blue">◇</div><div><h2 data-i18n="securityTitle">الأمان والحساب</h2><p data-i18n="securitySub">تحكّم في جلسة تسجيل الدخول الخاصة بك.</p></div></div>
+<div class="securityrow"><span class="check">✓</span><div class="grow"><b data-i18n="session">جلسة تسجيل الدخول</b><p data-i18n="sessionSub">أنت مسجّل الدخول على هذا الجهاز.</p></div><span class="active" data-i18n="active">نشطة</span></div>
+<div class="securityrow"><span class="check out">↗</span><div class="grow"><b data-i18n="logoutTitle">تسجيل الخروج</b><p data-i18n="logoutSub">إنهاء جلستك على هذا الجهاز.</p></div><button id="logout" class="logout" data-i18n="logout">تسجيل الخروج</button></div></section>
+<div class="privacy" data-i18n="privacy">نحافظ على خصوصية بياناتك. لا تشارك كلمة المرور أو رموز التحقق مع أي شخص.</div></div></div>
+<footer>© <span id="year"></span> AchriLi · <span data-i18n="footer">تسوّق من العالم إلى الجزائر</span></footer></main></body></html>
