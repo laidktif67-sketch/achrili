@@ -17,10 +17,11 @@ function hideNotice(){$('notice').classList.add('hidden')}
 async function invoke(body){const {data,error}=await supabase.functions.invoke('admin-quotes',{body});if(error)throw new Error(error.message||'تعذّر الاتصال بوظيفة الإدارة');if(data?.error)throw new Error(data.error);return data}
 async function loadRequests(){
  $('requestsLoading').classList.remove('hidden');$('requests').replaceChildren();
- const {data,error}=await supabase.from('ProductRequest').select('id,productUrl,productName,variant,quantity,notes,destination,status,createdAt').eq('status','SUBMITTED').order('createdAt',{ascending:true}).limit(100);
+ let result;
+ try { result=await invoke({action:'list_submitted_requests'}); }
+ catch(error){ $('requestsLoading').classList.add('hidden'); notice(error.message||'تعذّر تحميل الطلبات من خدمة الإدارة.','error'); return; }
  $('requestsLoading').classList.add('hidden');
- if(error){notice('تعذّر تحميل الطلبات. تأكد من صلاحيات المدير وسياسات قاعدة البيانات.','error');return}
- requests=data||[];
+ requests=result.requests||[];
  if(!requests.length){$('requests').textContent='لا توجد طلبات جديدة بحالة SUBMITTED.';return}
  for(const req of requests){
   const item=document.createElement('article');item.className='request';
