@@ -1,15 +1,14 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { calculateQuoteAmounts } from "./quote-domain.js";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Content-Type": "application/json",
-};
-
-function json(status: number, body: Record<string, unknown>) {
-  return new Response(JSON.stringify(body), { status, headers: corsHeaders });
+function makeCorsHeaders(origin: string | null) {
+  return {
+    "Access-Control-Allow-Origin": origin ?? "null",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+    "Content-Type": "application/json",
+  };
 }
 
 function finiteNonNegative(value: unknown): value is number {
@@ -17,7 +16,16 @@ function finiteNonNegative(value: unknown): value is number {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const configuredOrigin = Deno.env.get("APP_ALLOWED_ORIGIN");
+  const requestOrigin = req.headers.get("Origin");
+  const allowedOrigin = configuredOrigin && requestOrigin === configuredOrigin ? requestOrigin : null;
+  const headers = makeCorsHeaders(allowedOrigin);
+  const json = (status: number, body: Record<string, unknown>) =>
+    new Response(JSON.stringify(body), { status, headers });
+
+  if (!configuredOrigin) return json(500, { error: "APP_ALLOWED_ORIGIN is not configured" });
+  if (requestOrigin && !allowedOrigin) return json(403, { error: "Origin is not allowed" });
+  if (req.method === "OPTIONS") return new Response("ok", { status: 200, headers });
   if (req.method !== "POST") return json(405, { error: "Method not allowed" });
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
