@@ -8,7 +8,7 @@ const SHOP_DOMAINS = Object.freeze({
 });
 
 export function findSupportedShop(hostname) {
-  const host = hostname.toLowerCase().replace(/\\.$/, '');
+  const host = hostname.toLowerCase().replace(/\.$/, '');
   for (const [shop, domains] of Object.entries(SHOP_DOMAINS)) {
     if (domains.some(domain => host === domain || host.endsWith('.' + domain))) return shop;
   }
