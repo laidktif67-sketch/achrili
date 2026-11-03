@@ -22,7 +22,7 @@ function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
 function setMode(next){mode=next;history.replaceState({},'',next==='login'?'auth.html':'auth.html?mode='+next);render();}
 function render(){
  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
- document.querySelectorAll('[data-t]').forEach(el=>{const k=el.dataset.t;if(words[lang][k])el.textContent=words[lang][k];});
+ document.querySelectorAll('[data-t]').forEach(el=>{const k=el.dataset.t;if(words[lang][k]){if(k==='hero')el.innerHTML=words[lang][k];else el.textContent=words[lang][k];}});
  $('lang').textContent=lang==='ar'?'FR':'عربي';$('langDesk').textContent=lang==='ar'?'FR':'عربي';
  const signup=mode==='signup',reset=mode==='reset',newPass=mode==='new-password';
  $('title').innerHTML=t(reset?'resetTitle':newPass?'newTitle':signup?'signupTitle':'loginTitle');
