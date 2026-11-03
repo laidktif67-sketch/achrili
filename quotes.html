@@ -11,7 +11,7 @@
 <script type="module">
 import { supabase } from '/src/shared/services/supabase/client.js';
 const $=id=>document.getElementById(id);
-const money=v=>Number(v).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' DZD';
+const money=(v,currency='DZD')=>Number(v).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+currency;
 const statusNames={SUBMITTED:'تم الإرسال',UNDER_REVIEW:'قيد المراجعة',NEEDS_INFORMATION:'معلومات إضافية مطلوبة',QUOTED:'عرض سعر متاح',REJECTED:'مرفوض',ACCEPTED:'مقبول',CANCELLED:'ملغى',PURCHASED:'تم الشراء',SHIPPED:'تم الشحن',DELIVERED:'تم التسليم'};
 function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=txt;return n}
 async function init(){
@@ -39,8 +39,8 @@ async function init(){
    const currency=q.currency||'DZD';
    const rows=[['سعر المنتج',q.productCost,currency],['الشحن',q.shippingCost,currency],['رسوم خدمة AchriLi',q.serviceFee,currency]];
    if(q.customsEstimate!==null&&q.customsEstimate!==undefined)rows.push(['تقدير الرسوم الجمركية',q.customsEstimate,currency]);
-   for(const [label,value,cur] of rows){const row=el('div','line');row.append(el('span','',label),el('strong','',money(value)+' · '+cur));quote.append(row)}
-   const total=el('div','line total');total.append(el('span','','الإجمالي المسجل'),el('strong','',money(q.total)+' · '+currency));quote.append(total);
+   for(const [label,value,cur] of rows){const row=el('div','line');row.append(el('span','',label),el('strong','',money(value,cur)));quote.append(row)}
+   const total=el('div','line total');total.append(el('span','','الإجمالي المسجل'),el('strong','',money(q.total,currency)));quote.append(total);
    if(q.notes)quote.append(el('p','small',q.notes));
    if(q.expiresAt)quote.append(el('p','small','صلاحية العرض حتى: '+new Date(q.expiresAt).toLocaleString('ar-DZ')));
    quote.append(el('p','small','هذه الصفحة للعرض فقط حاليًا. قبول العرض وتأكيد الشراء غير متاحين إلكترونيًا إلى أن تُضاف عملية آمنة تتحقق من صلاحيات الإدارة وحالة العرض.'));
