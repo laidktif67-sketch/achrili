@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071f5c">
+<meta name="description" content="أرسل طلب منتجك إلى AchriLi وتابع حالته من حسابك.">
+<title>طلب منتج | AchriLi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/request.css"><script type="module" src="assets/js/request.js"></script>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html"><b>Achri<span>Li</span></b><small>اشريلي</small></a><div class="toplinks"><a href="profile.html" data-t="profile">حسابي وطلباتي</a><button id="language" type="button" aria-label="Change language">FR</button></div></header>
+<main class="page">
+<a class="back" href="index.html" data-t="back">← العودة للرئيسية</a>
+<section class="intro"><span class="eyebrow" data-t="eyebrow">خطوة نحو تسوّق أسهل</span><h1 data-t="title">أرسل طلب المنتج</h1><p data-t="intro">أدخل رابط المنتج وتفاصيله. سنحفظ طلبك في حسابك لتتمكن من متابعة حالته.</p></section>
+<div class="notice info" id="notice" role="status" aria-live="polite" hidden></div>
+<form class="panel" id="requestForm">
+<label for="productUrl" data-t="urlLabel">رابط المنتج *</label><input id="productUrl" type="url" required maxlength="2048" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="https://..." />
+<p class="hint" data-t="urlHint">يجب أن يكون الرابط من متجر مدعوم وأن يبدأ بـ HTTPS.</p>
+<div class="grid"><div><label for="quantity" data-t="quantity">الكمية *</label><input id="quantity" type="number" min="1" max="30" step="1" value="1" required></div><div><label for="destination" data-t="destination">وجهة التسليم</label><input id="destination" value="Algeria" maxlength="80" required></div></div>
+<label for="variant" data-t="variant">اللون / المقاس / النسخة (اختياري)</label><input id="variant" maxlength="240" placeholder="مثال: أسود، مقاس M">
+<label for="notes" data-t="notes">ملاحظات إضافية (اختياري)</label><textarea id="notes" rows="4" maxlength="1500" placeholder="أي تفاصيل تساعدنا في تحديد المنتج..."></textarea>
+<div class="disclaimer" data-t="disclaimer">إرسال الطلب يسجّل طلب مراجعة فقط؛ لا يعني شراء المنتج أو تأكيد السعر أو الشحن أو الدفع.</div>
+<button class="primary" id="submit" type="submit" data-t="submit">إرسال طلب المراجعة</button>
+</form>
+<footer>© <span id="year"></span> AchriLi · <span data-t="footer">تسوّق من العالم إلى الجزائر</span></footer>
+</main>
+</body></html>
