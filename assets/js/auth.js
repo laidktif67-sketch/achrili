@@ -6,6 +6,8 @@ const supabase = createClient(
   { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
 );
 const $ = id => document.getElementById(id);
+const requestedNext = new URLSearchParams(location.search).get('next');
+const nextPage = requestedNext === 'profile.html' ? 'profile.html' : 'index.html';
 let mode = new URLSearchParams(location.search).get('mode') === 'signup' ? 'signup' : 'login';
 let lang = localStorage.getItem('achrili-language') === 'fr' ? 'fr' : 'ar';
 let busy = false;
@@ -77,7 +79,7 @@ $('form').addEventListener('submit',async e=>{
   if(mode==='login'){
    const credentials={email:identity,password};
    const {error}=await supabase.auth.signInWithPassword(credentials);if(error)throw error;
-   notify(t('okLogin'),'success');setTimeout(()=>location.assign('index.html?auth=success'),650);
+   notify(t('okLogin'),'success');setTimeout(()=>location.assign(nextPage + (nextPage === 'index.html' ? '?auth=success' : '')),650);
   }else if(mode==='signup'){
    const {data,error}=await supabase.auth.signUp({email:identity,password,options:{data:{full_name:$('name').value.trim(),phone:normalizedPhone($('phone').value)},emailRedirectTo:location.origin+location.pathname+'?verified=1'}});
    if(error)throw error;if(data?.session){notify(t('okLogin'),'success');setTimeout(()=>location.assign('index.html?auth=success'),650);}else{showPending(identity);$('form').reset();}
@@ -106,7 +108,7 @@ $('resendEmail').addEventListener('click',async()=>{
   busy=false;$('resendEmail').disabled=false;$('resendEmail').querySelector('span').textContent=t('resend');
  }
 });
-$('google').addEventListener('click',async()=>{if(busy)return;clear();busy=true;$('google').disabled=true;try{const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)throw error;}catch(err){notify(err?.message||t('googleErr'));busy=false;$('google').disabled=false;}});
+$('google').addEventListener('click',async()=>{if(busy)return;clear();busy=true;$('google').disabled=true;try{const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname+(requestedNext==='profile.html'?'?next=profile.html':'')}});if(error)throw error;}catch(err){notify(err?.message||t('googleErr'));busy=false;$('google').disabled=false;}});
 const eyeIcons = {
   show: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
   hide: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.1 3.8"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10 10 0 0 0 4-.8"/></svg>'
