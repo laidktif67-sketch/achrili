@@ -23,6 +23,7 @@ function setMode(next){mode=next;history.replaceState({},'',next==='login'?'auth
 function render(){
  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
  document.querySelectorAll('[data-t]').forEach(el=>{const k=el.dataset.t;if(words[lang][k]){if(k==='hero')el.innerHTML=words[lang][k];else el.textContent=words[lang][k];}});
+ $('termsWrap').querySelector('span').innerHTML=lang==='ar'?'أوافق على <a href="terms.html">الشروط</a> و<a href="privacy.html">سياسة الخصوصية</a>.':'J’accepte les <a href="terms.html">conditions</a> et la <a href="privacy.html">politique de confidentialité</a>.';
  $('lang').textContent=lang==='ar'?'FR':'عربي';$('langDesk').textContent=lang==='ar'?'FR':'عربي';
  const signup=mode==='signup',reset=mode==='reset',newPass=mode==='new-password';
  $('title').innerHTML=t(reset?'resetTitle':newPass?'newTitle':signup?'signupTitle':'loginTitle');
