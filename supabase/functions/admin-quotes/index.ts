@@ -58,6 +58,14 @@ Deno.serve(async (req) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
+  if (body.action === "list_submitted_requests") {
+    const { data: rows, error } = await admin.from("ProductRequest")
+      .select("id,productUrl,productName,variant,quantity,notes,destination,status,createdAt")
+      .eq("status", "SUBMITTED").order("createdAt", { ascending: true }).limit(100);
+    if (error) return json(500, { error: "Could not load submitted requests" });
+    return json(200, { requests: rows ?? [] });
+  }
+
   if (body.action === "create_quote") {
     const requestId = typeof body.requestId === "string" ? body.requestId.trim() : "";
     const currency = typeof body.currency === "string" ? body.currency.toUpperCase() : "";
