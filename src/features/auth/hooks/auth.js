@@ -1,7 +1,8 @@
 import { supabase } from '../../../shared/services/supabase/client.js';
+import { safeNextPage } from '../model/auth-redirect.js';
 const $ = id => document.getElementById(id);
-const requestedNext = new URLSearchParams(location.search).get('next');
-const nextPage = ['profile.html', 'request.html'].includes(requestedNext) ? requestedNext : 'index.html';
+const requestedNext = safeNextPage(new URLSearchParams(location.search).get('next'));
+const nextPage = requestedNext || 'index.html';
 let mode = new URLSearchParams(location.search).get('mode') === 'signup' ? 'signup' : 'login';
 let lang = localStorage.getItem('achrili-language') === 'fr' ? 'fr' : 'ar';
 let busy = false;
