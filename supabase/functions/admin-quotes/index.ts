@@ -27,22 +27,17 @@ Deno.serve(async (req) => {
   }
 
   const authorization = req.headers.get("Authorization");
-  if (!authorization?.startsWith("Bearer ")) {
-    return json(401, { error: "Authentication required" });
-  }
+  if (!authorization?.startsWith("Bearer ")) return json(401, { error: "Authentication required" });
   const token = authorization.slice("Bearer ".length).trim();
   if (!token) return json(401, { error: "Authentication required" });
 
-  // Verify the caller's JWT with Auth. Never trust client-supplied role fields.
   const authClient = createClient(supabaseUrl, anonKey, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { data: authData, error: authError } = await authClient.auth.getUser(token);
   if (authError || !authData.user) return json(401, { error: "Invalid session" });
 
-  // Admin must be provisioned by a trusted server using app_metadata.
-  // user_metadata is intentionally not accepted because users can edit it.
+  // Only trusted app_metadata is accepted; user_metadata is user-editable.
   if (authData.user.app_metadata?.role !== "admin") {
     return json(403, { error: "Administrator access required" });
   }
@@ -67,7 +62,6 @@ Deno.serve(async (req) => {
     const currency = typeof body.currency === "string" ? body.currency.toUpperCase() : "";
     const productCost = body.productCost;
     const shippingCost = body.shippingCost;
-    const serviceFee = body.serviceFee;
     const customsEstimate = body.customsEstimate === undefined || body.customsEstimate === null
       ? 0
       : body.customsEstimate;
@@ -77,43 +71,46 @@ Deno.serve(async (req) => {
     if (!requestId || requestId.length > 200) return json(400, { error: "Valid requestId is required" });
     if (!["USD", "EUR", "DZD"].includes(currency)) return json(400, { error: "currency must be USD, EUR, or DZD" });
     if (!finiteNonNegative(productCost) || !finiteNonNegative(shippingCost) ||
-        !finiteNonNegative(serviceFee) || !finiteNonNegative(customsEstimate)) {
-      return json(400, { error: "All quote amounts must be finite, non-negative numbers" });
+        !finiteNonNegative(customsEstimate)) {
+      return json(400, { error: "Quote amounts must be finite, non-negative numbers" });
     }
     if (typeof notes !== "string" && notes !== null) return json(400, { error: "notes must be a string or null" });
     if (typeof notes === "string" && notes.length > 4000) return json(400, { error: "notes is too long" });
     if (expiresAt !== null && (typeof expiresAt !== "string" || !Number.isFinite(Date.parse(expiresAt)))) {
-      return json(400, { error: "expiresAt must be a valid ISO date string or null" });
+      return json(400, { error: "expiresAt must be a valid date string or null" });
     }
 
     const { data: requestRow, error: requestError } = await admin
-      .from("ProductRequest")
-      .select('id,status')
-      .eq("id", requestId)
-      .maybeSingle();
+      .from("ProductRequest").select("id,status").eq("id", requestId).maybeSingle();
     if (requestError) return json(500, { error: "Could not verify product request" });
     if (!requestRow) return json(404, { error: "Product request not found" });
     if (requestRow.status !== "SUBMITTED") {
       return json(409, { error: "A quote can only be created for a SUBMITTED request" });
     }
 
+    // Service fee is always sourced from protected pricing settings, never from client input.
+    const { data: settingRows, error: settingsError } = await admin
+      .from("AppSetting")
+      .select("key,value")
+      .in("key", ["service_fee_dzd", "usd_to_dzd_rate", "eur_to_dzd_rate"]);
+    if (settingsError || !settingRows) return json(500, { error: "Could not load pricing settings" });
+    const settings = new Map(settingRows.map((row) => [row.key, Number(row.value)]));
+    const serviceFeeDzd = settings.get("service_fee_dzd");
+    const currencyRate = currency === "DZD" ? 1
+      : currency === "USD" ? settings.get("usd_to_dzd_rate")
+      : settings.get("eur_to_dzd_rate");
+    if (!Number.isFinite(serviceFeeDzd) || serviceFeeDzd! < 0 ||
+        !Number.isFinite(currencyRate) || currencyRate! <= 0) {
+      return json(500, { error: "Pricing settings are missing or invalid" });
+    }
+    // Quote line items are denominated in quote.currency; convert the fixed DZD fee.
+    const serviceFee = Math.round((serviceFeeDzd! / currencyRate!) * 100) / 100;
     const total = Math.round((productCost + shippingCost + serviceFee + customsEstimate) * 100) / 100;
-    const { data: quote, error: insertError } = await admin
-      .from("Quote")
-      .insert({
-        requestId,
-        currency,
-        productCost,
-        shippingCost,
-        serviceFee,
-        customsEstimate,
-        total,
-        notes,
-        expiresAt,
-        status: "DRAFT",
-      })
-      .select("id,requestId,currency,productCost,shippingCost,serviceFee,customsEstimate,total,notes,expiresAt,status,createdAt")
-      .single();
+
+    const { data: quote, error: insertError } = await admin.from("Quote").insert({
+      requestId, currency, productCost, shippingCost, serviceFee, customsEstimate,
+      total, notes, expiresAt, status: "DRAFT",
+    }).select("id,requestId,currency,productCost,shippingCost,serviceFee,customsEstimate,total,notes,expiresAt,status,createdAt").single();
     if (insertError) return json(500, { error: "Could not create quote" });
     return json(201, { quote });
   }
@@ -123,10 +120,7 @@ Deno.serve(async (req) => {
     if (!quoteId || quoteId.length > 200) return json(400, { error: "Valid quoteId is required" });
 
     const { data: existing, error: readError } = await admin
-      .from("Quote")
-      .select("id,status,expiresAt")
-      .eq("id", quoteId)
-      .maybeSingle();
+      .from("Quote").select("id,status,expiresAt").eq("id", quoteId).maybeSingle();
     if (readError) return json(500, { error: "Could not verify quote" });
     if (!existing) return json(404, { error: "Quote not found" });
     if (existing.status !== "DRAFT") return json(409, { error: "Only draft quotes can be sent" });
@@ -134,13 +128,9 @@ Deno.serve(async (req) => {
       return json(409, { error: "Cannot send an already expired quote" });
     }
 
-    const { data: quote, error: updateError } = await admin
-      .from("Quote")
-      .update({ status: "SENT" })
-      .eq("id", quoteId)
-      .eq("status", "DRAFT")
-      .select("id,status")
-      .maybeSingle();
+    const { data: quote, error: updateError } = await admin.from("Quote")
+      .update({ status: "SENT" }).eq("id", quoteId).eq("status", "DRAFT")
+      .select("id,status").maybeSingle();
     if (updateError) return json(500, { error: "Could not send quote" });
     if (!quote) return json(409, { error: "Quote status changed; reload and try again" });
     return json(200, { quote });
