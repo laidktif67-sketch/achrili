@@ -97,6 +97,21 @@ Deno.serve(async (req) => {
       return json(409, { error: "A quote can only be created for a SUBMITTED request" });
     }
 
+    // Avoid accidental duplicate active offers for the same request.
+    const { data: activeQuotes, error: activeQuotesError } = await admin
+      .from("Quote")
+      .select("id,status,expiresAt")
+      .eq("requestId", requestId)
+      .in("status", ["DRAFT", "SENT", "ACCEPTED"]);
+    if (activeQuotesError) return json(500, { error: "Could not check existing quotes" });
+    const hasActiveQuote = (activeQuotes ?? []).some((quote) =>
+      quote.status === "DRAFT" || quote.status === "ACCEPTED" ||
+      (quote.status === "SENT" && (!quote.expiresAt || Date.parse(quote.expiresAt) > Date.now()))
+    );
+    if (hasActiveQuote) {
+      return json(409, { error: "An active quote already exists for this request" });
+    }
+
     // Service fee is always sourced from protected pricing settings, never from client input.
     const { data: settingRows, error: settingsError } = await admin
       .from("AppSetting")
