@@ -22,6 +22,7 @@ function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
 function setMode(next){mode=next;history.replaceState({},'',next==='login'?'auth.html':'auth.html?mode='+next);render();}
 function render(){
  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+ document.querySelectorAll('.eye').forEach(button=>{const visible=$(button.dataset.target)?.type==='text';button.setAttribute('aria-label',visible?(lang==='ar'?'إخفاء كلمة المرور':'Masquer le mot de passe'):(lang==='ar'?'إظهار كلمة المرور':'Afficher le mot de passe'));});
  document.querySelectorAll('[data-t]').forEach(el=>{const k=el.dataset.t;if(words[lang][k]){if(k==='hero')el.innerHTML=words[lang][k];else el.textContent=words[lang][k];}});
  $('termsWrap').querySelector('span').innerHTML=lang==='ar'?'أوافق على <a href="terms.html">الشروط</a> و<a href="privacy.html">سياسة الخصوصية</a>.':'J’accepte les <a href="terms.html">conditions</a> et la <a href="privacy.html">politique de confidentialité</a>.';
  $('lang').textContent=lang==='ar'?'FR':'عربي';$('langDesk').textContent=lang==='ar'?'FR':'عربي';
@@ -32,7 +33,7 @@ function render(){
  $('nameWrap').hidden=!signup;$('phoneWrap').hidden=!signup;$('confirmWrap').hidden=!(signup||newPass);$('termsWrap').hidden=!signup;
  $('forgot').hidden=signup||reset||newPass;$('passwordWrap').hidden=reset;
  $('identityLabel').textContent=reset||signup?t('email'):t('identity');
- $('identity').placeholder=reset||signup?t('emailPh'):t('identityPh');$('identity').inputMode=reset||signup?'email':'text';$('identity').autocomplete=reset||signup?'email':'username';
+ $('identity').placeholder=t('identityPh');$('identity').inputMode='email';$('identity').autocomplete='email';
  $('name').placeholder=t('namePh');$('phone').placeholder=t('phonePh');$('password').placeholder=t('passPh');
  $('password').autocomplete=signup||newPass?'new-password':'current-password';$('password').required=!reset;$('confirm').required=signup||newPass;$('name').required=signup;$('terms').required=signup;
  $('submit').querySelector('span').textContent=t(reset?'resetBtn':newPass?'newBtn':signup?'signupBtn':'loginBtn');
