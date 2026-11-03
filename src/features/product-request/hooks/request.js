@@ -13,6 +13,27 @@ let pricingSettings=null;function updateConversion(){const result=$('convertResu
 $('convertAmount').addEventListener('input',updateConversion);$('convertFrom').addEventListener('change',updateConversion);$('convertTo').addEventListener('change',updateConversion);
 async function loadPricing(){const rate=$('pricingRate'),eurRate=$('pricingEurRate'),fee=$('pricingFee'),status=$('pricingStatus');status.textContent=t('pricingLoading');try{pricingSettings=await getPricingSettings();rate.textContent=Number(pricingSettings.usdToDzdRate).toLocaleString(lang==='ar'?'ar-DZ':'fr-FR')+' DZD / USD';eurRate.textContent=Number(pricingSettings.eurToDzdRate).toLocaleString(lang==='ar'?'ar-DZ':'fr-FR')+' DZD / EUR';fee.textContent=Number(pricingSettings.serviceFeeDzd).toLocaleString(lang==='ar'?'ar-DZ':'fr-FR')+' DZD';status.textContent=t('pricingNote');updateConversion()}catch(error){console.error('Unable to load pricing settings',error);pricingSettings=null;rate.textContent='—';eurRate.textContent='—';fee.textContent='—';status.textContent=t('pricingFailed');updateConversion()}}
 loadPricing();
+
+// Subscribe to database changes so the displayed rates and converter stay current.
+const pricingChannel = supabase
+  .channel('achrili-pricing-settings')
+  .on('postgres_changes', {
+    event: '*',
+    schema: 'public',
+    table: 'AppSetting',
+  }, () => {
+    loadPricing();
+  })
+  .subscribe((status) => {
+    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+      console.warn('Pricing Realtime unavailable; reload the page to refresh rates.');
+    }
+  });
+
+window.addEventListener('pagehide', () => {
+  supabase.removeChannel(pricingChannel);
+}, { once: true });
+
 const params=new URLSearchParams(location.search);const initial=params.get('url')||sessionStorage.getItem('achrili-pending-product-url');if(initial){try{$('productUrl').value=new URL(initial).href}catch{}}
 async function init(){const {data,error}=await supabase.auth.getSession();if(error||!data.session){if($('productUrl').value.trim())sessionStorage.setItem('achrili-pending-product-url',$('productUrl').value.trim());message(t('login'),'info');setTimeout(()=>location.replace('auth.html?next=request.html'),900);return}user=data.session.user}
 $('requestForm').addEventListener('submit',async e=>{e.preventDefault();if(busy)return;if(!user){message(t('login'),'info');return}
