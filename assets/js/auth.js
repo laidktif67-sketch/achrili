@@ -9,14 +9,27 @@ const $ = id => document.getElementById(id);
 let mode = new URLSearchParams(location.search).get('mode') === 'signup' ? 'signup' : 'login';
 let lang = localStorage.getItem('achrili-language') === 'fr' ? 'fr' : 'ar';
 let busy = false;
+let pendingEmail = '';
 
 const words = {
- ar: {back:'العودة للرئيسية',eyebrow:'تسوّق من العالم، بكل سهولة',hero:'العالم أقرب إليك<br>مع اشريلي.',heroText:'حسابك يجمع روابط منتجاتك وتجربة تسوّقك في مكان واحد.',secure:'تسوّق آمن',shops:'متاجر عالمية',foot:'أهلاً بك في عالم التسوّق الذكي',login:'تسجيل الدخول',signup:'إنشاء حساب',name:'الاسم الكامل',phone:'رقم الهاتف',password:'كلمة المرور',confirm:'تأكيد كلمة المرور',forgot:'نسيت كلمة المرور؟',terms:'أوافق على الشروط وسياسة الخصوصية.',or:'أو تابع باستخدام',google:'المتابعة باستخدام Google',privacy:'بياناتك محمية وتُستخدم لتسهيل تجربة التسوّق الخاصة بك.',footer:'تسوّق من العالم إلى الجزائر',loginTitle:'مرحباً بعودتك',loginSub:'سجّل الدخول لمتابعة تسوّقك.',signupTitle:'أنشئ حسابك في اشريلي',signupSub:'خطوة واحدة تفصلك عن تجربة تسوّق أسهل.',resetTitle:'استعادة كلمة المرور',resetSub:'أدخل بريدك الإلكتروني لنرسل لك رابط الاستعادة.',newTitle:'كلمة مرور جديدة',newSub:'اختر كلمة مرور قوية لحسابك.',identity:'البريد الإلكتروني',email:'البريد الإلكتروني',namePh:'اكتب اسمك الكامل',identityPh:'name@example.com',emailPh:'name@example.com',phonePh:'5 XX XX XX XX',passPh:'8 أحرف على الأقل',loginBtn:'تسجيل الدخول',signupBtn:'إنشاء حساب',resetBtn:'إرسال رابط الاستعادة',newBtn:'حفظ كلمة المرور',noAccount:'ليس لديك حساب؟',hasAccount:'لديك حساب بالفعل؟',errRequired:'يرجى ملء الحقول المطلوبة.',errName:'اكتب اسمك الكامل.',errEmail:'أدخل بريداً إلكترونياً صحيحاً.',errPhone:'أدخل رقم هاتف صحيحاً مع مفتاح الدولة، مثل +213...',errPass:'كلمة المرور يجب أن تتكون من 8 أحرف على الأقل.',errConfirm:'كلمتا المرور غير متطابقتين.',errTerms:'يجب الموافقة على الشروط وسياسة الخصوصية.',okSignup:'تم إرسال طلب إنشاء الحساب. إذا كان تأكيد البريد مفعّلاً، افتح بريدك لتأكيد الحساب.',okLogin:'تم تسجيل الدخول بنجاح.',okReset:'إذا كان البريد مسجلاً، فستصلك رسالة تتضمن رابط الاستعادة.',okNew:'تم تحديث كلمة المرور بنجاح.',generic:'تعذّر إتمام العملية. حاول مجدداً.',googleErr:'تعذّر بدء تسجيل Google. تأكد من تفعيل مزوّد Google في إعدادات Supabase.',loading:'جارٍ المعالجة...',termsLink:'الشروط وسياسة الخصوصية'},
- fr: {back:'Retour à l’accueil',eyebrow:'Le shopping mondial, en toute simplicité',hero:'Le monde plus proche<br>avec AchriLi.',heroText:'Retrouvez vos liens produits et votre expérience shopping au même endroit.',secure:'Achats sécurisés',shops:'Boutiques mondiales',foot:'Bienvenue dans le shopping intelligent',login:'Connexion',signup:'Créer un compte',name:'Nom complet',phone:'Téléphone',password:'Mot de passe',confirm:'Confirmer le mot de passe',forgot:'Mot de passe oublié ?',terms:'J’accepte les conditions et la politique de confidentialité.',or:'Ou continuer avec',google:'Continuer avec Google',privacy:'Vos données sont protégées et servent à faciliter vos achats.',footer:'Le shopping mondial, livré en Algérie',loginTitle:'Heureux de vous revoir',loginSub:'Connectez-vous pour continuer vos achats.',signupTitle:'Créez votre compte AchriLi',signupSub:'Une étape pour simplifier vos achats.',resetTitle:'Réinitialiser le mot de passe',resetSub:'Saisissez votre e-mail pour recevoir un lien.',newTitle:'Nouveau mot de passe',newSub:'Choisissez un mot de passe robuste.',identity:'Adresse e-mail',email:'Adresse e-mail',namePh:'Votre nom complet',identityPh:'nom@exemple.com',emailPh:'nom@exemple.com',phonePh:'5 XX XX XX XX',passPh:'8 caractères minimum',loginBtn:'Se connecter',signupBtn:'Créer mon compte',resetBtn:'Envoyer le lien',newBtn:'Enregistrer le mot de passe',noAccount:'Pas encore de compte ?',hasAccount:'Vous avez déjà un compte ?',errRequired:'Veuillez remplir les champs requis.',errName:'Saisissez votre nom complet.',errEmail:'Saisissez une adresse e-mail valide.',errPhone:'Saisissez un numéro avec indicatif, par exemple +213...',errPass:'Le mot de passe doit contenir au moins 8 caractères.',errConfirm:'Les mots de passe ne correspondent pas.',errTerms:'Veuillez accepter les conditions et la politique de confidentialité.',okSignup:'Demande de création envoyée. Consultez votre e-mail si la confirmation est activée.',okLogin:'Connexion réussie.',okReset:'Si cette adresse est enregistrée, vous recevrez un lien de réinitialisation.',okNew:'Mot de passe mis à jour.',generic:'Impossible de terminer cette opération. Réessayez.',googleErr:'Connexion Google impossible. Vérifiez que Google est activé dans Supabase.',loading:'Traitement...',termsLink:'Conditions et confidentialité'}
+ ar: {pendingKicker:'خطوة أخيرة',pendingTitle:'تحقّق من بريدك الإلكتروني',pendingText:'أرسلنا إليك رابط التفعيل. افتح الرسالة واضغط على الرابط لتفعيل حسابك والبدء مع اشريلي.',sentTo:'أرسلنا الرسالة إلى',pendingTip:'لم تجد الرسالة؟ تحقق من مجلد الرسائل غير المرغوب فيها (Spam).',resend:'إعادة إرسال رسالة التفعيل',resendOk:'تم إرسال رسالة التفعيل من جديد. تحقق من بريدك.',resendWait:'جارٍ إرسال رسالة التفعيل...',backToLogin:'العودة إلى تسجيل الدخول',back:'العودة للرئيسية',eyebrow:'تسوّق من العالم، بكل سهولة',hero:'العالم أقرب إليك<br>مع اشريلي.',heroText:'حسابك يجمع روابط منتجاتك وتجربة تسوّقك في مكان واحد.',secure:'تسوّق آمن',shops:'متاجر عالمية',foot:'أهلاً بك في عالم التسوّق الذكي',login:'تسجيل الدخول',signup:'إنشاء حساب',name:'الاسم الكامل',phone:'رقم الهاتف',password:'كلمة المرور',confirm:'تأكيد كلمة المرور',forgot:'نسيت كلمة المرور؟',terms:'أوافق على الشروط وسياسة الخصوصية.',or:'أو تابع باستخدام',google:'المتابعة باستخدام Google',privacy:'بياناتك محمية وتُستخدم لتسهيل تجربة التسوّق الخاصة بك.',footer:'تسوّق من العالم إلى الجزائر',loginTitle:'مرحباً بعودتك',loginSub:'سجّل الدخول لمتابعة تسوّقك.',signupTitle:'أنشئ حسابك في اشريلي',signupSub:'خطوة واحدة تفصلك عن تجربة تسوّق أسهل.',resetTitle:'استعادة كلمة المرور',resetSub:'أدخل بريدك الإلكتروني لنرسل لك رابط الاستعادة.',newTitle:'كلمة مرور جديدة',newSub:'اختر كلمة مرور قوية لحسابك.',identity:'البريد الإلكتروني',email:'البريد الإلكتروني',namePh:'اكتب اسمك الكامل',identityPh:'name@example.com',emailPh:'name@example.com',phonePh:'5 XX XX XX XX',passPh:'8 أحرف على الأقل',loginBtn:'تسجيل الدخول',signupBtn:'إنشاء حساب',resetBtn:'إرسال رابط الاستعادة',newBtn:'حفظ كلمة المرور',noAccount:'ليس لديك حساب؟',hasAccount:'لديك حساب بالفعل؟',errRequired:'يرجى ملء الحقول المطلوبة.',errName:'اكتب اسمك الكامل.',errEmail:'أدخل بريداً إلكترونياً صحيحاً.',errPhone:'أدخل رقم هاتف صحيحاً مع مفتاح الدولة، مثل +213...',errPass:'كلمة المرور يجب أن تتكون من 8 أحرف على الأقل.',errConfirm:'كلمتا المرور غير متطابقتين.',errTerms:'يجب الموافقة على الشروط وسياسة الخصوصية.',okSignup:'تم إرسال طلب إنشاء الحساب. إذا كان تأكيد البريد مفعّلاً، افتح بريدك لتأكيد الحساب.',okLogin:'تم تسجيل الدخول بنجاح.',okReset:'إذا كان البريد مسجلاً، فستصلك رسالة تتضمن رابط الاستعادة.',okNew:'تم تحديث كلمة المرور بنجاح.',generic:'تعذّر إتمام العملية. حاول مجدداً.',googleErr:'تعذّر بدء تسجيل Google. تأكد من تفعيل مزوّد Google في إعدادات Supabase.',loading:'جارٍ المعالجة...',termsLink:'الشروط وسياسة الخصوصية'},
+ fr: {pendingKicker:'Dernière étape',pendingTitle:'Vérifiez votre e-mail',pendingText:'Nous vous avons envoyé un lien d’activation. Ouvrez le message et cliquez sur le lien pour activer votre compte AchriLi.',sentTo:'E-mail envoyé à',pendingTip:'Vous ne trouvez pas le message ? Vérifiez le dossier Spam ou Courrier indésirable.',resend:'Renvoyer l’e-mail d’activation',resendOk:'Un nouvel e-mail d’activation a été envoyé. Vérifiez votre boîte de réception.',resendWait:'Envoi de l’e-mail d’activation...',backToLogin:'Retour à la connexion',back:'Retour à l’accueil',eyebrow:'Le shopping mondial, en toute simplicité',hero:'Le monde plus proche<br>avec AchriLi.',heroText:'Retrouvez vos liens produits et votre expérience shopping au même endroit.',secure:'Achats sécurisés',shops:'Boutiques mondiales',foot:'Bienvenue dans le shopping intelligent',login:'Connexion',signup:'Créer un compte',name:'Nom complet',phone:'Téléphone',password:'Mot de passe',confirm:'Confirmer le mot de passe',forgot:'Mot de passe oublié ?',terms:'J’accepte les conditions et la politique de confidentialité.',or:'Ou continuer avec',google:'Continuer avec Google',privacy:'Vos données sont protégées et servent à faciliter vos achats.',footer:'Le shopping mondial, livré en Algérie',loginTitle:'Heureux de vous revoir',loginSub:'Connectez-vous pour continuer vos achats.',signupTitle:'Créez votre compte AchriLi',signupSub:'Une étape pour simplifier vos achats.',resetTitle:'Réinitialiser le mot de passe',resetSub:'Saisissez votre e-mail pour recevoir un lien.',newTitle:'Nouveau mot de passe',newSub:'Choisissez un mot de passe robuste.',identity:'Adresse e-mail',email:'Adresse e-mail',namePh:'Votre nom complet',identityPh:'nom@exemple.com',emailPh:'nom@exemple.com',phonePh:'5 XX XX XX XX',passPh:'8 caractères minimum',loginBtn:'Se connecter',signupBtn:'Créer mon compte',resetBtn:'Envoyer le lien',newBtn:'Enregistrer le mot de passe',noAccount:'Pas encore de compte ?',hasAccount:'Vous avez déjà un compte ?',errRequired:'Veuillez remplir les champs requis.',errName:'Saisissez votre nom complet.',errEmail:'Saisissez une adresse e-mail valide.',errPhone:'Saisissez un numéro avec indicatif, par exemple +213...',errPass:'Le mot de passe doit contenir au moins 8 caractères.',errConfirm:'Les mots de passe ne correspondent pas.',errTerms:'Veuillez accepter les conditions et la politique de confidentialité.',okSignup:'Demande de création envoyée. Consultez votre e-mail si la confirmation est activée.',okLogin:'Connexion réussie.',okReset:'Si cette adresse est enregistrée, vous recevrez un lien de réinitialisation.',okNew:'Mot de passe mis à jour.',generic:'Impossible de terminer cette opération. Réessayez.',googleErr:'Connexion Google impossible. Vérifiez que Google est activé dans Supabase.',loading:'Traitement...',termsLink:'Conditions et confidentialité'}
 };
 const t = key => words[lang][key] || key;
 function notify(message, kind='error'){const el=$('message');el.textContent=message;el.className='message '+kind;el.hidden=false;}
 function clear(){ $('message').hidden=true; $('message').textContent=''; }
+function showPending(email){
+ pendingEmail=email;$('pendingEmail').textContent=email;
+ $('title').textContent=t('pendingTitle');$('subtitle').textContent=t('pendingText');
+ ['tabs','message','form','divider','google','switchText','privacy'].forEach(id=>$(id).hidden=true);
+ $('emailPending').hidden=false;$('resendMessage').hidden=true;$('resendEmail').disabled=false;
+ $('resendEmail').querySelector('span').textContent=t('resend');
+}
+function hidePending(){
+ $('emailPending').hidden=true;
+ ['tabs','form','divider','google','switchText','privacy'].forEach(id=>$(id).hidden=false);
+ setMode('login');
+}
 function normalizedPhone(value){let p=value.trim().replace(/[\s().-]/g,'');if(p.startsWith('+'))return p;if(p.startsWith('00'))return '+'+p.slice(2);if(p.startsWith('213'))return '+'+p;if(p.startsWith('0'))return '+213'+p.slice(1);if(/^[567][0-9]{8}$/.test(p))return '+213'+p;return p;}
 function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
 function setMode(next){mode=next;history.replaceState({},'',next==='login'?'auth.html':'auth.html?mode='+next);render();}
@@ -27,6 +40,7 @@ function render(){
  $('termsWrap').querySelector('span').innerHTML=lang==='ar'?'أوافق على <a href="terms.html">الشروط</a> و<a href="privacy.html">سياسة الخصوصية</a>.':'J’accepte les <a href="terms.html">conditions</a> et la <a href="privacy.html">politique de confidentialité</a>.';
  $('lang').textContent=lang==='ar'?'FR':'عربي';$('langDesk').textContent=lang==='ar'?'FR':'عربي';
  const signup=mode==='signup',reset=mode==='reset',newPass=mode==='new-password';
+ const pendingVisible=!$('emailPending').hidden;
  $('title').innerHTML=t(reset?'resetTitle':newPass?'newTitle':signup?'signupTitle':'loginTitle');
  $('subtitle').textContent=t(reset?'resetSub':newPass?'newSub':signup?'signupSub':'loginSub');
  $('tabs').hidden=reset||newPass;$('loginTab').classList.toggle('active',mode==='login');$('signupTab').classList.toggle('active',signup);
@@ -42,6 +56,7 @@ function render(){
  $('switchText').innerHTML=(signup?t('hasAccount'):t('noAccount'))+' <button class="link" id="switch">'+(signup?t('login'):t('signup'))+'</button>';
  $('switch').addEventListener('click',()=>setMode(signup?'login':'signup'));
  clear();
+ if(pendingVisible){$('title').textContent=t('pendingTitle');$('subtitle').textContent=t('pendingText');$('resendEmail').querySelector('span').textContent=t('resend');}
 }
 function validate(){
  const identity=$('identity').value.trim(),pass=$('password').value;
@@ -64,8 +79,8 @@ $('form').addEventListener('submit',async e=>{
    const {error}=await supabase.auth.signInWithPassword(credentials);if(error)throw error;
    notify(t('okLogin'),'success');setTimeout(()=>location.assign('index.html?auth=success'),650);
   }else if(mode==='signup'){
-   const {error}=await supabase.auth.signUp({email:identity,password,options:{data:{full_name:$('name').value.trim(),phone:normalizedPhone($('phone').value)},emailRedirectTo:location.origin+location.pathname}});
-   if(error)throw error;notify(t('okSignup'),'success');$('form').reset();
+   const {data,error}=await supabase.auth.signUp({email:identity,password,options:{data:{full_name:$('name').value.trim(),phone:normalizedPhone($('phone').value)},emailRedirectTo:location.origin+location.pathname+'?verified=1'}});
+   if(error)throw error;if(data?.session){notify(t('okLogin'),'success');setTimeout(()=>location.assign('index.html?auth=success'),650);}else{showPending(identity);$('form').reset();}
   }else if(mode==='reset'){
    const {error}=await supabase.auth.resetPasswordForEmail(identity,{redirectTo:location.origin+location.pathname+'?mode=new-password'});if(error)throw error;notify(t('okReset'),'success');
   }else{
@@ -77,6 +92,20 @@ $('form').addEventListener('submit',async e=>{
 $('loginTab').addEventListener('click',()=>setMode('login'));
 $('signupTab').addEventListener('click',()=>setMode('signup'));
 $('forgot').addEventListener('click',()=>setMode('reset'));
+$('backToAuth').addEventListener('click',hidePending);
+$('resendEmail').addEventListener('click',async()=>{
+ if(busy||!pendingEmail)return;
+ busy=true;$('resendEmail').disabled=true;$('resendEmail').querySelector('span').textContent=t('resendWait');$('resendMessage').hidden=true;
+ try{
+  const {error}=await supabase.auth.resend({type:'signup',email:pendingEmail,options:{emailRedirectTo:location.origin+location.pathname+'?verified=1'}});
+  if(error)throw error;
+  $('resendMessage').textContent=t('resendOk');$('resendMessage').className='resend-message success';$('resendMessage').hidden=false;
+ }catch(err){
+  $('resendMessage').textContent=err?.message||t('generic');$('resendMessage').className='resend-message error';$('resendMessage').hidden=false;
+ }finally{
+  busy=false;$('resendEmail').disabled=false;$('resendEmail').querySelector('span').textContent=t('resend');
+ }
+});
 $('google').addEventListener('click',async()=>{if(busy)return;clear();busy=true;$('google').disabled=true;try{const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});if(error)throw error;}catch(err){notify(err?.message||t('googleErr'));busy=false;$('google').disabled=false;}});
 const eyeIcons = {
   show: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
