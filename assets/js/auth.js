@@ -56,7 +56,7 @@ function render(){
  $('switchText').innerHTML=(signup?t('hasAccount'):t('noAccount'))+' <button class="link" id="switch">'+(signup?t('login'):t('signup'))+'</button>';
  $('switch').addEventListener('click',()=>setMode(signup?'login':'signup'));
  clear();
- if(pendingVisible){$('title').textContent=t('pendingTitle');$('subtitle').textContent=t('pendingText');$('resendEmail').querySelector('span').textContent=t('resend');}
+ if(pendingVisible){['tabs','message','form','divider','google','switchText','privacy'].forEach(id=>$(id).hidden=true);$('title').textContent=t('pendingTitle');$('subtitle').textContent=t('pendingText');$('resendEmail').querySelector('span').textContent=t('resend');}
 }
 function validate(){
  const identity=$('identity').value.trim(),pass=$('password').value;
