@@ -97,30 +97,7 @@ Deno.serve(async (req) => {
       return json(400, { error: "expiresAt must be a valid date string or null" });
     }
 
-    const { data: requestRow, error: requestError } = await admin
-      .from("ProductRequest").select("id,status").eq("id", requestId).maybeSingle();
-    if (requestError) return json(500, { error: "Could not verify product request" });
-    if (!requestRow) return json(404, { error: "Product request not found" });
-    if (requestRow.status !== "SUBMITTED") {
-      return json(409, { error: "A quote can only be created for a SUBMITTED request" });
-    }
-
-    // Avoid accidental duplicate active offers for the same request.
-    const { data: activeQuotes, error: activeQuotesError } = await admin
-      .from("Quote")
-      .select("id,status,expiresAt")
-      .eq("requestId", requestId)
-      .in("status", ["DRAFT", "SENT", "ACCEPTED"]);
-    if (activeQuotesError) return json(500, { error: "Could not check existing quotes" });
-    const hasActiveQuote = (activeQuotes ?? []).some((quote) =>
-      quote.status === "DRAFT" || quote.status === "ACCEPTED" ||
-      (quote.status === "SENT" && (!quote.expiresAt || Date.parse(quote.expiresAt) > Date.now()))
-    );
-    if (hasActiveQuote) {
-      return json(409, { error: "An active quote already exists for this request" });
-    }
-
-    // Service fee is always sourced from protected pricing settings, never from client input.
+    // Load protected pricing settings; quote creation and request transition happen atomically in Postgres.
     const { data: settingRows, error: settingsError } = await admin
       .from("AppSetting")
       .select("key,value")
@@ -138,13 +115,30 @@ Deno.serve(async (req) => {
         usdToDzdRate: settings.get("usd_to_dzd_rate") as number,
         eurToDzdRate: settings.get("eur_to_dzd_rate") as number,
       });
-      const { serviceFee, total } = amounts;
 
-      const { data: quote, error: insertError } = await admin.from("Quote").insert({
-        requestId, currency, productCost, shippingCost, serviceFee, customsEstimate,
-        total, notes, expiresAt, status: "DRAFT",
-      }).select("id,requestId,currency,productCost,shippingCost,serviceFee,customsEstimate,total,notes,expiresAt,status,createdAt").single();
-      if (insertError) return json(500, { error: "Could not create quote" });
+      const { data: quoteRows, error: createError } = await admin.rpc("create_quote_atomically", {
+        p_request_id: requestId,
+        p_currency: currency,
+        p_product_cost: productCost,
+        p_shipping_cost: shippingCost,
+        p_service_fee: amounts.serviceFee,
+        p_customs_estimate: customsEstimate,
+        p_total: amounts.total,
+        p_notes: notes,
+        p_expires_at: expiresAt,
+      });
+      if (createError) {
+        if (createError.code === "23505" || createError.code === "23514" ||
+            createError.message?.includes("active_quote_exists") ||
+            createError.message?.includes("request_not_submitted")) {
+          return json(409, { error: "Request changed or an active quote already exists; reload and try again" });
+        }
+        if (createError.code === "P0002") return json(404, { error: "Product request not found" });
+        if (createError.code === "22023") return json(400, { error: "Invalid quote details" });
+        return json(500, { error: "Could not create quote" });
+      }
+      const quote = Array.isArray(quoteRows) ? quoteRows[0] : quoteRows;
+      if (!quote) return json(500, { error: "Quote creation returned no result" });
       return json(201, { quote });
     } catch {
       return json(500, { error: "Pricing settings are missing or invalid" });
