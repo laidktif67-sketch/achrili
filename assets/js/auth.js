@@ -108,7 +108,7 @@ $('resendEmail').addEventListener('click',async()=>{
   busy=false;$('resendEmail').disabled=false;$('resendEmail').querySelector('span').textContent=t('resend');
  }
 });
-$('google').addEventListener('click',async()=>{if(busy)return;clear();busy=true;$('google').disabled=true;try{const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname+(requestedNext==='profile.html'?'?next=profile.html':'')}});if(error)throw error;}catch(err){notify(err?.message||t('googleErr'));busy=false;$('google').disabled=false;}});
+$('google').addEventListener('click',async()=>{if(busy)return;clear();busy=true;$('google').disabled=true;try{const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname+(['profile.html','request.html'].includes(requestedNext)?'?next='+encodeURIComponent(requestedNext):'')}});if(error)throw error;}catch(err){notify(err?.message||t('googleErr'));busy=false;$('google').disabled=false;}});
 const eyeIcons = {
   show: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
   hide: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.1 3.8"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10 10 0 0 0 4-.8"/></svg>'
@@ -129,5 +129,5 @@ document.querySelectorAll('.eye').forEach(button=>{
 function changeLang(){lang=lang==='ar'?'fr':'ar';localStorage.setItem('achrili-language',lang);render();}
 $('lang').addEventListener('click',changeLang);$('langDesk').addEventListener('click',changeLang);
 $('year').textContent=new Date().getFullYear();
-supabase.auth.onAuthStateChange(event=>{if(event==='PASSWORD_RECOVERY'&&mode!=='new-password'){setMode('new-password');return;}if(event==='SIGNED_IN'&&requestedNext==='profile.html'){location.replace('profile.html');}});
+supabase.auth.onAuthStateChange(event=>{if(event==='PASSWORD_RECOVERY'&&mode!=='new-password'){setMode('new-password');return;}if(event==='SIGNED_IN'&&['profile.html','request.html'].includes(requestedNext)){location.replace(requestedNext);}});
 render();
