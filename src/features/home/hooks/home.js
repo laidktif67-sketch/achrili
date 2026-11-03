@@ -49,11 +49,6 @@ document.getElementById('linkForm').addEventListener('submit', event => {
 document.querySelectorAll('.shop').forEach(button => {
   button.addEventListener('click', () => {
     const shop = button.dataset.shop;
-    if (!shopDomains[shop]) {
-      notify('ستُضاف متاجر أخرى عند دعمها رسمياً.', 'info');
-      return;
-    }
-
     productUrl.focus();
     notify('افتح ' + shop + '، انسخ رابط صفحة المنتج ثم ألصقه هنا للتحقق منه.', 'info');
   });
