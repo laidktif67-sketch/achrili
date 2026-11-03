@@ -6,7 +6,8 @@
 
 - `index.html` — هيكل الصفحة ومحتواها.
 - `assets/css/styles.css` — التصميم المتجاوب.
-- `assets/js/app.js` — تفاعلات الواجهة والتحقق الأولي من رابط المنتج.\n- `auth.html` و`assets/css/auth.css` و`assets/js/auth.js` — واجهة تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور عبر Supabase Auth.
+- `assets/js/app.js` — تفاعلات الواجهة والتحقق الأولي من رابط المنتج.
+- `auth.html` و`assets/css/auth.css` و`assets/js/auth.js` — واجهة تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور عبر Supabase Auth.
 - `assets/*.svg` — الرسومات والبنرات المستخدمة في الصفحة.
 
 ## التشغيل
