@@ -34,7 +34,7 @@ function hidePending(){
 }
 function normalizedPhone(value){let p=value.trim().replace(/[\s().-]/g,'');if(p.startsWith('+'))return p;if(p.startsWith('00'))return '+'+p.slice(2);if(p.startsWith('213'))return '+'+p;if(p.startsWith('0'))return '+213'+p.slice(1);if(/^[567][0-9]{8}$/.test(p))return '+213'+p;return p;}
 function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
-function setMode(next){mode=next;history.replaceState({},'',next==='login'?'auth.html':'auth.html?mode='+next);render();}
+function setMode(next){mode=next;const params=new URLSearchParams();if(next!=='login')params.set('mode',next);if(requestedNext==='profile.html')params.set('next','profile.html');const query=params.toString();history.replaceState({},'','auth.html'+(query?'?'+query:''));render();}
 function render(){
  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
  document.querySelectorAll('.eye').forEach(button=>{const visible=$(button.dataset.target)?.type==='text';button.setAttribute('aria-label',visible?(lang==='ar'?'إخفاء كلمة المرور':'Masquer le mot de passe'):(lang==='ar'?'إظهار كلمة المرور':'Afficher le mot de passe'));});
