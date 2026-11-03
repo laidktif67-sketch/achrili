@@ -4,16 +4,23 @@
 
 ## هيكل المشروع
 
-- `index.html` — هيكل الصفحة ومحتواها.
-- `assets/css/styles.css` — التصميم المتجاوب.
-- `assets/js/app.js` — تفاعلات الواجهة والتحقق الأولي من رابط المنتج.
-- `auth.html` و`assets/css/auth.css` و`assets/js/auth.js` — واجهة تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور وتأكيد البريد عبر Supabase Auth.
-- `profile.html` و`assets/css/profile.css` و`assets/js/profile.js` — الملف الشخصي، تعديل الاسم ورقم الهاتف، عرض البريد، وتسجيل الخروج؛ يتطلب جلسة Supabase نشطة.
-- `assets/*.svg` — الرسومات والبنرات المستخدمة في الصفحة.
+- `index.html`, `auth.html`, `profile.html`, `request.html`, `privacy.html`, `terms.html` — صفحات متعددة مستقلة، مع الحفاظ على HTML الحالي.
+- `src/app/` — تهيئة واتفاقيات التطبيق العامة.
+- `src/features/<feature>/ui/` — أنماط واجهة كل ميزة.
+- `src/features/<feature>/hooks/` — سلوك الصفحة وتنسيق تفاعلاتها.
+- `src/features/<feature>/services/` — خدمات خاصة بالميزة عند الحاجة.
+- `src/features/<feature>/model/` — قواعد المجال والثوابت.
+- `src/shared/services/supabase/client.js` — عميل Supabase مشترك بدل تكرار إنشاء العميل في كل صفحة.
+- `src/shared/styles/global.css` — الأنماط العامة.
+- `assets/images/` — الصور والرسومات فقط؛ لا توضع ملفات CSS أو JavaScript داخل `assets/`.
+- `vite.config.js` و`package.json` — خادم التطوير وبناء الصفحات الست باستخدام Vite، دون تحويل المشروع إلى React.
 
 ## التشغيل
 
-افتح `index.html` في المتصفح، أو انشر المستودع كصفحة ثابتة عبر GitHub Pages أو استضافة ثابتة أخرى.
+- `npm install`
+- `npm run dev` للتطوير المحلي.
+- `npm run build` لبناء الإنتاج داخل `dist/`.
+- `npm run preview` لمعاينة بناء الإنتاج محلياً.
 
 ## الحالة الحالية
 

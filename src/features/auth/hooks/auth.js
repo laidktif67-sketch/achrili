@@ -1,13 +1,8 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.4';
-
-const supabase = createClient(
-  'https://cmvgeipqthurdbeizfvn.supabase.co',
-  'sb_publishable_kuB0PCt85GcDcFbWTOZC7g_zE4UR3Xc',
-  { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
-);
+import { supabase } from '../../../shared/services/supabase/client.js';
+import { safeNextPage } from '../model/auth-redirect.js';
 const $ = id => document.getElementById(id);
-const requestedNext = new URLSearchParams(location.search).get('next');
-const nextPage = ['profile.html', 'request.html'].includes(requestedNext) ? requestedNext : 'index.html';
+const requestedNext = safeNextPage(new URLSearchParams(location.search).get('next'));
+const nextPage = requestedNext || 'index.html';
 let mode = new URLSearchParams(location.search).get('mode') === 'signup' ? 'signup' : 'login';
 let lang = localStorage.getItem('achrili-language') === 'fr' ? 'fr' : 'ar';
 let busy = false;

@@ -19,6 +19,8 @@ function notify(message, kind = 'info') {
   noticeBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+window.notify = notify;
+
 function detectShop(hostname) {
   const host = hostname.toLowerCase().replace(/\.$/, '');
   for (const [shop, domains] of Object.entries(shopDomains)) {
