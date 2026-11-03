@@ -1,15 +1,6 @@
 const noticeBox = document.getElementById('notice');
 const productUrl = document.getElementById('productUrl');
-const shopDomains = {
-  Temu: ['temu.com'],
-  AliExpress: ['aliexpress.com'],
-  Amazon: ['amazon.com', 'amazon.co.uk', 'amazon.fr', 'amazon.de', 'amazon.it', 'amazon.es', 'amazon.ca', 'amazon.ae', 'amazon.sa', 'amazon.com.tr', 'amazon.co.jp', 'amazon.com.mx', 'amazon.in'],
-  SHEIN: ['shein.com'],
-  eBay: ['ebay.com', 'ebay.co.uk', 'ebay.fr', 'ebay.de', 'ebay.it', 'ebay.es', 'ebay.ca', 'ebay.com.au'],
-  Walmart: ['walmart.com'],
-  Etsy: ['etsy.com'],
-  ASOS: ['asos.com']
-};
+import { findSupportedShop, isValidProductUrl } from '../../product-request/model/product-request.js';
 
 function notify(message, kind = 'info') {
   noticeBox.textContent = message;
@@ -21,13 +12,6 @@ function notify(message, kind = 'info') {
 
 window.notify = notify;
 
-function detectShop(hostname) {
-  const host = hostname.toLowerCase().replace(/\.$/, '');
-  for (const [shop, domains] of Object.entries(shopDomains)) {
-    if (domains.some(domain => host === domain || host.endsWith('.' + domain))) return shop;
-  }
-  return null;
-}
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -44,13 +28,13 @@ document.getElementById('linkForm').addEventListener('submit', event => {
     return;
   }
 
-  if (url.protocol !== 'https:' || url.username || url.password || url.port) {
-    notify('استخدم رابط HTTPS مباشر من المتجر، من دون بيانات دخول أو منفذ مخصص.', 'error');
+  if (!isValidProductUrl(url.href)) {
+    notify('استخدم رابط HTTPS مباشر من متجر مدعوم، من دون بيانات دخول أو منفذ مخصص، وبطول لا يتجاوز 2048 حرفاً.', 'error');
     productUrl.focus();
     return;
   }
 
-  const shop = detectShop(url.hostname);
+  const shop = findSupportedShop(url.hostname);
   if (!shop) {
     notify('هذا المتجر غير مدعوم حالياً. استخدم رابطاً من Temu أو AliExpress أو Amazon أو SHEIN أو eBay أو Walmart أو Etsy أو ASOS.', 'error');
     productUrl.focus();
