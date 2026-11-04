@@ -49,8 +49,9 @@ begin
   if not found then
     raise exception using errcode = 'P0002', message = 'product_request_not_found';
   end if;
-  if v_request.status <> 'SUBMITTED' then
-    raise exception using errcode = '23514', message = 'request_not_submitted';
+  -- QUOTED requests may be quoted again only after their previous quote is no longer active.
+  if v_request.status not in ('SUBMITTED', 'QUOTED') then
+    raise exception using errcode = '23514', message = 'request_not_quotable';
   end if;
 
   if exists (
@@ -58,7 +59,8 @@ begin
     from public."Quote" q
     where q."requestId" = p_request_id
       and (
-        q.status in ('DRAFT', 'ACCEPTED')
+        q.status = 'ACCEPTED'
+        or (q.status = 'DRAFT' and (q."expiresAt" is null or q."expiresAt" > now()))
         or (q.status = 'SENT' and (q."expiresAt" is null or q."expiresAt" > now()))
       )
   ) then
