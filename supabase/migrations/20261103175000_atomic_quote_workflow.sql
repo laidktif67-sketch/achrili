@@ -67,11 +67,12 @@ begin
     raise exception using errcode = '23505', message = 'active_quote_exists';
   end if;
 
+  -- Quote.id is required text without a database default in the current schema.
   insert into public."Quote" (
-    "requestId", currency, "productCost", "shippingCost", "serviceFee",
+    id, "requestId", currency, "productCost", "shippingCost", "serviceFee",
     "customsEstimate", total, notes, "expiresAt", status
   ) values (
-    p_request_id, p_currency, p_product_cost, p_shipping_cost, p_service_fee,
+    pg_catalog.gen_random_uuid()::text, p_request_id, p_currency, p_product_cost, p_shipping_cost, p_service_fee,
     p_customs_estimate, p_total, p_notes, p_expires_at, 'DRAFT'
   ) returning * into v_quote;
 
