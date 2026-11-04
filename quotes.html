@@ -44,7 +44,8 @@ async function init(){
    const total=el('div','line total');total.append(el('span','','الإجمالي المسجل'),el('strong','',money(q.total,currency)));quote.append(total);
    if(q.notes)quote.append(el('p','small',q.notes));
    if(q.expiresAt)quote.append(el('p','small','صلاحية العرض حتى: '+new Date(q.expiresAt).toLocaleString('ar-DZ')));
-   quote.append(el('p','small','هذه الصفحة للعرض فقط حاليًا. قبول العرض وتأكيد الشراء غير متاحين إلكترونيًا إلى أن تُضاف عملية آمنة تتحقق من صلاحيات الإدارة وحالة العرض.'));
+   if(q.status==='SENT'&&(!q.expiresAt||Date.parse(q.expiresAt)>Date.now())){const payLink=el('a','','إرسال إثبات الدفع');payLink.href='payments.html?quote='+encodeURIComponent(q.id);payLink.style.display='inline-block';payLink.style.marginTop='12px';quote.append(payLink)}
+   quote.append(el('p','small','إرسال إثبات الدفع لا يؤكد استلام الأموال؛ يراجع المدير التحويل يدويًا. الدفع عبر USDT متاح فقط عندما يكون مبلغ العرض بالدولار USD، لتجنب اختراع سعر تحويل إلى USDT.'));
    card.append(quote);
   }
   $('list').append(card);
