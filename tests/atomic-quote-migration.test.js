@@ -47,7 +47,7 @@ test("rejects invalid currency, amounts, notes, and expired quote expiry", () =>
 });
 
 test("send RPC checks expiry atomically and is restricted to service_role", () => {
-  assert.match(sql, /create or replace function public\.send_quote_atomically\( p_quote_id text\)/);
+  assert.match(sql, /create or replace function public\.send_quote_atomically\( p_quote_id text\s*\)/);
   assert.match(sql, /"expiresat" is null or "expiresat" > clock_timestamp\(\)/);
   assert.match(sql, /message = 'quote_not_sendable'/);
   assert.match(sql, /revoke all on function public\.send_quote_atomically\(text\) from public, anon, authenticated/);
