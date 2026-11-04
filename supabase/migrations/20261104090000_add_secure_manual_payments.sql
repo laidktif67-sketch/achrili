@@ -119,15 +119,14 @@ as $$
 declare
   quote_row public."Quote"%rowtype;
   method_row public."PaymentMethod"%rowtype;
-  owner_id uuid;
 begin
   if tg_op = 'INSERT' then
     if auth.uid() is null then
       raise exception 'Authentication required' using errcode = '42501';
     end if;
 
-    select q.*, pr."customerId"
-      into quote_row, owner_id
+    select q
+      into quote_row
       from public."Quote" q
       join public."ProductRequest" pr on pr.id = q."requestId"
      where q.id = new."quoteId"
@@ -149,9 +148,15 @@ begin
     end if;
 
     if method_row.code = 'USDT_BEP20' then
+      if quote_row.currency <> 'USD' then
+        raise exception 'USDT payment requires a quote denominated in USD; no DZD/EUR to USDT rate is configured' using errcode = '22023';
+      end if;
       new.currency := 'USDT';
     else
       new.currency := quote_row.currency;
+    end if;
+    if split_part(new."proofPath", '/', 1) <> auth.uid()::text then
+      raise exception 'Proof path must belong to the authenticated customer' using errcode = '42501';
     end if;
     new."customerId" := auth.uid();
     new."requestId" := quote_row."requestId";
