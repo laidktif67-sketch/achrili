@@ -96,17 +96,21 @@ This is an incremental migration, not a claim that every screen already uses sha
 
 ### Validation evidence from the current implementation pass
 
-- `npm test`: 25/25 Node tests passed in a clean Vercel sandbox checkout.
-- `npm run build`: Vite build succeeded.
-- `git diff --check`: passed.
-- Playwright smoke test against the locally served production build: 22 route/viewport checks at 390px and 1365px in the pages' RTL mode; no HTTP failures, horizontal overflow, browser console errors, page errors, or non-font request failures were recorded. Routes that require a session redirected to the auth page as expected; their authenticated UI was therefore not exercised.
-- CSS-only direction check: 22 route/viewport combinations at 390px and 1365px with `dir=ltr`, and 22 combinations at 320px in RTL/LTR; no horizontal overflow was detected. JavaScript was blocked for these forced-LTR checks, so this is layout coverage, not proof of French translations or runtime behavior on every page.
-- Auth interactions: the language switch changed `lang/dir` from Arabic/RTL to French/LTR; sign-up revealed the name, confirmation, and terms fields; an empty sign-up produced the expected French validation message. No console or page errors were observed.
-- Product request form: required-field validation was exercised without submitting data; no console or page errors were observed.
+- Local `npm test`: **25/25 Node tests passed**.
+- Local `npm run build`: **passed**; Vite built all 11 HTML entry pages.
+- `git diff --check`: passed; working tree remained clean after the checks.
+- GitHub Actions run [41884309750](https://github.com/laidktif67-sketch/achrili/actions/runs/41884309750) on SHA `5fe7d2539424370c511851eb1ffa13db7b73eab1` completed successfully. Both `build` and `postgres-migration-test` passed, including the quote Edge Function type-check/error-contract tests and PostgreSQL migration/concurrency assertions.
+- Playwright generated **44 screenshot captures** for 11 routes at desktop (1365×900) and mobile (390×844), with Arabic/RTL and forced LTR layout modes. The measured document/body widths showed **zero horizontal overflow** in those captures. The four product-request captures are viewport screenshots because full-page capture timed out; the remaining captures are full-page.
+- A visual spot review was performed on the Arabic mobile home screen and French mobile authentication screen. This is not a complete pixel-by-pixel review of every screenshot or a comparison against a design reference.
+- The auth language toggle was exercised in the browser: Arabic/RTL changed to French/LTR and displayed French labels. Sign-up revealed the name, password confirmation, and terms fields; empty submission showed the expected required-name validation. No page-level JavaScript errors were recorded in this interaction check.
+- The Help/FAQ page showed 6 card elements, one shared alert, 3 shared buttons, no legacy `.btn` buttons, and no horizontal overflow.
+- Unauthenticated visits to `profile.html`, `quotes.html`, `payments.html`, `admin.html`, and `payment-admin.html` redirected to `auth.html?next=…`. This verifies the unauthenticated redirect only; authenticated views, role-specific admin access, and success/error states were not exercised.
+- All Supabase REST/Auth/Functions requests were blocked by the visual-test harness to avoid accessing or mutating production data. The product-request page consequently could not load live pricing settings during this isolated run; this is an expected test limitation, not a passing backend-flow test.
+- No `.env*` files, Vercel project environment variables, or custom Vercel environments were available for a staging test account. No staging credentials were supplied, so no real sign-in, quote, payment, order, or admin mutation was attempted.
+- The latest Ready Vercel preview remains on SHA `068d4062feee45312cc168ecc04055cc261a11b5`, not the tested branch head. Vercel previously returned HTTP 402 `api-deployments-free-per-day`; at the time of this pass the quota had not renewed, so no new deployment was attempted. The preview therefore remains stale.
+- The screenshots and machine-readable QA results were generated in an isolated Vercel sandbox and are not committed to this repository. The sandbox route returned HTTP 403 under Vercel protection, so reviewers do not yet have a shareable screenshot gallery link.
 
-These are repeatable browser smoke checks, not a full screenshot-by-screenshot visual review. Authenticated profile/orders, quote, payment, and admin workflows still need a staging test account; success states and real Supabase-backed flows were not exercised. GitHub Actions Build run [41884036137](https://github.com/laidktif67-sketch/achrili/actions/runs/41884036137) on SHA `5d255dfdb7bf42cde2cdd7130bb527fcb1d80f63` completed successfully; both `build` and `postgres-migration-test` passed. The Vercel preview could not be refreshed to this branch head: Vercel rejected the deployment request with HTTP 402 `api-deployments-free-per-day` (quota exceeded). The latest Ready preview remains on runtime commit `068d4062feee45312cc168ecc04055cc261a11b5`, so it does not include the newest shared-card/alert/button markup added to Help/FAQ.
-
-No claim of full RTL/LTR, mobile/desktop, browser-interaction, or console-error acceptance is made until those scenarios have been executed in a real browser and recorded.
+**Status:** unit tests, build, CI, and limited responsive/browser smoke checks pass. Full French localization across all pages, authenticated staging workflows, shareable screenshot evidence, and a preview built from the exact current SHA remain outstanding; do not treat the PR as merge-ready yet.
 
 ## Adoption and migration
 1. Load `design-system.css` on a page after its font setup and before page-specific CSS.
