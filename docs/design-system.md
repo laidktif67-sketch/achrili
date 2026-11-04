@@ -87,12 +87,24 @@ This is an incremental migration, not a claim that every screen already uses sha
 | Area | Current status | Remaining work |
 |---|---|---|
 | Shared tokens, typography, layout, components, utilities | Implemented as the shared CSS foundation | Expand real component adoption and remove unused/duplicated rules as pages are verified |
-| Privacy and terms | Migrated to shared `.ds-legal-page`, shared heading/text styles, and token-based responsive spacing; page-local inline CSS removed | Verify rendered layout at narrow and wide viewports |
+| Privacy and terms | Migrated to shared `.ds-legal-page`, shared heading/text styles, and token-based responsive spacing; page-local inline CSS removed | Browser layout metrics show no horizontal overflow at 320, 390, and 1365px in RTL and CSS-only LTR; screenshot/pixel review remains pending |
 | Authentication (login/sign-up) | Shared tokens are used for palette aliases, fields/focus, and feedback states; the two-column hero illustration and auth-specific states remain local | Adopt shared button/field primitives selectively after visual regression checks; exercise auth states in a browser |
 | Profile and orders | Shared tokens now drive core palette, field borders/focus, and success/error statuses; profile navigation, order cards, and responsive layout remain feature-specific | Consolidate cards, actions, and form controls without changing profile/order logic |
 | Product request and price estimator | Shared tokens now drive common palette, surfaces, and status colors; URL input, estimator, draft tools, and workflow layout remain feature-specific | Consolidate common controls while preserving price calculations and draft behavior |
 | Help / FAQ | Shared tokens drive brand, surfaces, semantic notice colors, and core type/spacing; hero and FAQ layout remain page-specific | Use shared card/action primitives where appearance can be checked |
 | Home, quotes, payments, and admin screens | Shared entry point/tokens are connected, with varying levels of primitive adoption | Audit and migrate each page in its own visual pass; do not infer full adoption from the stylesheet import |
+
+### Validation evidence from the current implementation pass
+
+- `npm test`: 25/25 Node tests passed in a clean Vercel sandbox checkout.
+- `npm run build`: Vite build succeeded.
+- `git diff --check`: passed.
+- Playwright smoke test against the locally served production build: 22 route/viewport checks at 390px and 1365px in the pages' RTL mode; no HTTP failures, horizontal overflow, browser console errors, page errors, or non-font request failures were recorded. Routes that require a session redirected to the auth page as expected; their authenticated UI was therefore not exercised.
+- CSS-only direction check: 22 route/viewport combinations at 390px and 1365px with `dir=ltr`, and 22 combinations at 320px in RTL/LTR; no horizontal overflow was detected. JavaScript was blocked for these forced-LTR checks, so this is layout coverage, not proof of French translations or runtime behavior on every page.
+- Auth interactions: the language switch changed `lang/dir` from Arabic/RTL to French/LTR; sign-up revealed the name, confirmation, and terms fields; an empty sign-up produced the expected French validation message. No console or page errors were observed.
+- Product request form: required-field validation was exercised without submitting data; no console or page errors were observed.
+
+These are repeatable browser smoke checks, not a full screenshot-by-screenshot visual review. Authenticated profile/orders, quote, payment, and admin workflows still need a staging test account; success states and real Supabase-backed flows were not exercised. The latest branch commit also needs a GitHub Actions run: the Actions API returned no run associated with the latest commit during this pass.
 
 No claim of full RTL/LTR, mobile/desktop, browser-interaction, or console-error acceptance is made until those scenarios have been executed in a real browser and recorded.
 
