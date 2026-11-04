@@ -108,7 +108,8 @@ function restoreDraft(){
   const params=new URLSearchParams(location.search),draft=readDraft();
   const initial=params.get('url')||sessionStorage.getItem('achrili-pending-product-url');
   if(draft){
-    if(draft.productUrl&&!params.has('url'))$('productUrl').value=draft.productUrl;\n    if(draft.customerPhone)$('customerPhone').value=draft.customerPhone;
+    if(draft.productUrl&&!params.has('url'))$('productUrl').value=draft.productUrl;
+    if(draft.customerPhone)$('customerPhone').value=draft.customerPhone;
     if(draft.quantity)$('quantity').value=draft.quantity;
     if(draft.destination)$('destination').value=draft.destination;
     if(draft.variant)$('variant').value=draft.variant;
@@ -144,7 +145,8 @@ let url;try{url=new URL($('productUrl').value.trim())}catch{message(t('badUrl'),
 const shop=isValidProductUrl(url.href)?findSupportedShop(url.hostname):null;if(!shop){message(t('badUrl'),'error');return}
 const phone=$('phone').value.trim();const phoneDigits=phone.replace(/\D/g,'');if(phoneDigits.length<9||phoneDigits.length>15){message(t('badPhone'),'error');$('phone').focus();return}
 const quantity=Number($('quantity').value);if(!Number.isInteger(quantity)||quantity<1||quantity>30){message(t('badQty'),'error');return}
-const customerPhone=$('customerPhone').value.trim();if(!customerPhone||customerPhone.replace(/\D/g,'').length<7){message(lang==='fr'?'Saisissez un numéro de téléphone valide pour confirmer votre demande.':'أدخل رقم هاتف صحيحًا لنتمكن من التواصل معك وتأكيد طلبك.','error');$('customerPhone').focus();return}\nconst destination=$('destination').value.trim();if(!destination){message(t('required'),'error');return}
+const customerPhone=$('customerPhone').value.trim();if(!customerPhone||customerPhone.replace(/\D/g,'').length<7){message(lang==='fr'?'Saisissez un numéro de téléphone valide pour confirmer votre demande.':'أدخل رقم هاتف صحيحًا لنتمكن من التواصل معك وتأكيد طلبك.','error');$('customerPhone').focus();return}
+const destination=$('destination').value.trim();if(!destination){message(t('required'),'error');return}
 busy=true;const btn=$('submit');btn.disabled=true;btn.textContent=t('sending');
 try{const {data:sessionData,error:sessionError}=await supabase.auth.getSession();if(sessionError||!sessionData.session)throw new Error('auth');user=sessionData.session.user;if((user.user_metadata?.phone||'').trim()!==customerPhone){const {error:phoneError}=await supabase.auth.updateUser({data:{...user.user_metadata,phone:customerPhone}});if(phoneError)throw phoneError}
 const {data:updatedUser,error:phoneSaveError}=await supabase.auth.updateUser({data:{...(sessionData.session.user.user_metadata||{}),phone}});if(phoneSaveError)throw phoneSaveError;if(updatedUser?.user)user=updatedUser.user;
