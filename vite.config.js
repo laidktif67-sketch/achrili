@@ -10,6 +10,7 @@ export default defineConfig({
         profile: 'profile.html',
         request: 'request.html',
         quotes: 'quotes.html',
+        help: 'help.html',
         privacy: 'privacy.html',
         terms: 'terms.html',
         admin: 'admin.html',
