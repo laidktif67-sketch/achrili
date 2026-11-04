@@ -34,8 +34,13 @@ window.addEventListener('pagehide', () => {
   supabase.removeChannel(pricingChannel);
 }, { once: true });
 
-const params=new URLSearchParams(location.search);const initial=params.get('url')||sessionStorage.getItem('achrili-pending-product-url');if(initial){try{$('productUrl').value=new URL(initial).href}catch{}}
-async function init(){const {data,error}=await supabase.auth.getSession();if(error||!data.session){if($('productUrl').value.trim())sessionStorage.setItem('achrili-pending-product-url',$('productUrl').value.trim());message(t('login'),'info');setTimeout(()=>location.replace('auth.html?next=request.html'),900);return}user=data.session.user}
+const DRAFT_KEY='achrili-product-request-draft';
+function readDraft(){try{const raw=sessionStorage.getItem(DRAFT_KEY);return raw?JSON.parse(raw):null}catch{return null}}
+function saveDraft(){try{const draft={productUrl:$('productUrl').value.trim(),quantity:$('quantity').value,destination:$('destination').value,variant:$('variant').value,notes:$('notes').value,updatedAt:Date.now()};if(Object.values(draft).some(v=>typeof v==='string'&&v.trim()))sessionStorage.setItem(DRAFT_KEY,JSON.stringify(draft));}catch(error){console.warn('Unable to save request draft',error)}}
+function restoreDraft(){const params=new URLSearchParams(location.search),draft=readDraft();const initial=params.get('url')||sessionStorage.getItem('achrili-pending-product-url');if(draft){if(draft.productUrl&&!params.has('url'))$('productUrl').value=draft.productUrl;if(draft.quantity)$('quantity').value=draft.quantity;if(draft.destination)$('destination').value=draft.destination;if(draft.variant)$('variant').value=draft.variant;if(draft.notes)$('notes').value=draft.notes}else if(initial){try{$('productUrl').value=new URL(initial).href}catch{}}}
+restoreDraft();
+['productUrl','quantity','destination','variant','notes'].forEach(id=>{const field=$(id);field.addEventListener('input',saveDraft);field.addEventListener('change',saveDraft)});
+async function init(){const {data,error}=await supabase.auth.getSession();if(error||!data.session){saveDraft();if($('productUrl').value.trim())sessionStorage.setItem('achrili-pending-product-url',$('productUrl').value.trim());message(t('login'),'info');setTimeout(()=>location.replace('auth.html?next=request.html'),900);return}user=data.session.user}
 $('requestForm').addEventListener('submit',async e=>{e.preventDefault();if(busy)return;if(!user){message(t('login'),'info');return}
 let url;try{url=new URL($('productUrl').value.trim())}catch{message(t('badUrl'),'error');return}
 const shop=isValidProductUrl(url.href)?findSupportedShop(url.hostname):null;if(!shop){message(t('badUrl'),'error');return}
@@ -45,7 +50,7 @@ busy=true;const btn=$('submit');btn.disabled=true;btn.textContent=t('sending');
 try{const {data:sessionData,error:sessionError}=await supabase.auth.getSession();if(sessionError||!sessionData.session)throw new Error('auth');user=sessionData.session.user;
 const payload={id:crypto.randomUUID(),customerId:user.id,productUrl:url.href,quantity,notes:$('notes').value.trim()||null,variant:$('variant').value.trim()||null,destination,status:'SUBMITTED'};
 const {error}=await supabase.from('ProductRequest').insert(payload);if(error)throw error;
-sessionStorage.removeItem('achrili-pending-product-url');message(t('success')+' '+t('shop')+' '+shop,'success');$('requestForm').reset();$('quantity').value='1';$('destination').value=lang==='fr'?'Algérie':'Algeria';const newUrl=new URL(location.href);newUrl.search='';history.replaceState({},'',newUrl.pathname);
+sessionStorage.removeItem('achrili-pending-product-url');sessionStorage.removeItem(DRAFT_KEY);message(t('success')+' '+t('shop')+' '+shop,'success');$('requestForm').reset();$('quantity').value='1';$('destination').value=lang==='fr'?'Algérie':'Algeria';const newUrl=new URL(location.href);newUrl.search='';history.replaceState({},'',newUrl.pathname);
 }catch(err){console.error('Product request submission failed',err);message(err?.message==='auth'?t('login'):t('failed'),'error')}finally{busy=false;btn.disabled=false;btn.textContent=t('submit')}
 });
 init().catch(()=>location.replace('auth.html?next='+encodeURIComponent('request.html'+location.search)));
