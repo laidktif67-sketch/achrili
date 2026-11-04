@@ -1,0 +1,22 @@
+/* Small, intentional utilities; prefer component/layout classes for structure. */
+.ds-w-full { width:100%; }
+.ds-min-w-0 { min-width:0; }
+.ds-text-start { text-align:start; }
+.ds-text-center { text-align:center; }
+.ds-flex { display:flex; }
+.ds-items-center { align-items:center; }
+.ds-justify-between { justify-content:space-between; }
+.ds-flex-wrap { flex-wrap:wrap; }
+.ds-gap-2 { gap:var(--achrili-space-2); }
+.ds-gap-3 { gap:var(--achrili-space-3); }
+.ds-gap-4 { gap:var(--achrili-space-4); }
+.ds-mt-2 { margin-block-start:var(--achrili-space-2); }
+.ds-mt-4 { margin-block-start:var(--achrili-space-4); }
+.ds-mb-0 { margin-block-end:0; }
+.ds-p-4 { padding:var(--achrili-space-4); }
+.ds-rounded { border-radius:var(--achrili-radius-md); }
+.ds-surface { background:var(--achrili-color-surface); }
+.ds-truncate { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ds-focusable:focus-visible { outline:none; box-shadow:var(--achrili-focus-ring); }
+[dir="rtl"] .ds-table { text-align:right; }
+[dir="ltr"] .ds-table { text-align:left; }
