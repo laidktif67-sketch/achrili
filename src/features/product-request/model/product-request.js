@@ -69,7 +69,6 @@ const SHOP_DOMAINS = Object.freeze({
   "Boulanger": ["boulanger.com", "boulanger.fr"],
   "Darty": ["darty.com", "darty.fr"],
   "Fnac Darty": ["fnac-darty.com"],
-  "Shopify Store": ["shop.app"],
 });
 
 export function findSupportedShop(hostname) {
