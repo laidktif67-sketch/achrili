@@ -22,3 +22,49 @@ jobs:
         run: npm test
       - name: Build all HTML pages
         run: npm run build
+
+  postgres-migration-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: achrili_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d achrili_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install --yes postgresql-client
+      - name: Create isolated schema fixture
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: achrili_test
+        run: psql -v ON_ERROR_STOP=1 -f tests/postgres/atomic-quote-fixture.sql
+      - name: Apply atomic quote migration
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: achrili_test
+        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261103175000_atomic_quote_workflow.sql
+      - name: Run PostgreSQL integration assertions
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: achrili_test
+        run: psql -v ON_ERROR_STOP=1 -f tests/postgres/atomic-quote-integration.sql
