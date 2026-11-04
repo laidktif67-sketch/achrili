@@ -4,7 +4,7 @@
 A shared visual system for the entire AchriLi Vite multi-page application: home, authentication, product request, profile/orders, quotes, payment, help, and admin operations. It defines visual contracts, not new business logic. During migration, preserve existing API calls, Supabase behavior, validation, authorization, and payment/quote rules.
 
 ## Files and responsibilities
-- `src/shared/styles/design-system.css`: public CSS entry point; load after font declarations and before feature styles.
+- `src/shared/styles/design-system.css`: public CSS entry point; load after font declarations and before feature styles. Connected pages include home, auth, request, profile, quotes, help, admin, payment admin, customer payment, privacy, and terms.
 - `src/shared/styles/design-tokens.css`: color, typography, spacing, radius, shadow, width, control-height, focus, and z-index tokens.
 - `src/shared/styles/typography.css`: text hierarchy, weights, line heights, numeric and Latin-direction helpers.
 - `src/shared/styles/layouts.css`: responsive containers, stacks, rows, grid, cards, dividers, and scroll utilities.
