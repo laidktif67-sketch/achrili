@@ -49,6 +49,10 @@ begin
   if not found then
     raise exception using errcode = 'P0002', message = 'product_request_not_found';
   end if;
+  -- A lock wait may have consumed the remaining lifetime of the requested quote.
+  if p_expires_at is not null and p_expires_at <= clock_timestamp() then
+    raise exception using errcode = '22023', message = 'quote_expiry_must_be_future';
+  end if;
   -- QUOTED requests may be quoted again only after their previous quote is no longer active.
   if v_request.status not in ('SUBMITTED', 'QUOTED') then
     raise exception using errcode = '23514', message = 'request_not_quotable';
