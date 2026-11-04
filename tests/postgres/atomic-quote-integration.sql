@@ -69,6 +69,44 @@ begin
   end if;
 end $$;
 
+-- Sending an active draft succeeds through the atomic send RPC.
+insert into public."ProductRequest"(id, status) values ('send-active-1', 'SUBMITTED');
+do $
+declare
+  v_quote_id text;
+  v_status public."QuoteStatus";
+begin
+  select id into v_quote_id
+  from public.create_quote_atomically('send-active-1', 'DZD', 100, 20, 5, 0, 125, null, now() + interval '1 day');
+  select status into v_status from public.send_quote_atomically(v_quote_id);
+  if v_status <> 'SENT' then
+    raise exception 'active draft did not transition to SENT';
+  end if;
+end $;
+
+-- Expired drafts cannot be sent, even if the caller's earlier check was stale.
+insert into public."ProductRequest"(id, status) values ('send-expired-1', 'QUOTED');
+insert into public."Quote"(id, "requestId", currency, "productCost", "shippingCost", "serviceFee", "customsEstimate", total, "expiresAt", status)
+values ('expired-send-1', 'send-expired-1', 'DZD', 100, 20, 5, 0, 125, now() - interval '1 second', 'DRAFT');
+do $
+begin
+  begin
+    perform * from public.send_quote_atomically('expired-send-1');
+    raise exception 'expected quote_not_sendable';
+  exception when check_violation then
+    if sqlerrm <> 'quote_not_sendable' then raise; end if;
+  end;
+  if (select status from public."Quote" where id = 'expired-send-1') <> 'DRAFT' then
+    raise exception 'expired draft status changed unexpectedly';
+  end if;
+  begin
+    perform * from public.send_quote_atomically('missing-send-1');
+    raise exception 'expected quote_not_found';
+  exception when no_data_found then
+    if sqlerrm <> 'quote_not_found' then raise; end if;
+  end;
+end $;
+
 -- Confirm RPC execute privilege is restricted to service_role.
 do $$
 begin
@@ -80,6 +118,15 @@ begin
   end if;
   if not has_function_privilege('service_role', 'public.create_quote_atomically(text,text,numeric,numeric,numeric,numeric,numeric,text,timestamp with time zone)', 'EXECUTE') then
     raise exception 'service_role lacks execute privilege';
+  end if;
+  if has_function_privilege('anon', 'public.send_quote_atomically(text)', 'EXECUTE') then
+    raise exception 'anon unexpectedly has send RPC execute privilege';
+  end if;
+  if has_function_privilege('authenticated', 'public.send_quote_atomically(text)', 'EXECUTE') then
+    raise exception 'authenticated unexpectedly has send RPC execute privilege';
+  end if;
+  if not has_function_privilege('service_role', 'public.send_quote_atomically(text)', 'EXECUTE') then
+    raise exception 'service_role lacks send RPC execute privilege';
   end if;
 end $$;
 
