@@ -1,5 +1,5 @@
 -- Atomically create one quote and move its request to QUOTED.
--- Only the trusted Edge Function service role may execute this RPC.
+-- Only the trusted Edge Function service role may execute these RPCs.
 create or replace function public.create_quote_atomically(
   p_request_id text,
   p_currency text,
@@ -84,5 +84,45 @@ begin
 end;
 $$;
 
+-- Check expiry inside PostgreSQL at the moment of the status update, not only
+-- in the Edge Function before the network round-trip.
+create or replace function public.send_quote_atomically(
+  p_quote_id text
+)
+returns setof public."Quote"
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_quote public."Quote"%rowtype;
+begin
+  if p_quote_id is null or length(btrim(p_quote_id)) = 0 then
+    raise exception using errcode = '22023', message = 'quote_id_required';
+  end if;
+
+  update public."Quote"
+  set status = 'SENT'
+  where id = p_quote_id
+    and status = 'DRAFT'
+    and ("expiresAt" is null or "expiresAt" > now())
+  returning * into v_quote;
+
+  if found then
+    return next v_quote;
+    return;
+  end if;
+
+  if not exists (select 1 from public."Quote" where id = p_quote_id) then
+    raise exception using errcode = 'P0002', message = 'quote_not_found';
+  end if;
+
+  raise exception using errcode = '23514', message = 'quote_not_sendable';
+end;
+$$;
+
 revoke all on function public.create_quote_atomically(text, text, numeric, numeric, numeric, numeric, numeric, text, timestamptz) from public, anon, authenticated;
 grant execute on function public.create_quote_atomically(text, text, numeric, numeric, numeric, numeric, numeric, text, timestamptz) to service_role;
+
+revoke all on function public.send_quote_atomically(text) from public, anon, authenticated;
+grant execute on function public.send_quote_atomically(text) to service_role;
