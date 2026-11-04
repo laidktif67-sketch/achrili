@@ -176,21 +176,25 @@ Deno.serve(async (req) => {
     const quoteId = typeof body.quoteId === "string" ? body.quoteId.trim() : "";
     if (!quoteId || quoteId.length > 200) return json(400, { error: "Valid quoteId is required" });
 
-    const { data: existing, error: readError } = await admin
-      .from("Quote").select("id,status,expiresAt").eq("id", quoteId).maybeSingle();
-    if (readError) return json(500, { error: "Could not verify quote" });
-    if (!existing) return json(404, { error: "Quote not found" });
-    if (existing.status !== "DRAFT") return json(409, { error: "Only draft quotes can be sent" });
-    if (existing.expiresAt && Date.parse(existing.expiresAt) <= Date.now()) {
-      return json(409, { error: "Cannot send an already expired quote" });
+    // The database checks status and expiry in the same statement to avoid a
+    // stale pre-read allowing an already-expired draft to be sent.
+    const { data: quoteRows, error: sendError } = await admin.rpc("send_quote_atomically", {
+      p_quote_id: quoteId,
+    });
+    if (sendError) {
+      if (sendError.code === "P0002" || sendError.message?.includes("quote_not_found")) {
+        return json(404, { error: "Quote not found" });
+      }
+      if (sendError.code === "23514" || sendError.message?.includes("quote_not_sendable")) {
+        return json(409, { error: "Only a non-expired draft quote can be sent" });
+      }
+      if (sendError.code === "22023") return json(400, { error: "Valid quoteId is required" });
+      return json(500, { error: "Could not send quote" });
     }
 
-    const { data: quote, error: updateError } = await admin.from("Quote")
-      .update({ status: "SENT" }).eq("id", quoteId).eq("status", "DRAFT")
-      .select("id,status").maybeSingle();
-    if (updateError) return json(500, { error: "Could not send quote" });
-    if (!quote) return json(409, { error: "Quote status changed; reload and try again" });
-    return json(200, { quote });
+    const quote = Array.isArray(quoteRows) ? quoteRows[0] : quoteRows;
+    if (!quote) return json(500, { error: "Quote sending returned no result" });
+    return json(200, { quote: { id: quote.id, status: quote.status } });
   }
 
   return json(400, { error: "Unsupported action" });
