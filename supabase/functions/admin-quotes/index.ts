@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
-import { calculateQuoteAmounts } from "./quote-domain.js";
+import { calculateQuoteAmounts, isQuoteActive } from "./quote-domain.js";
 
 function makeCorsHeaders(origin: string | null) {
   return {
@@ -69,9 +69,20 @@ Deno.serve(async (req) => {
   if (body.action === "list_submitted_requests") {
     const { data: rows, error } = await admin.from("ProductRequest")
       .select("id,productUrl,productName,variant,quantity,notes,destination,status,createdAt")
-      .eq("status", "SUBMITTED").order("createdAt", { ascending: true }).limit(100);
-    if (error) return json(500, { error: "Could not load submitted requests" });
-    return json(200, { requests: rows ?? [] });
+      .in("status", ["SUBMITTED", "QUOTED"]).order("createdAt", { ascending: true }).limit(100);
+    if (error) return json(500, { error: "Could not load quotable requests" });
+
+    const candidates = rows ?? [];
+    if (candidates.length === 0) return json(200, { requests: [] });
+    const { data: quotes, error: quotesError } = await admin.from("Quote")
+      .select("requestId,status,expiresAt")
+      .in("requestId", candidates.map((row) => row.id))
+      .in("status", ["DRAFT", "SENT", "ACCEPTED"]);
+    if (quotesError || !quotes) return json(500, { error: "Could not verify active quotes" });
+
+    const activeRequestIds = new Set(quotes.filter((quote) => isQuoteActive(quote)).map((quote) => quote.requestId));
+    const quotableRequests = candidates.filter((request) => !activeRequestIds.has(request.id));
+    return json(200, { requests: quotableRequests });
   }
 
   if (body.action === "create_quote") {
