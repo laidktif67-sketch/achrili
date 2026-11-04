@@ -42,29 +42,18 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Install PostgreSQL client
-        run: sudo apt-get update && sudo apt-get install --yes postgresql-client
       - name: Create isolated schema fixture
-        env:
-          PGHOST: localhost
-          PGPORT: 5432
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: achrili_test
-        run: psql -v ON_ERROR_STOP=1 -f tests/postgres/atomic-quote-fixture.sql
+        run: |
+          container_id="$(docker ps -q --filter ancestor=postgres:17 | head -n 1)"
+          test -n "$container_id"
+          docker exec -i "$container_id" psql -U postgres -d achrili_test -v ON_ERROR_STOP=1 < tests/postgres/atomic-quote-fixture.sql
       - name: Apply atomic quote migration
-        env:
-          PGHOST: localhost
-          PGPORT: 5432
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: achrili_test
-        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261103175000_atomic_quote_workflow.sql
+        run: |
+          container_id="$(docker ps -q --filter ancestor=postgres:17 | head -n 1)"
+          test -n "$container_id"
+          docker exec -i "$container_id" psql -U postgres -d achrili_test -v ON_ERROR_STOP=1 < supabase/migrations/20261103175000_atomic_quote_workflow.sql
       - name: Run PostgreSQL integration assertions
-        env:
-          PGHOST: localhost
-          PGPORT: 5432
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: achrili_test
-        run: psql -v ON_ERROR_STOP=1 -f tests/postgres/atomic-quote-integration.sql
+        run: |
+          container_id="$(docker ps -q --filter ancestor=postgres:17 | head -n 1)"
+          test -n "$container_id"
+          docker exec -i "$container_id" psql -U postgres -d achrili_test -v ON_ERROR_STOP=1 < tests/postgres/atomic-quote-integration.sql
