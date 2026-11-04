@@ -96,6 +96,9 @@ Deno.serve(async (req) => {
     if (expiresAt !== null && (typeof expiresAt !== "string" || !Number.isFinite(Date.parse(expiresAt)))) {
       return json(400, { error: "expiresAt must be a valid date string or null" });
     }
+    if (expiresAt !== null && Date.parse(expiresAt) <= Date.now()) {
+      return json(400, { error: "expiresAt must be in the future" });
+    }
 
     // Load protected pricing settings; quote creation and request transition happen atomically in Postgres.
     const { data: settingRows, error: settingsError } = await admin
