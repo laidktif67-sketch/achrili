@@ -22,7 +22,7 @@ async function loadRequests(){
  catch(error){ $('requestsLoading').classList.add('hidden'); notice(error.message||'تعذّر تحميل الطلبات من خدمة الإدارة.','error'); return; }
  $('requestsLoading').classList.add('hidden');
  requests=result.requests||[];
- if(!requests.length){$('requests').textContent='لا توجد طلبات جديدة بحالة SUBMITTED.';return}
+ if(!requests.length){$('requests').textContent='لا توجد طلبات متاحة للتسعير حاليًا.';return}
  for(const req of requests){
   const item=document.createElement('article');item.className='request';
   const title=document.createElement('h3');title.textContent=req.productName||'طلب منتج';
@@ -75,7 +75,7 @@ init().catch(err=>{ $('loading').classList.add('hidden');notice(err.message||'ح
 <div id="loading" class="notice">جارٍ التحقق من الجلسة والصلاحيات...</div>
 <div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
 <section id="workspace" class="hidden">
-<div class="card"><div class="actions"><h2 style="margin:0 auto 0 0">الطلبات الجديدة</h2><button id="refresh" type="button" class="secondary">تحديث القائمة</button></div><p id="requestsLoading" class="muted hidden">جارٍ تحميل الطلبات...</p><div id="requests"></div></div>
+<div class="card"><div class="actions"><h2 style="margin:0 auto 0 0">الطلبات القابلة للتسعير</h2><button id="refresh" type="button" class="secondary">تحديث القائمة</button></div><p id="requestsLoading" class="muted hidden">جارٍ تحميل الطلبات...</p><div id="requests"></div></div>
 <div class="card"><h2>إنشاء عرض سعر</h2><p class="muted">يُحتسب رسم الخدمة من إعدادات قاعدة البيانات، ولا يُقبل من النموذج. أدخل تكاليف مؤكدة فقط؛ لا تضع شحنًا أو جمارك تخمينية على أنها مؤكدة.</p>
 <form id="quoteForm">
 <label for="requestId">معرّف الطلب</label><input id="requestId" required maxlength="200" placeholder="اختر طلبًا من القائمة">

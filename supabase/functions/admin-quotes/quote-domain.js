@@ -1,3 +1,13 @@
+// Keep this definition aligned with the active-quote check in the PostgreSQL RPC.
+export function isQuoteActive({ status, expiresAt }, now = Date.now()) {
+  if (status === "ACCEPTED") return true;
+  if (status !== "DRAFT" && status !== "SENT") return false;
+  if (expiresAt == null) return true;
+  const expiry = Date.parse(expiresAt);
+  // Fail closed for malformed timestamps rather than making a possibly active quote re-quotable.
+  return !Number.isFinite(expiry) || expiry > now;
+}
+
 export function calculateQuoteAmounts({
   currency,
   productCost,

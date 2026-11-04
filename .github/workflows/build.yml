@@ -22,3 +22,49 @@ jobs:
         run: npm test
       - name: Build all HTML pages
         run: npm run build
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check admin quote Edge Function
+        run: deno check supabase/functions/admin-quotes/index.ts
+
+  postgres-migration-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: achrili_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d achrili_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Create isolated schema fixture
+        run: |
+          container_id="$(docker ps -q --filter ancestor=postgres:17 | head -n 1)"
+          test -n "$container_id"
+          docker exec -i "$container_id" psql -U postgres -d achrili_test -v ON_ERROR_STOP=1 < tests/postgres/atomic-quote-fixture.sql
+      - name: Apply atomic quote migration
+        run: |
+          container_id="$(docker ps -q --filter ancestor=postgres:17 | head -n 1)"
+          test -n "$container_id"
+          docker exec -i "$container_id" psql -U postgres -d achrili_test -v ON_ERROR_STOP=1 < supabase/migrations/20261103175000_atomic_quote_workflow.sql
+      - name: Run PostgreSQL integration assertions
+        run: |
+          container_id="$(docker ps -q --filter ancestor=postgres:17 | head -n 1)"
+          test -n "$container_id"
+          docker exec -i "$container_id" psql -U postgres -d achrili_test -v ON_ERROR_STOP=1 < tests/postgres/atomic-quote-integration.sql
+      - name: Verify concurrent quote creation is serialized
+        run: |
+          container_id="$(docker ps -q --filter ancestor=postgres:17 | head -n 1)"
+          test -n "$container_id"
+          bash tests/postgres/atomic-quote-concurrency.sh "$container_id"

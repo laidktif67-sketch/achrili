@@ -17,14 +17,14 @@ POST JSON to the function:
 
 The service fee is not accepted from the caller. It is read from `AppSetting.service_fee_dzd` and converted into the quote currency using the configured USD/EUR-to-DZD rates. All quote line items are expected to use the same currency.
 
-Creating a quote only accepts requests currently in `SUBMITTED` and creates a `DRAFT` quote. Sending only permits a non-expired `DRAFT` quote to transition to `SENT`. The conditional update guards against concurrent status changes.
+Creating a quote accepts requests in `SUBMITTED`, or `QUOTED` when no active quote exists. It creates a `DRAFT` quote and updates the request to `QUOTED` in the same PostgreSQL transaction. An `ACCEPTED` quote always blocks re-quoting; non-expiring or unexpired `DRAFT`/`SENT` quotes also block it. Sending only permits a non-expired `DRAFT` quote to transition to `SENT`; the `send_quote_atomically` RPC checks status and expiry in PostgreSQL at update time, so an expiry boundary between the HTTP handler's validation and database write cannot send an expired quote.
 
 ## Before deployment
 
-1. Confirm the actual deployed schema, enum values, and timestamp column names match the function's queries.
-2. Add automated tests for unauthorized users, malformed payloads, invalid/missing pricing settings, quote arithmetic, request state checks, expiry, and concurrent status changes.
+1. Confirm the actual deployed schema, enum values, timestamp column names, and pricing-setting values match the function's queries.
+2. Add automated Edge Function tests for unauthorized users, malformed payloads, invalid/missing pricing settings, and the HTTP response mapping for database errors. The PostgreSQL migration integration tests cover atomic create/send RPC behavior, request state, expiry/re-quoting, concurrency during quote creation, and function privileges; they do not execute the Edge Function handler.
 3. Run the function locally against a disposable Supabase project with test users and test data.
-4. Configure CORS to the real application origin(s) instead of `*` before production use.
+4. Set `APP_ALLOWED_ORIGIN` to the exact application origin that should be allowed before production use.
 5. Decide how the admin claim is provisioned and audited; do not enable admin access until this process is in place.
 6. Connect the admin UI only after the above checks pass.
 

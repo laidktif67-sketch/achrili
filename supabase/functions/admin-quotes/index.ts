@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
-import { calculateQuoteAmounts } from "./quote-domain.js";
+import { calculateQuoteAmounts, isQuoteActive } from "./quote-domain.js";
 
 function makeCorsHeaders(origin: string | null) {
   return {
@@ -67,11 +67,35 @@ Deno.serve(async (req) => {
   });
 
   if (body.action === "list_submitted_requests") {
-    const { data: rows, error } = await admin.from("ProductRequest")
-      .select("id,productUrl,productName,variant,quantity,notes,destination,status,createdAt")
-      .eq("status", "SUBMITTED").order("createdAt", { ascending: true }).limit(100);
-    if (error) return json(500, { error: "Could not load submitted requests" });
-    return json(200, { requests: rows ?? [] });
+    // Scan past blocked requests so the first 100 active-quote rows cannot hide later quotable requests.
+    const quotableRequests: Record<string, unknown>[] = [];
+    const batchSize = 100;
+    let offset = 0;
+
+    while (quotableRequests.length < 100) {
+      const { data: rows, error } = await admin.from("ProductRequest")
+        .select("id,productUrl,productName,variant,quantity,notes,destination,status,createdAt")
+        .in("status", ["SUBMITTED", "QUOTED"])
+        .order("createdAt", { ascending: true })
+        .order("id", { ascending: true })
+        .range(offset, offset + batchSize - 1);
+      if (error) return json(500, { error: "Could not load quotable requests" });
+
+      const candidates = rows ?? [];
+      if (candidates.length === 0) break;
+      const { data: quotes, error: quotesError } = await admin.from("Quote")
+        .select("requestId,status,expiresAt")
+        .in("requestId", candidates.map((row) => row.id))
+        .in("status", ["DRAFT", "SENT", "ACCEPTED"]);
+      if (quotesError || !quotes) return json(500, { error: "Could not verify active quotes" });
+
+      const activeRequestIds = new Set(quotes.filter((quote) => isQuoteActive(quote)).map((quote) => quote.requestId));
+      quotableRequests.push(...candidates.filter((request) => !activeRequestIds.has(request.id)));
+      if (candidates.length < batchSize) break;
+      offset += batchSize;
+    }
+
+    return json(200, { requests: quotableRequests.slice(0, 100) });
   }
 
   if (body.action === "create_quote") {
@@ -96,31 +120,11 @@ Deno.serve(async (req) => {
     if (expiresAt !== null && (typeof expiresAt !== "string" || !Number.isFinite(Date.parse(expiresAt)))) {
       return json(400, { error: "expiresAt must be a valid date string or null" });
     }
-
-    const { data: requestRow, error: requestError } = await admin
-      .from("ProductRequest").select("id,status").eq("id", requestId).maybeSingle();
-    if (requestError) return json(500, { error: "Could not verify product request" });
-    if (!requestRow) return json(404, { error: "Product request not found" });
-    if (requestRow.status !== "SUBMITTED") {
-      return json(409, { error: "A quote can only be created for a SUBMITTED request" });
+    if (expiresAt !== null && Date.parse(expiresAt) <= Date.now()) {
+      return json(400, { error: "expiresAt must be in the future" });
     }
 
-    // Avoid accidental duplicate active offers for the same request.
-    const { data: activeQuotes, error: activeQuotesError } = await admin
-      .from("Quote")
-      .select("id,status,expiresAt")
-      .eq("requestId", requestId)
-      .in("status", ["DRAFT", "SENT", "ACCEPTED"]);
-    if (activeQuotesError) return json(500, { error: "Could not check existing quotes" });
-    const hasActiveQuote = (activeQuotes ?? []).some((quote) =>
-      quote.status === "DRAFT" || quote.status === "ACCEPTED" ||
-      (quote.status === "SENT" && (!quote.expiresAt || Date.parse(quote.expiresAt) > Date.now()))
-    );
-    if (hasActiveQuote) {
-      return json(409, { error: "An active quote already exists for this request" });
-    }
-
-    // Service fee is always sourced from protected pricing settings, never from client input.
+    // Load protected pricing settings; quote creation and request transition happen atomically in Postgres.
     const { data: settingRows, error: settingsError } = await admin
       .from("AppSetting")
       .select("key,value")
@@ -138,13 +142,30 @@ Deno.serve(async (req) => {
         usdToDzdRate: settings.get("usd_to_dzd_rate") as number,
         eurToDzdRate: settings.get("eur_to_dzd_rate") as number,
       });
-      const { serviceFee, total } = amounts;
 
-      const { data: quote, error: insertError } = await admin.from("Quote").insert({
-        requestId, currency, productCost, shippingCost, serviceFee, customsEstimate,
-        total, notes, expiresAt, status: "DRAFT",
-      }).select("id,requestId,currency,productCost,shippingCost,serviceFee,customsEstimate,total,notes,expiresAt,status,createdAt").single();
-      if (insertError) return json(500, { error: "Could not create quote" });
+      const { data: quoteRows, error: createError } = await admin.rpc("create_quote_atomically", {
+        p_request_id: requestId,
+        p_currency: currency,
+        p_product_cost: productCost,
+        p_shipping_cost: shippingCost,
+        p_service_fee: amounts.serviceFee,
+        p_customs_estimate: customsEstimate,
+        p_total: amounts.total,
+        p_notes: notes,
+        p_expires_at: expiresAt,
+      });
+      if (createError) {
+        if (createError.code === "23505" || createError.code === "23514" ||
+            createError.message?.includes("active_quote_exists") ||
+            createError.message?.includes("request_not_quotable")) {
+          return json(409, { error: "Request changed or an active quote already exists; reload and try again" });
+        }
+        if (createError.code === "P0002") return json(404, { error: "Product request not found" });
+        if (createError.code === "22023") return json(400, { error: "Invalid quote details" });
+        return json(500, { error: "Could not create quote" });
+      }
+      const quote = Array.isArray(quoteRows) ? quoteRows[0] : quoteRows;
+      if (!quote) return json(500, { error: "Quote creation returned no result" });
       return json(201, { quote });
     } catch {
       return json(500, { error: "Pricing settings are missing or invalid" });
@@ -155,21 +176,25 @@ Deno.serve(async (req) => {
     const quoteId = typeof body.quoteId === "string" ? body.quoteId.trim() : "";
     if (!quoteId || quoteId.length > 200) return json(400, { error: "Valid quoteId is required" });
 
-    const { data: existing, error: readError } = await admin
-      .from("Quote").select("id,status,expiresAt").eq("id", quoteId).maybeSingle();
-    if (readError) return json(500, { error: "Could not verify quote" });
-    if (!existing) return json(404, { error: "Quote not found" });
-    if (existing.status !== "DRAFT") return json(409, { error: "Only draft quotes can be sent" });
-    if (existing.expiresAt && Date.parse(existing.expiresAt) <= Date.now()) {
-      return json(409, { error: "Cannot send an already expired quote" });
+    // The database checks status and expiry in the same statement to avoid a
+    // stale pre-read allowing an already-expired draft to be sent.
+    const { data: quoteRows, error: sendError } = await admin.rpc("send_quote_atomically", {
+      p_quote_id: quoteId,
+    });
+    if (sendError) {
+      if (sendError.code === "P0002" || sendError.message?.includes("quote_not_found")) {
+        return json(404, { error: "Quote not found" });
+      }
+      if (sendError.code === "23514" || sendError.message?.includes("quote_not_sendable")) {
+        return json(409, { error: "Only a non-expired draft quote can be sent" });
+      }
+      if (sendError.code === "22023") return json(400, { error: "Valid quoteId is required" });
+      return json(500, { error: "Could not send quote" });
     }
 
-    const { data: quote, error: updateError } = await admin.from("Quote")
-      .update({ status: "SENT" }).eq("id", quoteId).eq("status", "DRAFT")
-      .select("id,status").maybeSingle();
-    if (updateError) return json(500, { error: "Could not send quote" });
-    if (!quote) return json(409, { error: "Quote status changed; reload and try again" });
-    return json(200, { quote });
+    const quote = Array.isArray(quoteRows) ? quoteRows[0] : quoteRows;
+    if (!quote) return json(500, { error: "Quote sending returned no result" });
+    return json(200, { quote: { id: quote.id, status: quote.status } });
   }
 
   return json(400, { error: "Unsupported action" });
