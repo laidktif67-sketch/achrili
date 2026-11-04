@@ -8,6 +8,14 @@ test('matches supported store root domains and subdomains', () => {
   assert.equal(findSupportedShop('m.aliexpress.com'), 'AliExpress');
 });
 
+test('recognizes additional international shopping platforms', () => {
+  assert.equal(findSupportedShop('www.temu.com'), 'Temu');
+  assert.equal(findSupportedShop('m.shopee.com.my'), 'Shopee');
+  assert.equal(findSupportedShop('www.noon.com'), 'Noon');
+  assert.equal(findSupportedShop('shop.zalando.de'), 'Zalando');
+  assert.equal(findSupportedShop('www.trendyol.com'), 'Trendyol');
+});
+
 test('normalizes hostname case and a trailing dot', () => {
   assert.equal(findSupportedShop('WWW.AMAZON.COM.'), 'Amazon');
 });

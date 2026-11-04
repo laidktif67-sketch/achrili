@@ -26,10 +26,10 @@ async function loadRequests(){
  for(const req of requests){
   const item=document.createElement('article');item.className='request';
   const title=document.createElement('h3');title.textContent=req.productName||'طلب منتج';
-  const meta=document.createElement('p');meta.className='muted';meta.textContent='الكمية: '+req.quantity+' · الوجهة: '+(req.destination||'—')+' · أُرسل: '+new Date(req.createdAt).toLocaleString('ar-DZ');
+  const meta=document.createElement('p');meta.className='muted';meta.textContent='المتجر: '+(req.shop||'غير معروف')+' · الكمية: '+req.quantity+' · الوجهة: '+(req.destination||'—')+' · أُرسل: '+new Date(req.createdAt).toLocaleString('ar-DZ');
   const status=document.createElement('span');status.className='pill';status.textContent=req.status;
   const link=document.createElement('a');link.href=req.productUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent='فتح رابط المنتج';
-  item.append(title,status,meta,link);
+  item.append(title,status,meta);const phone=document.createElement('p');phone.className='muted';phone.textContent='هاتف الزبون: '+(req.customerPhone||'غير مسجل في الملف الشخصي');item.append(phone,link);
   if(req.variant){const v=document.createElement('p');v.textContent='المواصفات: '+req.variant;item.append(v)}
   if(req.notes){const n=document.createElement('p');n.textContent='ملاحظات العميل: '+req.notes;item.append(n)}
   const btn=document.createElement('button');btn.type='button';btn.className='secondary';btn.textContent='إنشاء عرض لهذا الطلب';btn.addEventListener('click',()=>selectRequest(req.id));item.append(btn);
@@ -68,7 +68,7 @@ init().catch(err=>{ $('loading').classList.add('hidden');notice(err.message||'ح
 </script>
 </head>
 <body>
-<header class="top"><a class="brand" href="index.html">Achri<span>Li</span></a><a href="profile.html">العودة للحساب</a></header>
+<header class="top"><a class="brand" href="index.html">Achri<span>Li</span></a><div class="actions"><a href="payment-admin.html">إدارة الدفع</a><a href="profile.html">العودة للحساب</a></div></header>
 <main class="page">
 <h1>إدارة الطلبات وعروض الأسعار</h1>
 <p class="muted">لوحة أولية للموظف المخوّل. إنشاء العرض يحفظه كمسودة؛ الإرسال يغيّر الحالة فقط ولا يرسل رسالة خارجية.</p>

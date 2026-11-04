@@ -2,28 +2,48 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071f5c">
-<meta name="description" content="أرسل طلب منتجك إلى AchriLi وتابع حالته من حسابك.">
+<meta name="description" content="أرسل طلب منتجك إلى AchriLi وقدّر سعره بالدينار الجزائري قبل الإرسال.">
 <title>طلب منتج | AchriLi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/src/features/product-request/ui/request.css"><script type="module" src="/src/features/product-request/hooks/request.js"></script>
 </head>
 <body>
-<header class="topbar"><a class="brand" href="index.html"><b>Achri<span>Li</span></b><small>اشريلي</small></a><div class="toplinks"><a href="profile.html" data-t="profile">حسابي وطلباتي</a><button id="language" type="button" aria-label="Change language">FR</button></div></header>
+<header class="topbar"><a class="brand" href="index.html" aria-label="AchriLi - الرئيسية"><b>Achri<span>Li</span></b><small>اشريلي</small></a><nav class="toplinks" aria-label="التنقل"><a href="index.html" data-t="back">الرئيسية</a><a href="profile.html" data-t="profile">حسابي وطلباتي</a><button id="language" type="button" aria-label="Change language">FR</button></nav></header>
 <main class="page">
-<a class="back" href="index.html" data-t="back">← العودة للرئيسية</a>
-<section class="intro"><span class="eyebrow" data-t="eyebrow">خطوة نحو تسوّق أسهل</span><h1 data-t="title">أرسل طلب المنتج</h1><p data-t="intro">أدخل رابط المنتج وتفاصيله. سنحفظ طلبك في حسابك لتتمكن من متابعة حالته.</p></section>
-<section class="pricing-summary" aria-live="polite"><div class="pricing-values"><div><span data-t="rateLabel">سعر الدولار</span><strong id="pricingRate">—</strong></div><div><span data-t="eurRateLabel">سعر الأورو</span><strong id="pricingEurRate">—</strong></div><div><span data-t="feeLabel">رسوم خدمة AchriLi</span><strong id="pricingFee">—</strong></div></div><p id="pricingStatus" class="pricing-status">جارٍ تحميل إعدادات التسعير...</p><div class="currency-converter"><h2 data-t="converterTitle">تحويل العملات</h2><div class="grid"><div><label for="convertAmount" data-t="amountLabel">المبلغ</label><input id="convertAmount" type="number" min="0" step="any" value="1"></div><div><label for="convertFrom" data-t="fromLabel">من</label><select id="convertFrom"><option value="EUR">EUR — أورو</option><option value="USD">USD — دولار</option><option value="DZD">DZD — دينار جزائري</option></select></div></div><label for="convertTo" data-t="toLabel">إلى</label><select id="convertTo"><option value="USD">USD — دولار</option><option value="EUR">EUR — أورو</option><option value="DZD">DZD — دينار جزائري</option></select><p id="convertResult" class="convert-result" aria-live="polite">—</p></div></section>
+<section class="intro"><div class="intro-copy"><span class="eyebrow" data-t="eyebrow">خطوة نحو تسوّق أسهل</span><h1 data-t="title">أرسل طلب المنتج</h1><p data-t="intro">أضف رابط المنتج أولاً، ثم حدّد السعر والتفاصيل. سنحفظ طلبك في حسابك لتتمكن من متابعة حالته.</p></div><div class="step-pill"><span>01</span><span data-t="stepLabel">رابط · سعر · تفاصيل</span></div></section>
+<div class="draft-tools"><p id="draftStatus" class="hint" role="status" aria-live="polite">تُحفظ المسودة على هذا الجهاز لمدة تصل إلى 7 أيام.</p><button id="clearDraft" class="text-button" type="button" hidden>مسح المسودة المحفوظة</button></div>
 <div class="notice info" id="notice" role="status" aria-live="polite" hidden></div>
-<form class="panel" id="requestForm">
-<label for="productUrl" data-t="urlLabel">رابط المنتج *</label><input id="productUrl" type="url" required maxlength="2048" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="https://..." />
-<p class="hint" data-t="urlHint">يجب أن يكون الرابط من متجر مدعوم وأن يبدأ بـ HTTPS.</p>
+<form class="panel request-panel" id="requestForm">
+<section class="form-section link-section" aria-labelledby="linkHeading">
+<div class="section-heading"><span class="section-number">1</span><div><h2 id="linkHeading" data-t="linkHeading">رابط المنتج</h2><p data-t="linkIntro">ألصق رابط المنتج من المتجر الذي تريد الشراء منه.</p></div></div>
+<label for="productUrl" data-t="urlLabel">رابط المنتج *</label><div class="url-input-wrap"><span class="url-symbol" aria-hidden="true">↗</span><input id="productUrl" type="url" required maxlength="2048" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="https://..." /></div>
+<p class="hint" data-t="urlHint">يجب أن يكون الرابط من متجر مدعوم وأن يبدأ بـ HTTPS.</p><p id="shopDetected" class="pricing-status" role="status" aria-live="polite" data-t="shopAutoHint">سيُحدّد المتجر تلقائيًا من الرابط.</p>
+</section>
+<section class="pricing-summary" aria-labelledby="estimateTitle">
+<div class="section-heading"><span class="section-number">2</span><div><h2 id="estimateTitle" data-t="estimateTitle">سعر المنتج</h2><p data-t="estimateIntro">اختر العملة وأدخل السعر الظاهر في المتجر لتحصل على تقدير بالدينار الجزائري.</p></div></div>
+<div class="price-entry">
+<div><label for="productPrice" data-t="productPriceLabel">سعر المنتج في المتجر</label><input id="productPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="مثال: 25.99"></div>
+<div><label for="productCurrency" data-t="productCurrencyLabel">عملة السعر</label><select id="productCurrency"><option value="USD">USD — دولار أمريكي</option><option value="EUR">EUR — أورو</option></select></div>
+</div>
+<div class="estimate-result" aria-live="polite">
+<div class="estimate-line"><span data-t="originalPrice">سعر المنتج</span><strong id="originalPriceValue">—</strong></div>
+<div class="estimate-line"><span data-t="convertedPrice">سعر الوحدة بالدينار</span><strong id="convertedPriceValue">—</strong></div>
+<div class="estimate-line"><span data-t="serviceFeeLine">رسوم الخدمة</span><strong id="serviceFeeValue">—</strong></div>
+<div class="estimate-total"><span data-t="estimatedTotal">المجموع التقديري</span><strong id="estimatedTotalValue">أدخل سعر المنتج</strong></div>
+</div>
+<p id="pricingStatus" class="pricing-status" role="status" aria-live="polite">جارٍ تحميل إعدادات التسعير...</p>
+</section>
+<section class="form-section details-section" aria-labelledby="detailsHeading">
+<div class="section-heading"><span class="section-number">3</span><div><h2 id="detailsHeading" data-t="detailsHeading">تفاصيل الطلب</h2><p data-t="detailsIntro">أكمل الكمية والوجهة وأي مواصفات مهمة.</p></div></div>
 <div class="grid"><div><label for="quantity" data-t="quantity">الكمية *</label><input id="quantity" type="number" min="1" max="30" step="1" value="1" required></div><div><label for="destination" data-t="destination">وجهة التسليم</label><input id="destination" value="Algeria" maxlength="80" required></div></div>
+<label for="customerPhone" data-t="customerPhone">رقم الهاتف للتواصل *</label><input id="customerPhone" type="tel" autocomplete="tel" inputmode="tel" maxlength="24" placeholder="+213 5XX XX XX XX" required aria-describedby="phoneHint"><p class="hint" id="phoneHint" data-t="phoneHint">رقم إلزامي لنتواصل معك ونتأكد من تفاصيل طلبك.</p>
 <label for="variant" data-t="variant">اللون / المقاس / النسخة (اختياري)</label><input id="variant" maxlength="240" placeholder="مثال: أسود، مقاس M">
-<label for="notes" data-t="notes">ملاحظات إضافية (اختياري)</label><textarea id="notes" rows="4" maxlength="1500" placeholder="أي تفاصيل تساعدنا في تحديد المنتج..."></textarea>
-<div class="disclaimer" data-t="disclaimer">إرسال الطلب يسجّل طلب مراجعة فقط؛ لا يعني شراء المنتج أو تأكيد السعر أو الشحن أو الدفع.</div>
-<button class="primary" id="submit" type="submit" data-t="submit">إرسال طلب المراجعة</button>
+<label for="notes" data-t="notes">ملاحظات إضافية (اختياري)</label><textarea id="notes" rows="3" maxlength="1500" placeholder="أي تفاصيل تساعدنا في تحديد المنتج..."></textarea>
+</section>
+<div class="disclaimer" data-t="disclaimer">هذا تقدير أولي فقط، ولا يشمل الشحن أو الجمارك. السعر النهائي يتأكد بعد مراجعة المنتج.</div>
+<div class="submit-row"><p data-t="submitHint">راجع الرابط والسعر قبل إرسال طلبك.</p><button class="primary" id="submit" type="submit" data-t="submit">إرسال طلب المراجعة</button></div>
 </form>
-<footer>© <span id="year"></span> AchriLi · <span data-t="footer">تسوّق من العالم إلى الجزائر</span></footer>
+<footer>© <span id="year"></span> AchriLi · <span data-t="footer">تسوّق من العالم إلى الجزائر</span> · <a href="help.html">المساعدة</a></footer>
 </main>
 </body></html>
