@@ -1,4 +1,5 @@
 /* AchriLi layout primitives */
+*,*::before,*::after { box-sizing:border-box; }
 .ds-root { min-width:0; }
 .ds-container { width:min(100% - 2rem,var(--achrili-content-width)); margin-inline:auto; }
 .ds-container--narrow { width:min(100% - 2rem,var(--achrili-content-narrow)); margin-inline:auto; }
