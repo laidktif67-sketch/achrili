@@ -106,7 +106,7 @@ Deno.serve(async (req) => {
       }
       let shop = "متجر غير معروف";
       try {
-        const hostname = new URL(String(request.productUrl)).hostname.toLowerCase().replace(/\\.$/, "");
+        const hostname = new URL(String(request.productUrl)).hostname.toLowerCase().replace(/\.$/, "");
         const shops: Record<string, string> = {
           "temu.com": "Temu",
           "shein.com": "SHEIN",
