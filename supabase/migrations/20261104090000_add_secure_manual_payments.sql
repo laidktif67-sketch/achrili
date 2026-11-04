@@ -57,6 +57,7 @@ alter table public."PaymentMethod" enable row level security;
 alter table public."Payment" enable row level security;
 
 grant select on public."PaymentMethod" to anon, authenticated;
+grant update on public."PaymentMethod" to authenticated;
 grant select, insert, update on public."Payment" to authenticated;
 grant all on public."PaymentMethod" to service_role;
 grant all on public."Payment" to service_role;
@@ -153,7 +154,10 @@ begin
       end if;
       new.currency := 'USDT';
     else
-      new.currency := quote_row.currency;
+      if quote_row.currency <> 'DZD' then
+        raise exception 'CCP transfer requires a quote denominated in DZD; no payment conversion rate is configured' using errcode = '22023';
+      end if;
+      new.currency := 'DZD';
     end if;
     if split_part(new."proofPath", '/', 1) <> auth.uid()::text then
       raise exception 'Proof path must belong to the authenticated customer' using errcode = '42501';
@@ -170,7 +174,7 @@ begin
     return new;
   end if;
 
-  if (select auth.jwt() -> 'app_metadata' ->> 'role') <> 'admin' then
+  if (select auth.jwt() -> 'app_metadata' ->> 'role') is distinct from 'admin' then
     raise exception 'Only an administrator can review payments' using errcode = '42501';
   end if;
 
