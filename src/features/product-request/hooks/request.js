@@ -139,7 +139,7 @@ $('clearDraft').addEventListener('click',()=>{
   const cleanUrl=new URL(location.href);cleanUrl.search='';history.replaceState({},'',cleanUrl.pathname);
   $('productUrl').focus();
 });
-async function init(){const {data,error}=await supabase.auth.getSession();if(error||!data.session){saveDraft();if($('productUrl').value.trim())sessionStorage.setItem('achrili-pending-product-url',$('productUrl').value.trim());message(t('login'),'info');setTimeout(()=>location.replace('auth.html?next=request.html'),900);return}user=data.session.user}
+async function init(){const {data,error}=await supabase.auth.getSession();if(error||!data.session){saveDraft();if($('productUrl').value.trim())sessionStorage.setItem('achrili-pending-product-url',$('productUrl').value.trim());message(t('login'),'info');setTimeout(()=>location.replace('auth.html?next=request.html'),900);return}user=data.session.user;$('customerPhone').value=$('customerPhone').value||user.user_metadata?.phone||''}
 $('requestForm').addEventListener('submit',async e=>{e.preventDefault();if(busy)return;if(!user){message(t('login'),'info');return}
 let url;try{url=new URL($('productUrl').value.trim())}catch{message(t('badUrl'),'error');return}
 const shop=isValidProductUrl(url.href)?findSupportedShop(url.hostname):null;if(!shop){message(t('badUrl'),'error');return}
