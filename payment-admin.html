@@ -52,6 +52,7 @@ async function loadPayments(){
   if(p.reviewNote)card.append(el('p','muted','ملاحظة المراجعة: '+p.reviewNote));
   const form=document.createElement('form');form.className='actions';const status=document.createElement('select');status.name='status';
   for(const value of ['PENDING','UNDER_REVIEW','CONFIRMED','REJECTED']){const op=document.createElement('option');op.value=value;op.textContent=value;op.selected=p.status===value;status.append(op)}
+  status.disabled=['CONFIRMED','REJECTED'].includes(p.status);
   const noteInput=document.createElement('input');noteInput.name='reviewNote';noteInput.placeholder='ملاحظة مراجعة (اختياري)';noteInput.maxLength=2000;noteInput.value=p.reviewNote||'';
   const btn=el('button','','حفظ المراجعة');btn.type='submit';form.append(status,noteInput,btn);
   form.addEventListener('submit',async e=>{e.preventDefault();btn.disabled=true;try{const statusValue=status.value;const patch={status:statusValue,reviewNote:noteInput.value.trim()||null};if(statusValue==='CONFIRMED'||statusValue==='REJECTED'){patch.reviewedBy=user.id;patch.reviewedAt=new Date().toISOString()}else{patch.reviewedBy=null;patch.reviewedAt=null}
