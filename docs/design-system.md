@@ -91,7 +91,7 @@ This is an incremental migration, not a claim that every screen already uses sha
 | Authentication (login/sign-up) | Shared tokens are used for palette aliases, fields/focus, and feedback states; the two-column hero illustration and auth-specific states remain local | Adopt shared button/field primitives selectively after visual regression checks; exercise auth states in a browser |
 | Profile and orders | Shared tokens now drive core palette, field borders/focus, and success/error statuses; profile navigation, order cards, and responsive layout remain feature-specific | Consolidate cards, actions, and form controls without changing profile/order logic |
 | Product request and price estimator | Shared tokens now drive common palette, surfaces, and status colors; URL input, estimator, draft tools, and workflow layout remain feature-specific | Consolidate common controls while preserving price calculations and draft behavior |
-| Help / FAQ | Shared tokens drive brand, surfaces, semantic notice colors, and core type/spacing; hero and FAQ layout remain page-specific | Use shared card/action primitives where appearance can be checked |
+| Help / FAQ | Shared tokens drive brand, surfaces, semantic notice colors, and core type/spacing; FAQ items use `.ds-card`, the notice uses `.ds-alert--warning`, and actions use `.ds-button` variants | Hero remains intentionally page-specific; screenshot/pixel review remains pending |
 | Home, quotes, payments, and admin screens | Shared entry point/tokens are connected, with varying levels of primitive adoption | Audit and migrate each page in its own visual pass; do not infer full adoption from the stylesheet import |
 
 ### Validation evidence from the current implementation pass
