@@ -194,6 +194,9 @@ begin
   if new.status not in ('PENDING', 'UNDER_REVIEW', 'CONFIRMED', 'REJECTED') then
     raise exception 'Invalid payment status';
   end if;
+  if old.status in ('CONFIRMED', 'REJECTED') and new.status is distinct from old.status then
+    raise exception 'A reviewed terminal payment cannot be reopened or reversed';
+  end if;
   if new.status in ('CONFIRMED', 'REJECTED') then
     new."reviewedBy" := auth.uid();
     new."reviewedAt" := now();
