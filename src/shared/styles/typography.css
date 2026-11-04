@@ -1,0 +1,14 @@
+/* AchriLi typography system */
+.ds-root { font-family:var(--achrili-font-sans); color:var(--achrili-color-ink); font-size:var(--achrili-text-md); line-height:var(--achrili-leading-relaxed); font-weight:var(--achrili-weight-regular); }
+.ds-root :where(h1,h2,h3,h4,p) { margin-block-start:0; }
+.ds-page-title { margin:0; color:var(--achrili-color-brand-900); font-family:var(--achrili-font-display); font-size:clamp(1.5rem,3vw,var(--achrili-text-3xl)); line-height:var(--achrili-leading-tight); font-weight:var(--achrili-weight-extrabold); letter-spacing:-.025em; }
+.ds-section-title { margin:0; color:var(--achrili-color-brand-900); font-size:var(--achrili-text-xl); line-height:var(--achrili-leading-tight); font-weight:var(--achrili-weight-bold); }
+.ds-card-title { margin:0; color:var(--achrili-color-ink); font-size:var(--achrili-text-lg); line-height:var(--achrili-leading-normal); font-weight:var(--achrili-weight-bold); }
+.ds-body { font-size:var(--achrili-text-md); line-height:var(--achrili-leading-relaxed); }
+.ds-small { font-size:var(--achrili-text-sm); line-height:var(--achrili-leading-normal); }
+.ds-caption { font-size:var(--achrili-text-xs); line-height:var(--achrili-leading-normal); }
+.ds-muted { color:var(--achrili-color-muted); }
+.ds-numeric { font-variant-numeric:tabular-nums; }
+.ds-latin { direction:ltr; unicode-bidi:isolate; }
+.ds-code { font-family:var(--achrili-font-mono); font-size:.95em; }
+.ds-eyebrow { color:var(--achrili-color-brand-800); font-size:var(--achrili-text-xs); font-weight:var(--achrili-weight-bold); letter-spacing:.04em; }
