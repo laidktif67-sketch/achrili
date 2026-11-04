@@ -71,7 +71,7 @@ end $$;
 
 -- Sending an active draft succeeds through the atomic send RPC.
 insert into public."ProductRequest"(id, status) values ('send-active-1', 'SUBMITTED');
-do $
+do $test$
 declare
   v_quote_id text;
   v_status public."QuoteStatus";
@@ -82,13 +82,13 @@ begin
   if v_status <> 'SENT' then
     raise exception 'active draft did not transition to SENT';
   end if;
-end $;
+end $test$;
 
 -- Expired drafts cannot be sent, even if the caller's earlier check was stale.
 insert into public."ProductRequest"(id, status) values ('send-expired-1', 'QUOTED');
 insert into public."Quote"(id, "requestId", currency, "productCost", "shippingCost", "serviceFee", "customsEstimate", total, "expiresAt", status)
 values ('expired-send-1', 'send-expired-1', 'DZD', 100, 20, 5, 0, 125, now() - interval '1 second', 'DRAFT');
-do $
+do $test$
 begin
   begin
     perform * from public.send_quote_atomically('expired-send-1');
@@ -105,7 +105,7 @@ begin
   exception when no_data_found then
     if sqlerrm <> 'quote_not_found' then raise; end if;
   end;
-end $;
+end $test$;
 
 -- Confirm RPC execute privilege is restricted to service_role.
 do $$
