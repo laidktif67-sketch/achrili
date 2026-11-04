@@ -36,7 +36,7 @@ begin
   if p_notes is not null and length(p_notes) > 4000 then
     raise exception using errcode = '22023', message = 'notes_too_long';
   end if;
-  if p_expires_at is not null and p_expires_at <= now() then
+  if p_expires_at is not null and p_expires_at <= clock_timestamp() then
     raise exception using errcode = '22023', message = 'quote_expiry_must_be_future';
   end if;
 
@@ -60,7 +60,7 @@ begin
     where q."requestId" = p_request_id
       and (
         q.status = 'ACCEPTED'
-        or (q.status = 'DRAFT' and (q."expiresAt" is null or q."expiresAt" > now()))
+        or (q.status = 'DRAFT' and (q."expiresAt" is null or q."expiresAt" > clock_timestamp()))
         or (q.status = 'SENT' and (q."expiresAt" is null or q."expiresAt" > now()))
       )
   ) then
@@ -105,7 +105,7 @@ begin
   set status = 'SENT'
   where id = p_quote_id
     and status = 'DRAFT'
-    and ("expiresAt" is null or "expiresAt" > now())
+    and ("expiresAt" is null or "expiresAt" > clock_timestamp())
   returning * into v_quote;
 
   if found then
