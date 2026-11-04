@@ -26,3 +26,14 @@
  .ds-card { padding:var(--achrili-space-4); }
  .ds-row--mobile-stack { align-items:stretch; flex-direction:column; }
 }
+
+/* Shared legal/policy document layout */
+.ds-legal-page { width:min(100% - 2rem,var(--achrili-content-narrow)); margin:var(--achrili-space-10) auto; padding:var(--achrili-space-8); background:var(--achrili-color-surface); border:1px solid var(--achrili-color-border); border-radius:var(--achrili-radius-xl); color:var(--achrili-color-ink); line-height:2; }
+.ds-legal-page .ds-brand { display:inline-block; color:var(--achrili-color-brand-900); font:900 1.75rem Arial,sans-serif; text-decoration:none; direction:ltr; }
+.ds-legal-page .ds-brand span { color:var(--achrili-color-accent-500); }
+.ds-legal-page h1 { margin-block:var(--achrili-space-4); color:var(--achrili-color-brand-900); font-size:var(--achrili-text-2xl); line-height:var(--achrili-leading-tight); }
+.ds-legal-page h2 { margin-block-start:var(--achrili-space-6); color:var(--achrili-color-brand-900); font-size:var(--achrili-text-md); line-height:var(--achrili-leading-normal); }
+.ds-legal-page p,.ds-legal-page li { color:var(--achrili-color-muted); font-size:var(--achrili-text-sm); }
+.ds-legal-page a:not(.ds-brand) { color:var(--achrili-color-brand-800); }
+.ds-legal-note { padding:var(--achrili-space-3) var(--achrili-space-4); background:var(--achrili-color-accent-100); border-radius:var(--achrili-radius-sm); font-size:var(--achrili-text-xs); }
+@media(max-width:760px) { .ds-legal-page { width:min(100% - 1.25rem,var(--achrili-content-narrow)); margin-block:var(--achrili-space-3); padding:var(--achrili-space-5); border-radius:var(--achrili-radius-lg); } .ds-legal-page h1 { font-size:var(--achrili-text-xl); } }
