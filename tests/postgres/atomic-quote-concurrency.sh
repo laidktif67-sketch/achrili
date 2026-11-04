@@ -2,7 +2,7 @@
 set -euo pipefail
 
 container_id="${1:?Usage: atomic-quote-concurrency.sh POSTGRES_CONTAINER_ID}"
-psql=(docker exec -i "$container_id" psql -U postgres -d achrili_test -v ON_ERROR_STOP=1)
+psql=(docker exec "$container_id" psql -U postgres -d achrili_test -v ON_ERROR_STOP=1)
 
 # Both sessions race to create a quote for the same request. The request-row lock
 # must allow exactly one RPC to commit and make the other reject the active quote.
