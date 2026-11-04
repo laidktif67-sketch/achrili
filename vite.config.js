@@ -14,6 +14,8 @@ export default defineConfig({
         privacy: 'privacy.html',
         terms: 'terms.html',
         admin: 'admin.html',
+        payments: 'payments.html',
+        paymentAdmin: 'payment-admin.html',
       },
     },
   },
