@@ -3,15 +3,45 @@ import { findSupportedShop, isValidProductUrl } from '../model/product-request.j
 import { getPricingSettings } from '../../../shared/services/supabase/pricing-settings.js';
 import { convertCurrency } from '../../pricing/model/pricing.js';
 const $=id=>document.getElementById(id);let lang=localStorage.getItem('achrili-language')==='fr'?'fr':'ar',user=null,busy=false;
-const words={ar:{profile:'حسابي وطلباتي',back:'← العودة للرئيسية',eyebrow:'خطوة نحو تسوّق أسهل',title:'أرسل طلب المنتج',intro:'أدخل رابط المنتج وتفاصيله. سنحفظ طلبك في حسابك لتتمكن من متابعة حالته.',urlLabel:'رابط المنتج *',urlHint:'يجب أن يكون الرابط من متجر مدعوم وأن يبدأ بـ HTTPS.',quantity:'الكمية *',destination:'وجهة التسليم',variant:'اللون / المقاس / النسخة (اختياري)',notes:'ملاحظات إضافية (اختياري)',disclaimer:'إرسال الطلب يسجّل طلب مراجعة فقط؛ لا يعني شراء المنتج أو تأكيد السعر أو الشحن أو الدفع.',submit:'إرسال طلب المراجعة',footer:'تسوّق من العالم إلى الجزائر',badUrl:'أدخل رابط HTTPS صحيحاً من متجر مدعوم.',badQty:'يجب أن تكون الكمية بين 1 و30.',sending:'جارٍ إرسال الطلب...',success:'تم حفظ طلبك بنجاح. يمكنك متابعة حالته من صفحة حسابك.',failed:'تعذّر حفظ الطلب. حاول مجدداً بعد التحقق من اتصالك وحسابك.',login:'يجب تسجيل الدخول أولاً. سيتم توجيهك إلى صفحة الدخول.',shop:'المتجر المدعوم:',required:'تعذّر إرسال الطلب: تأكد من أن ملف حسابك مكتمل ثم أعد المحاولة.',rateLabel:'سعر الدولار',eurRateLabel:'سعر الأورو',converterTitle:'تحويل العملات',amountLabel:'المبلغ',fromLabel:'من',toLabel:'إلى',feeLabel:'رسوم خدمة AchriLi',pricingLoading:'جارٍ تحميل إعدادات التسعير...',pricingFailed:'تعذر تحميل إعدادات التسعير؛ لن نعرض تقديراً للسعر الآن.',rateSource:'المصدر',rateManual:'يدوي',pricingNote:'هذه الإعدادات معلوماتية حالياً. السعر النهائي والشحن غير مؤكدين حتى تتم مراجعة المنتج والتحقق من رسوم الشحن الفعلية.'},fr:{profile:'Mon compte et mes demandes',back:'← Retour à l’accueil',eyebrow:'Une étape vers un shopping plus simple',title:'Envoyer une demande produit',intro:'Saisissez le lien et les détails du produit. La demande sera enregistrée dans votre compte pour suivre son statut.',urlLabel:'Lien du produit *',urlHint:'Le lien doit provenir d’une boutique prise en charge et utiliser HTTPS.',quantity:'Quantité *',destination:'Destination',variant:'Couleur / taille / variante (facultatif)',notes:'Notes supplémentaires (facultatif)',disclaimer:'L’envoi crée une demande de vérification uniquement ; aucun achat, prix, livraison ou paiement n’est confirmé.',submit:'Envoyer la demande',footer:'Le shopping mondial vers l’Algérie',badUrl:'Saisissez une URL HTTPS valide d’une boutique prise en charge.',badQty:'La quantité doit être comprise entre 1 et 30.',sending:'Envoi de la demande...',success:'Votre demande a été enregistrée. Suivez son statut depuis votre compte.',failed:'Impossible d’enregistrer la demande. Vérifiez votre connexion et réessayez.',login:'Connectez-vous d’abord. Redirection vers la page de connexion.',shop:'Boutique prise en charge :',required:'Impossible d’envoyer la demande. Vérifiez votre profil puis réessayez.',rateLabel:'Taux du dollar',eurRateLabel:'Taux de l’euro',converterTitle:'Convertisseur de devises',amountLabel:'Montant',fromLabel:'De',toLabel:'Vers',feeLabel:'Frais de service AchriLi',pricingLoading:'Chargement des paramètres de tarification...',pricingFailed:'Impossible de charger les paramètres de tarification ; aucune estimation ne sera affichée.',rateSource:'Source',rateManual:'Manuel',pricingNote:'Ces paramètres sont informatifs pour le moment. Le prix final et la livraison ne sont pas confirmés avant vérification du produit et des frais de livraison réels.'}};
+const words={ar:{profile:'حسابي وطلباتي',back:'← العودة للرئيسية',eyebrow:'خطوة نحو تسوّق أسهل',title:'أرسل طلب المنتج',intro:'أدخل رابط المنتج وتفاصيله. سنحفظ طلبك في حسابك لتتمكن من متابعة حالته.',urlLabel:'رابط المنتج *',urlHint:'يجب أن يكون الرابط من متجر مدعوم وأن يبدأ بـ HTTPS.',quantity:'الكمية *',destination:'وجهة التسليم',variant:'اللون / المقاس / النسخة (اختياري)',notes:'ملاحظات إضافية (اختياري)',disclaimer:'إرسال الطلب يسجّل طلب مراجعة فقط؛ لا يعني شراء المنتج أو تأكيد السعر أو الشحن أو الدفع.',submit:'إرسال طلب المراجعة',footer:'تسوّق من العالم إلى الجزائر',badUrl:'أدخل رابط HTTPS صحيحاً من متجر مدعوم.',badQty:'يجب أن تكون الكمية بين 1 و30.',sending:'جارٍ إرسال الطلب...',success:'تم حفظ طلبك بنجاح. يمكنك متابعة حالته من صفحة حسابك.',failed:'تعذّر حفظ الطلب. حاول مجدداً بعد التحقق من اتصالك وحسابك.',login:'يجب تسجيل الدخول أولاً. سيتم توجيهك إلى صفحة الدخول.',shop:'المتجر المدعوم:',required:'تعذّر إرسال الطلب: تأكد من أن ملف حسابك مكتمل ثم أعد المحاولة.',estimateEyebrow:'تقدير سريع',estimateTitle:'قدّر سعر منتجك',estimateIntro:'اختر العملة وأدخل السعر الظاهر في المتجر لتحصل على تقدير بالدينار الجزائري.',productPriceLabel:'سعر المنتج في المتجر',productCurrencyLabel:'عملة السعر',originalPrice:'سعر المنتج',convertedPrice:'ما يعادله بالدينار',serviceFeeLine:'رسوم الخدمة',estimatedTotal:'المجموع التقديري',enterPrice:'أدخل سعر المنتج',pricingLoading:'جارٍ تحميل أسعار الصرف...',pricingFailed:'تعذر تحميل التسعير؛ تحقق من الاتصال ثم أعد المحاولة.',pricingNote:'التقدير محسوب حسب أسعار الصرف ورسوم الخدمة المضبوطة في AchriLi. لا يشمل الشحن أو الجمارك، والسعر النهائي يتأكد بعد مراجعة الطلب.'},fr:{profile:'Mon compte et mes demandes',back:'← Retour à l’accueil',eyebrow:'Une étape vers un shopping plus simple',title:'Envoyer une demande produit',intro:'Saisissez le lien et les détails du produit. La demande sera enregistrée dans votre compte pour suivre son statut.',urlLabel:'Lien du produit *',urlHint:'Le lien doit provenir d’une boutique prise en charge et utiliser HTTPS.',quantity:'Quantité *',destination:'Destination',variant:'Couleur / taille / variante (facultatif)',notes:'Notes supplémentaires (facultatif)',disclaimer:'L’envoi crée une demande de vérification uniquement ; aucun achat, prix, livraison ou paiement n’est confirmé.',submit:'Envoyer la demande',footer:'Le shopping mondial vers l’Algérie',badUrl:'Saisissez une URL HTTPS valide d’une boutique prise en charge.',badQty:'La quantité doit être comprise entre 1 et 30.',sending:'Envoi de la demande...',success:'Votre demande a été enregistrée. Suivez son statut depuis votre compte.',failed:'Impossible d’enregistrer la demande. Vérifiez votre connexion et réessayez.',login:'Connectez-vous d’abord. Redirection vers la page de connexion.',shop:'Boutique prise en charge :',required:'Impossible d’envoyer la demande. Vérifiez votre profil puis réessayez.',estimateEyebrow:'Estimation rapide',estimateTitle:'Estimez le prix de votre produit',estimateIntro:'Choisissez la devise et saisissez le prix affiché sur la boutique pour obtenir une estimation en dinars algériens.',productPriceLabel:'Prix du produit en boutique',productCurrencyLabel:'Devise du prix',originalPrice:'Prix du produit',convertedPrice:'Équivalent en dinars',serviceFeeLine:'Frais de service',estimatedTotal:'Total estimé',enterPrice:'Saisissez le prix du produit',pricingLoading:'Chargement des taux de change...',pricingFailed:'Tarification indisponible ; vérifiez la connexion puis réessayez.',pricingNote:'Estimation calculée avec les taux et frais configurés dans AchriLi. Livraison et douane non incluses ; le prix final sera confirmé après vérification de la demande.'}};
 const t=k=>words[lang][k]||words.ar[k]||k;
 function message(s,type='info'){$('notice').textContent=s;$('notice').className='notice '+type;$('notice').hidden=false}
 function translate(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));$('language').textContent=lang==='ar'?'FR':'عربي';$('destination').value=$('destination').value||'Algeria'}
 $('language').addEventListener('click',()=>{lang=lang==='ar'?'fr':'ar';localStorage.setItem('achrili-language',lang);translate();loadPricing()});
 $('year').textContent=new Date().getFullYear();translate();
-let pricingSettings=null;function updateConversion(){const result=$('convertResult');if(!pricingSettings){result.textContent='—';return}try{const amount=$('convertAmount').value;if(amount.trim()===''){result.textContent='—';return}const value=convertCurrency(amount,$('convertFrom').value,$('convertTo').value,pricingSettings);result.textContent=value.toLocaleString(lang==='ar'?'ar-DZ':'fr-FR',{maximumFractionDigits:2})+' '+$('convertTo').value}catch{result.textContent='—'}}
-$('convertAmount').addEventListener('input',updateConversion);$('convertFrom').addEventListener('change',updateConversion);$('convertTo').addEventListener('change',updateConversion);
-async function loadPricing(){const rate=$('pricingRate'),eurRate=$('pricingEurRate'),fee=$('pricingFee'),status=$('pricingStatus');status.textContent=t('pricingLoading');try{pricingSettings=await getPricingSettings();rate.textContent=Number(pricingSettings.usdToDzdRate).toLocaleString(lang==='ar'?'ar-DZ':'fr-FR')+' DZD / USD';eurRate.textContent=Number(pricingSettings.eurToDzdRate).toLocaleString(lang==='ar'?'ar-DZ':'fr-FR')+' DZD / EUR';fee.textContent=Number(pricingSettings.serviceFeeDzd).toLocaleString(lang==='ar'?'ar-DZ':'fr-FR')+' DZD';status.textContent=t('pricingNote');updateConversion()}catch(error){console.error('Unable to load pricing settings',error);pricingSettings=null;rate.textContent='—';eurRate.textContent='—';fee.textContent='—';status.textContent=t('pricingFailed');updateConversion()}}
+let pricingSettings=null;
+const money=(value,currency)=>Number(value).toLocaleString(lang==='ar'?'ar-DZ':'fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+currency;
+function updateEstimate(){
+ const priceField=$('productPrice'),currency=$('productCurrency').value;
+ const original=$('originalPriceValue'),converted=$('convertedPriceValue'),fee=$('serviceFeeValue'),total=$('estimatedTotalValue');
+ const raw=priceField.value.trim(),price=Number(raw);
+ if(!pricingSettings){original.textContent='—';converted.textContent='—';fee.textContent='—';total.textContent='—';return}
+ if(raw===''||!Number.isFinite(price)||price<0){original.textContent='—';converted.textContent='—';fee.textContent=money(pricingSettings.serviceFeeDzd,'DZD');total.textContent=t('enterPrice');return}
+ const convertedDzd=convertCurrency(price,currency,'DZD',pricingSettings);
+ const quantity=Math.max(1,Math.min(30,Number($('quantity')?.value)||1));
+ const feeDzd=pricingSettings.serviceFeeDzd;
+ original.textContent=money(price,currency);
+ converted.textContent=money(convertedDzd,'DZD');
+ fee.textContent=money(feeDzd,'DZD');
+ total.textContent=money(convertedDzd+feeDzd,'DZD');
+}
+$('productPrice').addEventListener('input',updateEstimate);
+$('productCurrency').addEventListener('change',updateEstimate);
+$('quantity').addEventListener('input',updateEstimate);
+async function loadPricing(){
+ const status=$('pricingStatus');
+ status.textContent=t('pricingLoading');
+ try{
+  pricingSettings=await getPricingSettings();
+  status.textContent=t('pricingNote');
+  updateEstimate();
+ }catch(error){
+  console.error('Unable to load pricing settings',error);
+  pricingSettings=null;
+  status.textContent=t('pricingFailed');
+  updateEstimate();
+ }
+}
 loadPricing();
 
 // Subscribe to database changes so the displayed rates and converter stay current.
@@ -60,7 +90,7 @@ function setDraftStatus(message,hasDraft=false){
 }
 function saveDraft(){
   try{
-    const draft={productUrl:$('productUrl').value.trim(),quantity:$('quantity').value,destination:$('destination').value.trim(),variant:$('variant').value,notes:$('notes').value,updatedAt:Date.now()};
+    const draft={productUrl:$('productUrl').value.trim(),quantity:$('quantity').value,destination:$('destination').value.trim(),variant:$('variant').value,notes:$('notes').value,productPrice:$('productPrice').value,productCurrency:$('productCurrency').value,updatedAt:Date.now()};
     const hasUserInput=Boolean(draft.productUrl||draft.variant.trim()||draft.notes.trim()||draft.quantity!=='1');
     if(hasUserInput){
       localStorage.setItem(DRAFT_KEY,JSON.stringify(draft));
@@ -83,13 +113,16 @@ function restoreDraft(){
     if(draft.destination)$('destination').value=draft.destination;
     if(draft.variant)$('variant').value=draft.variant;
     if(draft.notes)$('notes').value=draft.notes;
+    if(draft.productPrice)$('productPrice').value=draft.productPrice;
+    if(draft.productCurrency==='USD'||draft.productCurrency==='EUR')$('productCurrency').value=draft.productCurrency;
+    updateEstimate();
     setDraftStatus(lang==='fr'?'Brouillon précédent restauré. Il expirera après 7 jours.':'تم استرجاع المسودة السابقة؛ تنتهي صلاحيتها بعد 7 أيام.',true);
   }else if(initial){
     try{$('productUrl').value=new URL(initial).href}catch{}
   }
 }
 restoreDraft();
-['productUrl','quantity','destination','variant','notes'].forEach(id=>{
+['productUrl','quantity','destination','variant','notes','productPrice','productCurrency'].forEach(id=>{
   const field=$(id);
   field.addEventListener('input',saveDraft);
   field.addEventListener('change',saveDraft);
@@ -99,6 +132,7 @@ $('clearDraft').addEventListener('click',()=>{
   sessionStorage.removeItem('achrili-pending-product-url');
   $('requestForm').reset();
   $('quantity').value='1';
+  $('productPrice').value='';$('productCurrency').value='USD';updateEstimate();
   $('destination').value=lang==='fr'?'Algérie':'Algeria';
   setDraftStatus(lang==='fr'?'Brouillon supprimé de cet appareil.':'تم مسح المسودة المحفوظة من هذا الجهاز.',false);
   const cleanUrl=new URL(location.href);cleanUrl.search='';history.replaceState({},'',cleanUrl.pathname);
@@ -114,7 +148,7 @@ busy=true;const btn=$('submit');btn.disabled=true;btn.textContent=t('sending');
 try{const {data:sessionData,error:sessionError}=await supabase.auth.getSession();if(sessionError||!sessionData.session)throw new Error('auth');user=sessionData.session.user;
 const payload={id:crypto.randomUUID(),customerId:user.id,productUrl:url.href,quantity,notes:$('notes').value.trim()||null,variant:$('variant').value.trim()||null,destination,status:'SUBMITTED'};
 const {error}=await supabase.from('ProductRequest').insert(payload);if(error)throw error;
-sessionStorage.removeItem('achrili-pending-product-url');localStorage.removeItem(DRAFT_KEY);sessionStorage.removeItem(LEGACY_DRAFT_KEY);setDraftStatus(lang==='fr'?'Demande envoyée ; brouillon supprimé.':'تم إرسال الطلب ومسح المسودة.',false);message(t('success')+' '+t('shop')+' '+shop,'success');$('requestForm').reset();$('quantity').value='1';$('destination').value=lang==='fr'?'Algérie':'Algeria';const newUrl=new URL(location.href);newUrl.search='';history.replaceState({},'',newUrl.pathname);
+sessionStorage.removeItem('achrili-pending-product-url');localStorage.removeItem(DRAFT_KEY);sessionStorage.removeItem(LEGACY_DRAFT_KEY);setDraftStatus(lang==='fr'?'Demande envoyée ; brouillon supprimé.':'تم إرسال الطلب ومسح المسودة.',false);message(t('success')+' '+t('shop')+' '+shop,'success');$('requestForm').reset();$('quantity').value='1';$('productPrice').value='';$('productCurrency').value='USD';updateEstimate();$('destination').value=lang==='fr'?'Algérie':'Algeria';const newUrl=new URL(location.href);newUrl.search='';history.replaceState({},'',newUrl.pathname);
 }catch(err){console.error('Product request submission failed',err);message(err?.message==='auth'?t('login'):t('failed'),'error')}finally{busy=false;btn.disabled=false;btn.textContent=t('submit')}
 });
 init().catch(()=>location.replace('auth.html?next='+encodeURIComponent('request.html'+location.search)));
