@@ -101,6 +101,7 @@ $('clearDraft').addEventListener('click',()=>{
   $('quantity').value='1';
   $('destination').value=lang==='fr'?'Algérie':'Algeria';
   setDraftStatus(lang==='fr'?'Brouillon supprimé de cet appareil.':'تم مسح المسودة المحفوظة من هذا الجهاز.',false);
+  const cleanUrl=new URL(location.href);cleanUrl.search='';history.replaceState({},'',cleanUrl.pathname);
   $('productUrl').focus();
 });
 async function init(){const {data,error}=await supabase.auth.getSession();if(error||!data.session){saveDraft();if($('productUrl').value.trim())sessionStorage.setItem('achrili-pending-product-url',$('productUrl').value.trim());message(t('login'),'info');setTimeout(()=>location.replace('auth.html?next=request.html'),900);return}user=data.session.user}
