@@ -23,7 +23,7 @@ begin
   if p_request_id is null or length(btrim(p_request_id)) = 0 then
     raise exception using errcode = '22023', message = 'request_id_required';
   end if;
-  if p_currency not in ('USD', 'EUR', 'DZD') then
+  if p_currency is null or p_currency not in ('USD', 'EUR', 'DZD') then
     raise exception using errcode = '22023', message = 'unsupported_currency';
   end if;
   if p_product_cost is null or p_product_cost < 0
