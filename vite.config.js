@@ -9,6 +9,7 @@ export default defineConfig({
         auth: 'auth.html',
         profile: 'profile.html',
         request: 'request.html',
+        quotes: 'quotes.html',
         privacy: 'privacy.html',
         terms: 'terms.html',
         admin: 'admin.html',
