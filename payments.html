@@ -56,7 +56,7 @@ $('form').addEventListener('submit',async e=>{
   const {error:insertError}=await supabase.from('Payment').insert({quoteId:quote.id,requestId:quote.requestId,paymentMethodId:method.id,proofPath,transactionReference:reference||null});
   if(insertError)throw new Error('تعذّر تسجيل الدفع. تحقق من أن العرض ما زال صالحًا ثم أعد المحاولة.');
   paymentCreated=true;
-  $('form').reset();note('تم استلام إثبات الدفع بنجاح. الحالة الآن قيد المراجعة، ولم يتم تأكيد الدفع تلقائيًا.','success');
+  $('form').reset();note('تم استلام إثبات الدفع بنجاح. الحالة الآن قيد المراجعة، ولم يتم تأكيد الدفع تلقائيًا. يمكنك الرجوع إلى «طلباتي» في أي وقت لمتابعة العرض.','success');$('returnToOrders').hidden=false;
  }catch(error){
   if(proofPath&&!paymentCreated){
    const {error:cleanupError}=await supabase.storage.from('payment-proofs').remove([proofPath]);
@@ -77,5 +77,5 @@ init().catch(()=>note('حدث خطأ أثناء تحميل صفحة الدفع.'
 <label for="reference">رقم العملية / ملاحظة مرجعية (اختياري)</label><input id="reference" maxlength="200" autocomplete="off">
 <p class="small">لا ترسل كلمات مرور أو مفاتيح خاصة. لا ترسل عبر شبكة مختلفة عن الشبكة المحددة للوسيلة.</p>
 <button id="submit" type="submit">إرسال إثبات الدفع للمراجعة</button>
-</form></section></main>
+</form><a id="returnToOrders" class="small" href="quotes.html" hidden style="display:inline-block;margin-top:12px;font-weight:800">العودة إلى طلباتي ومتابعة الحالة</a></section></main>
 </body></html>
