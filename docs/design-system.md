@@ -4,7 +4,7 @@
 A shared visual system for the entire AchriLi Vite multi-page application: home, authentication, product request, profile/orders, quotes, payment, help, and admin operations. It defines visual contracts, not new business logic. During migration, preserve existing API calls, Supabase behavior, validation, authorization, and payment/quote rules.
 
 ## Files and responsibilities
-- `src/shared/styles/design-system.css`: public CSS entry point; load after font declarations and before feature styles. Connected pages include home, auth, request, profile, quotes, help, admin, payment admin, customer payment, privacy, and terms.
+- `src/shared/styles/design-system.css`: public CSS entry point; load after font declarations and before feature styles. The entry point is imported by home, auth, request, profile/orders, quotes, help, admin, payment admin, customer payment, privacy, and terms. **Importing the entry point is not proof that a page is fully migrated**; feature-specific CSS remains where needed.
 - `src/shared/styles/design-tokens.css`: color, typography, spacing, radius, shadow, width, control-height, focus, and z-index tokens.
 - `src/shared/styles/typography.css`: text hierarchy, weights, line heights, numeric and Latin-direction helpers.
 - `src/shared/styles/layouts.css`: responsive containers, stacks, rows, grid, cards, dividers, and scroll utilities.
@@ -80,12 +80,29 @@ The admin workspace shares brand tokens but has its own information density:
 - Do not place unrelated long forms in one vertical stack.
 - Keep role checks, RLS, Edge Function authorization, and sensitive operations enforced server-side; visual hiding is not security.
 
+## Current adoption status
+
+This is an incremental migration, not a claim that every screen already uses shared components end-to-end.
+
+| Area | Current status | Remaining work |
+|---|---|---|
+| Shared tokens, typography, layout, components, utilities | Implemented as the shared CSS foundation | Expand real component adoption and remove unused/duplicated rules as pages are verified |
+| Privacy and terms | Migrated to shared `.ds-legal-page`, shared heading/text styles, and token-based responsive spacing; page-local inline CSS removed | Verify rendered layout at narrow and wide viewports |
+| Authentication (login/sign-up) | Shared tokens are used for palette aliases, fields/focus, and feedback states; the two-column hero illustration and auth-specific states remain local | Adopt shared button/field primitives selectively after visual regression checks; exercise auth states in a browser |
+| Profile and orders | Shared tokens now drive core palette, field borders/focus, and success/error statuses; profile navigation, order cards, and responsive layout remain feature-specific | Consolidate cards, actions, and form controls without changing profile/order logic |
+| Product request and price estimator | Shared tokens now drive common palette, surfaces, and status colors; URL input, estimator, draft tools, and workflow layout remain feature-specific | Consolidate common controls while preserving price calculations and draft behavior |
+| Help / FAQ | Shared tokens drive brand, surfaces, semantic notice colors, and core type/spacing; hero and FAQ layout remain page-specific | Use shared card/action primitives where appearance can be checked |
+| Home, quotes, payments, and admin screens | Shared entry point/tokens are connected, with varying levels of primitive adoption | Audit and migrate each page in its own visual pass; do not infer full adoption from the stylesheet import |
+
+No claim of full RTL/LTR, mobile/desktop, browser-interaction, or console-error acceptance is made until those scenarios have been executed in a real browser and recorded.
+
 ## Adoption and migration
 1. Load `design-system.css` on a page after its font setup and before page-specific CSS.
 2. Migrate one page group at a time; replace duplicated tokens/components rather than layering endless overrides.
-3. Start with admin shell, quote workflow, and payment admin; then migrate auth, request, profile, quotes/payment customer pages, home, and help.
-4. Verify every route in Arabic and French, mobile and desktop, loading/empty/error/success states, and keyboard navigation.
-5. Run `npm test` and `npm run build`; do not merge until results are checked.
+3. Keep workflow-specific visuals only where they communicate a distinct task or preserve required behavior.
+4. Verify every route in Arabic and French, mobile and desktop, loading/empty/error/success states, keyboard navigation, and browser console.
+5. Run `npm test` and `npm run build`; inspect the actual CI run for the exact commit.
+6. Record browser QA evidence separately from HTTP status checks; do not mark the visual checklist complete based on HTML responses alone.
 
 ## Acceptance checklist
 - [ ] Pages consume the shared tokens rather than inventing competing colors and spacing.
