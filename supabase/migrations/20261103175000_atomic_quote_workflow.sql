@@ -36,6 +36,9 @@ begin
   if p_notes is not null and length(p_notes) > 4000 then
     raise exception using errcode = '22023', message = 'notes_too_long';
   end if;
+  if p_expires_at is not null and p_expires_at <= now() then
+    raise exception using errcode = '22023', message = 'quote_expiry_must_be_future';
+  end if;
 
   -- Serialize all quote creation attempts for this request.
   select * into v_request
