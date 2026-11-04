@@ -144,7 +144,7 @@ Deno.serve(async (req) => {
       if (createError) {
         if (createError.code === "23505" || createError.code === "23514" ||
             createError.message?.includes("active_quote_exists") ||
-            createError.message?.includes("request_not_submitted")) {
+            createError.message?.includes("request_not_quotable")) {
           return json(409, { error: "Request changed or an active quote already exists; reload and try again" });
         }
         if (createError.code === "P0002") return json(404, { error: "Product request not found" });
