@@ -61,7 +61,7 @@ begin
       and (
         q.status = 'ACCEPTED'
         or (q.status = 'DRAFT' and (q."expiresAt" is null or q."expiresAt" > clock_timestamp()))
-        or (q.status = 'SENT' and (q."expiresAt" is null or q."expiresAt" > now()))
+        or (q.status = 'SENT' and (q."expiresAt" is null or q."expiresAt" > clock_timestamp()))
       )
   ) then
     raise exception using errcode = '23505', message = 'active_quote_exists';
