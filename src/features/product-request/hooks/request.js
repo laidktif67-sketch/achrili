@@ -35,11 +35,74 @@ window.addEventListener('pagehide', () => {
 }, { once: true });
 
 const DRAFT_KEY='achrili-product-request-draft';
-function readDraft(){try{const raw=sessionStorage.getItem(DRAFT_KEY);return raw?JSON.parse(raw):null}catch{return null}}
-function saveDraft(){try{const draft={productUrl:$('productUrl').value.trim(),quantity:$('quantity').value,destination:$('destination').value,variant:$('variant').value,notes:$('notes').value,updatedAt:Date.now()};const hasUserInput=Boolean(draft.productUrl||draft.variant.trim()||draft.notes.trim()||draft.quantity!=='1');const status=$('draftStatus');if(hasUserInput){sessionStorage.setItem(DRAFT_KEY,JSON.stringify(draft));if(status)status.textContent=lang==='fr'?'Brouillon enregistré automatiquement pendant cette session.':'تُحفظ المسودة تلقائيًا خلال هذه الجلسة.';}else{sessionStorage.removeItem(DRAFT_KEY);if(status)status.textContent=lang==='fr'?'Votre brouillon sera enregistré dès votre première modification.':'سيتم حفظ المسودة تلقائيًا عند إجراء أول تعديل.';}}catch(error){console.warn('Unable to save request draft',error)}}
-function restoreDraft(){const params=new URLSearchParams(location.search),draft=readDraft();const initial=params.get('url')||sessionStorage.getItem('achrili-pending-product-url');if(draft){if(draft.productUrl&&!params.has('url'))$('productUrl').value=draft.productUrl;if(draft.quantity)$('quantity').value=draft.quantity;if(draft.destination)$('destination').value=draft.destination;if(draft.variant)$('variant').value=draft.variant;if(draft.notes)$('notes').value=draft.notes;const status=$('draftStatus');if(status)status.textContent=lang==='fr'?'Brouillon précédent restauré pour cette session.':'تم استرجاع المسودة السابقة لهذه الجلسة.'}else if(initial){try{$('productUrl').value=new URL(initial).href}catch{}}}
+const LEGACY_DRAFT_KEY='achrili-product-request-draft';
+const DRAFT_TTL=7*24*60*60*1000;
+function readDraft(){
+  try{
+    let raw=localStorage.getItem(DRAFT_KEY);
+    if(!raw){
+      raw=sessionStorage.getItem(LEGACY_DRAFT_KEY);
+      if(raw){localStorage.setItem(DRAFT_KEY,raw);sessionStorage.removeItem(LEGACY_DRAFT_KEY);}
+    }
+    if(!raw)return null;
+    const draft=JSON.parse(raw);
+    if(!draft||typeof draft!=='object'||!Number.isFinite(draft.updatedAt)||Date.now()-draft.updatedAt>DRAFT_TTL||draft.updatedAt>Date.now()+60000){
+      localStorage.removeItem(DRAFT_KEY);
+      return null;
+    }
+    return draft;
+  }catch(error){console.warn('Unable to read saved request draft',error);return null}
+}
+function setDraftStatus(message,hasDraft=false){
+  const status=$('draftStatus'),clear=$('clearDraft');
+  if(status)status.textContent=message;
+  if(clear)clear.hidden=!hasDraft;
+}
+function saveDraft(){
+  try{
+    const draft={productUrl:$('productUrl').value.trim(),quantity:$('quantity').value,destination:$('destination').value.trim(),variant:$('variant').value,notes:$('notes').value,updatedAt:Date.now()};
+    const hasUserInput=Boolean(draft.productUrl||draft.variant.trim()||draft.notes.trim()||draft.quantity!=='1');
+    if(hasUserInput){
+      localStorage.setItem(DRAFT_KEY,JSON.stringify(draft));
+      setDraftStatus(lang==='fr'?'Brouillon enregistré sur cet appareil (7 jours maximum).':'حُفظت المسودة على هذا الجهاز (لمدة أقصاها 7 أيام).',true);
+    }else{
+      localStorage.removeItem(DRAFT_KEY);
+      setDraftStatus(lang==='fr'?'Le brouillon sera enregistré dès votre première modification.':'سيتم حفظ المسودة عند إجراء أول تعديل.',false);
+    }
+  }catch(error){
+    console.warn('Unable to save request draft',error);
+    setDraftStatus(lang==='fr'?'Enregistrement local indisponible dans ce navigateur.':'الحفظ المحلي غير متاح في هذا المتصفح.',false);
+  }
+}
+function restoreDraft(){
+  const params=new URLSearchParams(location.search),draft=readDraft();
+  const initial=params.get('url')||sessionStorage.getItem('achrili-pending-product-url');
+  if(draft){
+    if(draft.productUrl&&!params.has('url'))$('productUrl').value=draft.productUrl;
+    if(draft.quantity)$('quantity').value=draft.quantity;
+    if(draft.destination)$('destination').value=draft.destination;
+    if(draft.variant)$('variant').value=draft.variant;
+    if(draft.notes)$('notes').value=draft.notes;
+    setDraftStatus(lang==='fr'?'Brouillon précédent restauré. Il expirera après 7 jours.':'تم استرجاع المسودة السابقة؛ تنتهي صلاحيتها بعد 7 أيام.',true);
+  }else if(initial){
+    try{$('productUrl').value=new URL(initial).href}catch{}
+  }
+}
 restoreDraft();
-['productUrl','quantity','destination','variant','notes'].forEach(id=>{const field=$(id);field.addEventListener('input',saveDraft);field.addEventListener('change',saveDraft)});
+['productUrl','quantity','destination','variant','notes'].forEach(id=>{
+  const field=$(id);
+  field.addEventListener('input',saveDraft);
+  field.addEventListener('change',saveDraft);
+});
+$('clearDraft').addEventListener('click',()=>{
+  localStorage.removeItem(DRAFT_KEY);
+  sessionStorage.removeItem('achrili-pending-product-url');
+  $('requestForm').reset();
+  $('quantity').value='1';
+  $('destination').value=lang==='fr'?'Algérie':'Algeria';
+  setDraftStatus(lang==='fr'?'Brouillon supprimé de cet appareil.':'تم مسح المسودة المحفوظة من هذا الجهاز.',false);
+  $('productUrl').focus();
+});
 async function init(){const {data,error}=await supabase.auth.getSession();if(error||!data.session){saveDraft();if($('productUrl').value.trim())sessionStorage.setItem('achrili-pending-product-url',$('productUrl').value.trim());message(t('login'),'info');setTimeout(()=>location.replace('auth.html?next=request.html'),900);return}user=data.session.user}
 $('requestForm').addEventListener('submit',async e=>{e.preventDefault();if(busy)return;if(!user){message(t('login'),'info');return}
 let url;try{url=new URL($('productUrl').value.trim())}catch{message(t('badUrl'),'error');return}
@@ -50,7 +113,7 @@ busy=true;const btn=$('submit');btn.disabled=true;btn.textContent=t('sending');
 try{const {data:sessionData,error:sessionError}=await supabase.auth.getSession();if(sessionError||!sessionData.session)throw new Error('auth');user=sessionData.session.user;
 const payload={id:crypto.randomUUID(),customerId:user.id,productUrl:url.href,quantity,notes:$('notes').value.trim()||null,variant:$('variant').value.trim()||null,destination,status:'SUBMITTED'};
 const {error}=await supabase.from('ProductRequest').insert(payload);if(error)throw error;
-sessionStorage.removeItem('achrili-pending-product-url');sessionStorage.removeItem(DRAFT_KEY);message(t('success')+' '+t('shop')+' '+shop,'success');$('requestForm').reset();$('quantity').value='1';$('destination').value=lang==='fr'?'Algérie':'Algeria';const newUrl=new URL(location.href);newUrl.search='';history.replaceState({},'',newUrl.pathname);
+sessionStorage.removeItem('achrili-pending-product-url');localStorage.removeItem(DRAFT_KEY);sessionStorage.removeItem(LEGACY_DRAFT_KEY);setDraftStatus(lang==='fr'?'Demande envoyée ; brouillon supprimé.':'تم إرسال الطلب ومسح المسودة.',false);message(t('success')+' '+t('shop')+' '+shop,'success');$('requestForm').reset();$('quantity').value='1';$('destination').value=lang==='fr'?'Algérie':'Algeria';const newUrl=new URL(location.href);newUrl.search='';history.replaceState({},'',newUrl.pathname);
 }catch(err){console.error('Product request submission failed',err);message(err?.message==='auth'?t('login'):t('failed'),'error')}finally{busy=false;btn.disabled=false;btn.textContent=t('submit')}
 });
 init().catch(()=>location.replace('auth.html?next='+encodeURIComponent('request.html'+location.search)));
