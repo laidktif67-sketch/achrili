@@ -42,7 +42,7 @@ async function init(){
 }
 $('form').addEventListener('submit',async e=>{
  e.preventDefault();note('جارٍ إرسال إثبات الدفع...');$('submit').disabled=true;
- let proofPath=null;
+ let proofPath=null;let paymentCreated=false;
  try{
   if(!quote||!methods.length)throw new Error('لا توجد وسيلة دفع متاحة لهذا العرض.');
   const methodId=new FormData($('form')).get('paymentMethod');const method=methods.find(m=>m.id===methodId);
@@ -55,8 +55,15 @@ $('form').addEventListener('submit',async e=>{
   if(uploadError)throw new Error('تعذّر رفع إثبات الدفع. '+uploadError.message);
   const {error:insertError}=await supabase.from('Payment').insert({quoteId:quote.id,requestId:quote.requestId,paymentMethodId:method.id,proofPath,transactionReference:reference||null});
   if(insertError)throw new Error('تعذّر تسجيل الدفع. تحقق من أن العرض ما زال صالحًا ثم أعد المحاولة.');
+  paymentCreated=true;
   $('form').reset();note('تم استلام إثبات الدفع بنجاح. الحالة الآن قيد المراجعة، ولم يتم تأكيد الدفع تلقائيًا.','success');
- }catch(error){note(error.message||'تعذّر إرسال إثبات الدفع.','error')}finally{$('submit').disabled=false}
+ }catch(error){
+  if(proofPath&&!paymentCreated){
+   const {error:cleanupError}=await supabase.storage.from('payment-proofs').remove([proofPath]);
+   if(cleanupError)console.error('Could not clean up orphan payment proof:',cleanupError.message);
+  }
+  note(error.message||'تعذّر إرسال إثبات الدفع.','error');
+ }finally{$('submit').disabled=false}
 });
 init().catch(()=>note('حدث خطأ أثناء تحميل صفحة الدفع.','error'));
 </script>
