@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { calculateQuoteAmounts, isQuoteActive } from "./quote-domain.js";
+import { mapCreateQuoteError, mapSendQuoteError } from "./quote-http-contract.ts";
 
 function makeCorsHeaders(origin: string | null) {
   return {
@@ -155,14 +156,8 @@ Deno.serve(async (req) => {
         p_expires_at: expiresAt,
       });
       if (createError) {
-        if (createError.code === "23505" || createError.code === "23514" ||
-            createError.message?.includes("active_quote_exists") ||
-            createError.message?.includes("request_not_quotable")) {
-          return json(409, { error: "Request changed or an active quote already exists; reload and try again" });
-        }
-        if (createError.code === "P0002") return json(404, { error: "Product request not found" });
-        if (createError.code === "22023") return json(400, { error: "Invalid quote details" });
-        return json(500, { error: "Could not create quote" });
+        const mapped = mapCreateQuoteError(createError.code, createError.message);
+        return json(mapped.status, mapped.body);
       }
       const quote = Array.isArray(quoteRows) ? quoteRows[0] : quoteRows;
       if (!quote) return json(500, { error: "Quote creation returned no result" });
@@ -182,14 +177,8 @@ Deno.serve(async (req) => {
       p_quote_id: quoteId,
     });
     if (sendError) {
-      if (sendError.code === "P0002" || sendError.message?.includes("quote_not_found")) {
-        return json(404, { error: "Quote not found" });
-      }
-      if (sendError.code === "23514" || sendError.message?.includes("quote_not_sendable")) {
-        return json(409, { error: "Only a non-expired draft quote can be sent" });
-      }
-      if (sendError.code === "22023") return json(400, { error: "Valid quoteId is required" });
-      return json(500, { error: "Could not send quote" });
+      const mapped = mapSendQuoteError(sendError.code, sendError.message);
+      return json(mapped.status, mapped.body);
     }
 
     const quote = Array.isArray(quoteRows) ? quoteRows[0] : quoteRows;

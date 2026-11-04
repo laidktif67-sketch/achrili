@@ -28,6 +28,8 @@ jobs:
           deno-version: v2.x
       - name: Type-check admin quote Edge Function
         run: deno check supabase/functions/admin-quotes/index.ts
+      - name: Test admin quote HTTP error contract
+        run: deno test supabase/functions/admin-quotes/quote-http-contract.deno.ts
 
   postgres-migration-test:
     runs-on: ubuntu-latest
