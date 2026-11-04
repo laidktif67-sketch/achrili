@@ -67,22 +67,35 @@ Deno.serve(async (req) => {
   });
 
   if (body.action === "list_submitted_requests") {
-    const { data: rows, error } = await admin.from("ProductRequest")
-      .select("id,productUrl,productName,variant,quantity,notes,destination,status,createdAt")
-      .in("status", ["SUBMITTED", "QUOTED"]).order("createdAt", { ascending: true }).limit(100);
-    if (error) return json(500, { error: "Could not load quotable requests" });
+    // Scan past blocked requests so the first 100 active-quote rows cannot hide later quotable requests.
+    const quotableRequests: Record<string, unknown>[] = [];
+    const batchSize = 100;
+    let offset = 0;
 
-    const candidates = rows ?? [];
-    if (candidates.length === 0) return json(200, { requests: [] });
-    const { data: quotes, error: quotesError } = await admin.from("Quote")
-      .select("requestId,status,expiresAt")
-      .in("requestId", candidates.map((row) => row.id))
-      .in("status", ["DRAFT", "SENT", "ACCEPTED"]);
-    if (quotesError || !quotes) return json(500, { error: "Could not verify active quotes" });
+    while (quotableRequests.length < 100) {
+      const { data: rows, error } = await admin.from("ProductRequest")
+        .select("id,productUrl,productName,variant,quantity,notes,destination,status,createdAt")
+        .in("status", ["SUBMITTED", "QUOTED"])
+        .order("createdAt", { ascending: true })
+        .order("id", { ascending: true })
+        .range(offset, offset + batchSize - 1);
+      if (error) return json(500, { error: "Could not load quotable requests" });
 
-    const activeRequestIds = new Set(quotes.filter((quote) => isQuoteActive(quote)).map((quote) => quote.requestId));
-    const quotableRequests = candidates.filter((request) => !activeRequestIds.has(request.id));
-    return json(200, { requests: quotableRequests });
+      const candidates = rows ?? [];
+      if (candidates.length === 0) break;
+      const { data: quotes, error: quotesError } = await admin.from("Quote")
+        .select("requestId,status,expiresAt")
+        .in("requestId", candidates.map((row) => row.id))
+        .in("status", ["DRAFT", "SENT", "ACCEPTED"]);
+      if (quotesError || !quotes) return json(500, { error: "Could not verify active quotes" });
+
+      const activeRequestIds = new Set(quotes.filter((quote) => isQuoteActive(quote)).map((quote) => quote.requestId));
+      quotableRequests.push(...candidates.filter((request) => !activeRequestIds.has(request.id)));
+      if (candidates.length < batchSize) break;
+      offset += batchSize;
+    }
+
+    return json(200, { requests: quotableRequests.slice(0, 100) });
   }
 
   if (body.action === "create_quote") {
