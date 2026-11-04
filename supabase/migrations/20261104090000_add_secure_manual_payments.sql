@@ -126,7 +126,7 @@ begin
       raise exception 'Authentication required' using errcode = '42501';
     end if;
 
-    select q
+    select q.*
       into quote_row
       from public."Quote" q
       join public."ProductRequest" pr on pr.id = q."requestId"
