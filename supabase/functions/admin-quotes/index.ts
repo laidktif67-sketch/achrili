@@ -75,7 +75,7 @@ Deno.serve(async (req) => {
 
     while (quotableRequests.length < 100) {
       const { data: rows, error } = await admin.from("ProductRequest")
-        .select("id,productUrl,productName,variant,quantity,notes,destination,status,createdAt")
+        .select("id,customerId,productUrl,productName,variant,quantity,notes,destination,status,createdAt")
         .in("status", ["SUBMITTED", "QUOTED"])
         .order("createdAt", { ascending: true })
         .order("id", { ascending: true })
@@ -96,7 +96,36 @@ Deno.serve(async (req) => {
       offset += batchSize;
     }
 
-    return json(200, { requests: quotableRequests.slice(0, 100) });
+    const requestsWithContact = await Promise.all(quotableRequests.slice(0, 100).map(async (request) => {
+      const customerId = typeof request.customerId === "string" ? request.customerId : "";
+      let customerPhone: string | null = null;
+      if (customerId) {
+        const { data: customerResult } = await admin.auth.admin.getUserById(customerId);
+        const rawPhone = customerResult.user?.user_metadata?.phone;
+        if (typeof rawPhone === "string" && rawPhone.trim()) customerPhone = rawPhone.trim();
+      }
+      let shop = "متجر غير معروف";
+      try {
+        const hostname = new URL(String(request.productUrl)).hostname.toLowerCase().replace(/\\.$/, "");
+        const shops: Record<string, string> = {
+          "temu.com": "Temu",
+          "shein.com": "SHEIN",
+          "aliexpress.com": "AliExpress",
+          "amazon.com": "Amazon", "amazon.co.uk": "Amazon", "amazon.fr": "Amazon",
+          "amazon.de": "Amazon", "amazon.it": "Amazon", "amazon.es": "Amazon",
+          "amazon.ca": "Amazon", "amazon.ae": "Amazon", "amazon.sa": "Amazon",
+          "amazon.com.tr": "Amazon", "amazon.co.jp": "Amazon", "amazon.com.mx": "Amazon",
+          "amazon.in": "Amazon", "ebay.com": "eBay", "ebay.co.uk": "eBay",
+          "ebay.fr": "eBay", "ebay.de": "eBay", "ebay.it": "eBay",
+          "ebay.es": "eBay", "ebay.ca": "eBay", "ebay.com.au": "eBay",
+          "walmart.com": "Walmart", "etsy.com": "Etsy", "asos.com": "ASOS",
+        };
+        const matched = Object.entries(shops).find(([domain]) => hostname === domain || hostname.endsWith("." + domain));
+        if (matched) shop = matched[1];
+      } catch { /* Invalid legacy URL: keep unknown shop label. */ }
+      return { ...request, customerPhone, shop };
+    }));
+    return json(200, { requests: requestsWithContact });
   }
 
   if (body.action === "create_quote") {
