@@ -28,8 +28,8 @@ test("locks the request row before checking quote eligibility", () => {
 
 test("blocks accepted quotes and unexpired or non-expiring draft/sent quotes", () => {
   assert.match(sql, /q\.status = 'accepted'/);
-  assert.match(sql, /q\.status = 'draft' and \(q\."expiresat" is null or q\."expiresat" > now\(\)\)/);
-  assert.match(sql, /q\.status = 'sent' and \(q\."expiresat" is null or q\."expiresat" > now\(\)\)/);
+  assert.match(sql, /q\.status = 'draft' and \(q\."expiresat" is null or q\."expiresat" > clock_timestamp\(\)\)/);
+  assert.match(sql, /q\.status = 'sent' and \(q\."expiresat" is null or q\."expiresat" > clock_timestamp\(\)\)/);
 });
 
 test("creates a required text Quote.id and updates request status in the same RPC", () => {
@@ -43,7 +43,7 @@ test("rejects invalid currency, amounts, notes, and expired quote expiry", () =>
   assert.match(sql, /p_currency is null or p_currency not in \('usd', 'eur', 'dzd'\)/);
   assert.match(sql, /message = 'invalid_quote_amount'/);
   assert.match(sql, /length\(p_notes\) > 4000/);
-  assert.match(sql, /p_expires_at <= now\(\)/);
+  assert.match(sql, /p_expires_at <= clock_timestamp\(\)/);
 });
 
 test("send RPC checks expiry atomically and is restricted to service_role", () => {
