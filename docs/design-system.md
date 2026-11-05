@@ -128,6 +128,14 @@ This is an incremental migration, not a claim that every screen already uses sha
 - [ ] Build and tests pass; visual review covers key states and screen sizes.
 
 
+### Latest branch-head verification (documentation-only follow-up)
+
+- Branch head checked after the environment-inventory update: `0fbb541c8ded6371db96e6816e02b8dbcfcab100`. This commit changes documentation only; application code remains at the screenshot capture SHA recorded above.
+- GitHub Actions run [41993820597](https://github.com/laidktif67-sketch/achrili/actions/runs/41993820597) is associated with this exact SHA and completed successfully. Both `build` and `postgres-migration-test` passed. The build job ran unit tests, built all 11 HTML pages, type-checked the admin quote Edge Function, and tested its HTTP error contract. The PostgreSQL job created an isolated fixture, applied the quote migration, and passed integration and concurrent-creation assertions.
+- Vercel preview deployment [3FTBEfeLWvxaB88W69b9HyDiYw8R](https://vercel.com/nino-1c9d/achrili-main/3FTBEfeLWvxaB88W69b9HyDiYw8R) reached `READY` with the same source SHA. The application itself remains SSO-protected and has not been functionally inspected in that deployed environment.
+- The workflow run reports no retained artifacts. The 28 original screenshots and full JSON results are not available in the connected repository/artifact inventory; only the embedded contact sheet and written register are durable in the branch. Do not claim the originals, ZIP, or full JSON are retained.
+
+
 ## Current verification artifact
 
 - Durable review index: [`docs/qa-screenshots/index.html`](./qa-screenshots/index.html). It embeds a labeled overview of all 28 captures and records what was and was not validated. Full-resolution originals remain temporary and should not be treated as retained evidence.
