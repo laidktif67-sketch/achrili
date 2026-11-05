@@ -7,7 +7,7 @@
 .home-page .hero::before {
   content: "";
   position: absolute;
-  z-index: -1;
+  z-index: 2;
   inset: -18%;
   pointer-events: none;
   opacity: 0.34;
@@ -26,6 +26,11 @@
     radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 60%), transparent 65%);
   transform-origin: 50% 0%;
   animation: achrili-light-rays 18s ease-in-out infinite alternate;
+}
+
+.home-page .hero img {
+  position: relative;
+  z-index: 1;
 }
 
 .home-page .search button {
