@@ -1,1 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" role="img" aria-labelledby="title desc"><title id="title">AchriLi — تسوّق من العالم</title><desc id="desc">أرسل رابط المنتج من متجرك العالمي المفضل واستلم طلبك في الجزائر</desc><style>@keyframes hero-copy-reveal{from{opacity:0;filter:blur(7px)}to{opacity:1;filter:blur(0)}}.hero-copy text{opacity:0;animation:hero-copy-reveal .72s ease-out forwards}.hero-copy text:nth-of-type(2){animation-delay:.09s}.hero-copy text:nth-of-type(3){animation-delay:.18s}.hero-copy text:nth-of-type(4){animation-delay:.27s}.hero-copy text:nth-of-type(5){animation-delay:.36s}@media(prefers-reduced-motion:reduce){.hero-copy text{opacity:1;filter:none;animation:none}}</style><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0f6ff"/><stop offset="1" stop-color="#b9d9ff"/></linearGradient><linearGradient id="parcel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffb53b"/><stop offset="1" stop-color="#ff8216"/></linearGradient><filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#071f5c" flood-opacity=".17"/></filter></defs><rect width="1200" height="500" rx="30" fill="url(#bg)"/><circle cx="170" cy="70" r="120" fill="#fff" opacity=".32"/><circle cx="1040" cy="440" r="160" fill="#fff" opacity=".3"/><path d="M0 420Q240 340 430 450T820 430T1200 390V500H0Z" fill="#fff" opacity=".32"/><g class="hero-copy" font-family="Tahoma,Arial,sans-serif" text-anchor="end" fill="#071f5c"><text x="1080" y="145" font-size="27" font-weight="700" fill="#35517f">تسوّق من العالم</text><text x="1080" y="210" font-size="56" font-weight="900">المنتج الذي تحبه،</text><text x="1080" y="275" font-size="56" font-weight="900">أقرب إليك في الجزائر</text><text x="1080" y="324" font-size="22" fill="#405b86">أرسل رابط المنتج من متجرك المفضل</text><text x="1080" y="360" font-size="22" fill="#405b86">وراجع السعر والشحن قبل تأكيد أي طلب.</text></g><g filter="url(#shadow)" transform="translate(115 160) rotate(-7 170 150)"><ellipse cx="180" cy="260" rx="170" ry="25" fill="#416aa6" opacity=".15"/><path d="M35 90 180 25l145 65-145 76Z" fill="#ffd18a"/><path d="M35 90v135l145 72V166Z" fill="url(#parcel)"/><path d="M180 166v131l145-72V90Z" fill="#f47713"/><path d="M35 90 180 166l145-76M180 166v131" fill="none" stroke="#fff" stroke-width="5" opacity=".8"/><path d="M150 39 294 104 255 125 110 59Z" fill="#fff" opacity=".78"/><path d="M151 39 111 59 255 125 294 104Z" fill="#ffedcc"/><path d="M151 39c-62-55-91-4-46 20 22 12 75-5 75-5s54 17 76-5c45-24 16-75-46-20l-30 15Z" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></g><g filter="url(#shadow)" transform="translate(370 100) rotate(8)"><rect width="100" height="130" rx="17" fill="#fff"/><rect x="18" y="24" width="64" height="8" rx="4" fill="#dbe7fa"/><rect x="18" y="43" width="48" height="8" rx="4" fill="#dbe7fa"/><rect x="18" y="67" width="64" height="42" rx="8" fill="#edf4ff"/><path d="m35 86 9 9 20-22" fill="none" stroke="#ff8b19" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></g><rect x="65" y="55" width="205" height="58" rx="29" fill="#071f5c"/><text x="167" y="93" font-family="Arial,sans-serif" font-size="30" font-weight="900" text-anchor="middle" fill="#fff">Achri<tspan fill="#ff9b20">Li</tspan></text><circle cx="485" cy="325" r="8" fill="#ff9b20"/><circle cx="440" cy="360" r="5" fill="#fff"/><circle cx="520" cy="280" r="6" fill="#fff"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 620" role="img" aria-labelledby="title desc">
+<title id="title">AchriLi — تسوّق من العالم</title>
+<desc id="desc">المنتج الذي تحبه، أقرب إليك في الجزائر. أرسل رابط المنتج وراجع السعر والشحن قبل التأكيد.</desc>
+<defs>
+  <linearGradient id="night" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071a42"/><stop offset=".56" stop-color="#0a2a64"/><stop offset="1" stop-color="#123d7a"/></linearGradient>
+  <linearGradient id="boxTop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd18a"/><stop offset="1" stop-color="#ffad38"/></linearGradient>
+  <linearGradient id="boxFront" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff9a26"/><stop offset="1" stop-color="#f36d13"/></linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff" stop-opacity=".19"/><stop offset="1" stop-color="#ffffff" stop-opacity=".04"/></linearGradient>
+  <filter id="shadow" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#020b20" flood-opacity=".3"/></filter>
+  <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#fff" stroke-opacity=".045"/></pattern>
+  <style>
+    @keyframes floatBox{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(-2deg)}}
+    @keyframes fadeCopy{from{opacity:0;transform:translateY(12px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+    .copy{opacity:0;animation:fadeCopy .7s cubic-bezier(.22,1,.36,1) forwards}
+    .copy:nth-of-type(2){animation-delay:.1s}.copy:nth-of-type(3){animation-delay:.2s}.copy:nth-of-type(4){animation-delay:.3s}
+    .package{transform-box:fill-box;transform-origin:center;animation:floatBox 6s ease-in-out infinite}
+    @media(prefers-reduced-motion:reduce){.copy{opacity:1;animation:none}.package{animation:none}}
+  </style>
+</defs>
+<rect width="1440" height="620" rx="34" fill="url(#night)"/>
+<rect width="1440" height="620" rx="34" fill="url(#grid)"/>
+<circle cx="330" cy="320" r="255" fill="#2c5eaa" opacity=".16"/>
+<circle cx="330" cy="320" r="205" fill="none" stroke="#c4d9ff" stroke-opacity=".14" stroke-width="1.5"/>
+<circle cx="330" cy="320" r="155" fill="none" stroke="#c4d9ff" stroke-opacity=".12" stroke-dasharray="3 12" stroke-width="2"/>
+<path d="M70 420C170 300 270 490 405 330S520 250 590 280" fill="none" stroke="#ffab35" stroke-width="2" stroke-opacity=".65" stroke-dasharray="5 10"/>
+<circle cx="70" cy="420" r="5" fill="#ffab35"/><circle cx="590" cy="280" r="5" fill="#ffab35"/>
+<g class="package" filter="url(#shadow)" transform="translate(160 160)">
+  <ellipse cx="190" cy="360" rx="180" ry="24" fill="#020b20" opacity=".3"/>
+  <path d="M28 118 190 42l162 76-162 86Z" fill="url(#boxTop)"/>
+  <path d="M28 118v175l162 83V204Z" fill="url(#boxFront)"/>
+  <path d="M190 204v172l162-83V118Z" fill="#dc6414"/>
+  <path d="M28 118 190 204l162-86M190 204v172" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="3"/>
+  <path d="M165 54 319 126l-45 24-154-72Z" fill="#fff" opacity=".8"/>
+  <path d="M120 78 274 150l45-24-154-72Z" fill="#ffefcf"/>
+  <path d="M156 57c-49-43-75-4-39 16 17 9 58-4 73-4s56 13 73 4c36-20 10-59-39-16l-34 16Z" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g filter="url(#shadow)" transform="translate(445 125) rotate(7)">
+  <rect width="124" height="190" rx="25" fill="#f8fbff"/>
+  <rect x="9" y="9" width="106" height="172" rx="18" fill="#eaf1fc"/>
+  <rect x="42" y="17" width="40" height="5" rx="3" fill="#a8b8d4"/>
+  <rect x="22" y="43" width="80" height="80" rx="13" fill="#fff"/>
+  <path d="M38 88 58 67l14 14 13-9 9 17H38Z" fill="#9ab6e6"/>
+  <circle cx="76" cy="61" r="7" fill="#ffab35"/>
+  <rect x="22" y="137" width="80" height="7" rx="3.5" fill="#b5c7e4"/>
+  <rect x="22" y="151" width="52" height="6" rx="3" fill="#ccd8eb"/>
+</g>
+<g transform="translate(110 80)">
+  <rect width="174" height="46" rx="23" fill="url(#glass)" stroke="#fff" stroke-opacity=".22"/>
+  <text x="87" y="29" font-family="Arial,sans-serif" font-size="18" font-weight="800" text-anchor="middle" fill="#fff">Achri<tspan fill="#ffad38">Li</tspan></text>
+</g>
+<g font-family="Alexandria,Tahoma,Arial,sans-serif" text-anchor="end" fill="#fff">
+  <text class="copy" x="1325" y="160" font-size="20" font-weight="700" fill="#ffb44c">تسوّق من العالم</text>
+  <text class="copy" x="1325" y="250" font-size="57" font-weight="800" letter-spacing="-1.2">المنتج الذي تحبه،</text>
+  <text class="copy" x="1325" y="322" font-size="57" font-weight="800" letter-spacing="-1.2">أقرب إليك في الجزائر</text>
+  <text class="copy" x="1325" y="386" font-size="22" fill="#d6e4ff">أرسل رابط المنتج من متجرك المفضل</text>
+  <text class="copy" x="1325" y="422" font-size="22" fill="#d6e4ff">وراجع السعر والشحن قبل تأكيد أي طلب.</text>
+</g>
+<path d="M900 482H1325" stroke="#fff" stroke-opacity=".16"/>
+<text x="1325" y="522" text-anchor="end" font-family="Alexandria,Tahoma,Arial,sans-serif" font-size="14" fill="#a9c2ed">واضح قبل التأكيد · أنت صاحب القرار</text>
+<circle cx="860" cy="170" r="4" fill="#ffad38"/><circle cx="910" cy="194" r="2.5" fill="#fff" opacity=".7"/><circle cx="825" cy="220" r="3" fill="#fff" opacity=".45"/>
+</svg>
