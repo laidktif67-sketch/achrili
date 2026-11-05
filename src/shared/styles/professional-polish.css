@@ -456,3 +456,17 @@ body.home-page {
   .home-page .hero::before,
   .home-page .search button::after { animation: none !important; }
 }
+
+
+/* Responsive hero correction: preserve the full banner artwork on narrow screens. */
+@media (max-width: 760px) {
+  .home-page .hero img {
+    aspect-ratio: 1440 / 620;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+  }
+}
+@media (max-width: 380px) {
+  .home-page .hero img { aspect-ratio: 1440 / 620; }
+}
