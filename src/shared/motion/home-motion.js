@@ -17,7 +17,8 @@ if (home && !reducedMotion) {
   });
 
   lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  const lenisTicker = (time) => lenis.raf(time * 1000);
+  gsap.ticker.add(lenisTicker);
   gsap.ticker.lagSmoothing(0);
 
   // The existing hero artwork already contains the page's messaging.
@@ -137,7 +138,7 @@ if (home && !reducedMotion) {
   // Keep the smooth-scrolling instance tidy if this page is ever hot-reloaded.
   if (import.meta.hot) {
     import.meta.hot.dispose(() => {
-      gsap.ticker.remove((time) => lenis.raf(time * 1000));
+      gsap.ticker.remove(lenisTicker);
       lenis.destroy();
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     });
