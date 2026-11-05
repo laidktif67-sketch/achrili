@@ -128,12 +128,13 @@ This is an incremental migration, not a claim that every screen already uses sha
 - [ ] Build and tests pass; visual review covers key states and screen sizes.
 
 
-### Latest branch-head verification (documentation-only follow-up)
+### Verification snapshot and current branch-head status
 
-- Branch head checked after the environment-inventory update: `0fbb541c8ded6371db96e6816e02b8dbcfcab100`. This commit changes documentation only; application code remains at the screenshot capture SHA recorded above.
-- GitHub Actions run [41993820597](https://github.com/laidktif67-sketch/achrili/actions/runs/41993820597) is associated with this exact SHA and completed successfully. Both `build` and `postgres-migration-test` passed. The build job ran unit tests, built all 11 HTML pages, type-checked the admin quote Edge Function, and tested its HTTP error contract. The PostgreSQL job created an isolated fixture, applied the quote migration, and passed integration and concurrent-creation assertions.
-- Vercel preview deployment [3FTBEfeLWvxaB88W69b9HyDiYw8R](https://vercel.com/nino-1c9d/achrili-main/3FTBEfeLWvxaB88W69b9HyDiYw8R) reached `READY` with the same source SHA. The application itself remains SSO-protected and has not been functionally inspected in that deployed environment.
-- The workflow run reports no retained artifacts. The 28 original screenshots and full JSON results are not available in the connected repository/artifact inventory; only the embedded contact sheet and written register are durable in the branch. Do not claim the originals, ZIP, or full JSON are retained.
+- The last fully verified application/documentation snapshot was commit `f69fd30e65e52c7d7a8b909489e31ddc42e71249`. It contains documentation-only changes after `e05d217e5ebae2eb3196646c2ec9900bc71abb5d`; application code remains at the screenshot capture SHA recorded above.
+- GitHub Actions run [41993931523](https://github.com/laidktif67-sketch/achrili/actions/runs/41993931523) is associated with that exact snapshot SHA and completed successfully. Both `build` and `postgres-migration-test` passed. The build job ran unit tests, built all 11 HTML pages, type-checked the admin quote Edge Function, and tested its HTTP error contract. The PostgreSQL job created an isolated fixture, applied the quote migration, and passed integration and concurrent-creation assertions.
+- Vercel preview deployment [8KpTgUEcYt7q4bDSkMiXztaJF2jg](https://vercel.com/nino-1c9d/achrili-main/8KpTgUEcYt7q4bDSkMiXztaJF2jg) reached `READY` with the same source SHA. The application itself remains SSO-protected and has not been functionally inspected in that deployed environment.
+- A read-only workspace and Library search found no `qa-screenshots.zip`, `results.json`, or matching original screenshot assets. The workflow run reports no retained artifacts. The 28 original screenshots and full JSON results are not retained in the connected repository/artifact inventory; only the embedded contact sheet and written register are durable in the branch. Do not claim the originals, ZIP, or full JSON are retained.
+- This documentation update is a new docs-only commit. Its own CI/deployment status must be checked against the resulting commit SHA before describing it as verified.
 
 
 ## Current verification artifact
