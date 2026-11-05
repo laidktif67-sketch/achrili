@@ -1,0 +1,72 @@
+/* Motion styling for the homepage. Existing brand tokens and copy remain unchanged. */
+.home-page .hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.home-page .hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -18%;
+  pointer-events: none;
+  opacity: 0.34;
+  background:
+    conic-gradient(
+      from 205deg at 50% 0%,
+      transparent 0deg,
+      rgb(255 255 255 / 0%) 18deg,
+      rgb(255 255 255 / 42%) 28deg,
+      transparent 38deg,
+      transparent 58deg,
+      rgb(255 255 255 / 28%) 67deg,
+      transparent 76deg,
+      transparent 100deg
+    ),
+    radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 60%), transparent 65%);
+  transform-origin: 50% 0%;
+  animation: achrili-light-rays 18s ease-in-out infinite alternate;
+}
+
+.home-page .search button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.home-page .search button::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 285deg,
+    rgb(255 255 255 / 68%) 305deg,
+    #fff 316deg,
+    transparent 336deg 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: achrili-star-border 5.8s linear infinite;
+  opacity: 0.82;
+}
+
+@keyframes achrili-light-rays {
+  from { transform: rotate(-2deg) scale(1); opacity: 0.22; }
+  to { transform: rotate(2deg) scale(1.04); opacity: 0.38; }
+}
+
+@keyframes achrili-star-border {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page .hero::before,
+  .home-page .search button::after {
+    animation: none;
+  }
+}
