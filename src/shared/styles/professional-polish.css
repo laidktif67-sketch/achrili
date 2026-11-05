@@ -1,0 +1,121 @@
+/* AchriLi professional polish layer
+ * Shared, low-risk refinements. Keep brand colors and product behavior unchanged.
+ */
+.ds-root {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.ds-root :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--achrili-color-accent-500);
+  outline-offset: 3px;
+}
+
+.ds-root :where(input, select, textarea):focus-visible {
+  outline-offset: 1px;
+}
+
+.ds-root :where(.ds-button, .ds-input, .ds-select, .ds-textarea) {
+  transition:
+    color .18s ease,
+    background-color .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    transform .18s ease;
+}
+
+.ds-root .ds-input:focus,
+.ds-root .ds-select:focus,
+.ds-root .ds-textarea:focus {
+  border-color: var(--achrili-color-brand-800);
+  box-shadow: 0 0 0 3px rgb(16 60 139 / 12%);
+}
+
+.ds-root .ds-button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.ds-root .ds-card {
+  box-shadow: var(--achrili-shadow-sm);
+}
+
+.ds-root .ds-card--flat {
+  box-shadow: none;
+}
+
+.ds-root :where(.request-panel, .sidebar, .quote, .card) {
+  border-color: var(--achrili-color-border);
+}
+
+.ds-root :where(.request-panel, .sidebar, .quote) {
+  box-shadow: 0 10px 30px rgb(10 43 100 / 5%);
+}
+
+/* Homepage: clearer input affordance and calmer, consistent card feedback. */
+.home-page .search {
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+.home-page .search:focus-within {
+  border-color: var(--achrili-color-brand-800);
+  box-shadow: 0 0 0 3px rgb(16 60 139 / 10%), 0 8px 22px rgb(26 77 142 / 5%);
+}
+
+.home-page .search button {
+  min-height: 44px;
+}
+
+.home-page .shop {
+  box-shadow: 0 3px 12px rgb(10 43 100 / 3%);
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease,
+    background-color .2s ease;
+}
+
+.home-page .shop:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgb(10 43 100 / 9%);
+}
+
+.home-page .step {
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.home-page .step:hover {
+  border-color: var(--achrili-color-border-strong);
+  box-shadow: 0 10px 22px rgb(10 43 100 / 6%);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 760px) {
+  .ds-root :where(a, button, input, select, textarea) {
+    scroll-margin-block: 1rem;
+  }
+
+  .home-page .search button {
+    min-height: 42px;
+  }
+
+  .home-page .step:hover,
+  .home-page .shop:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-root *,
+  .ds-root *::before,
+  .ds-root *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+
+  .home-page .shop:hover,
+  .home-page .step:hover {
+    transform: none;
+  }
+}
