@@ -96,7 +96,7 @@ This is an incremental migration, not a claim that every screen already uses sha
 
 ### Validation evidence from the current implementation pass
 
-- Application/browser QA was captured from code SHA `9880845e818d9d5d5485a10f5db64b1c75ea3d50` on `design/achrili-unified-design-system`. Subsequent commits in this verification pass changed only `docs/design-system.md`; no application code changed. PR #13 remains open and draft; no merge or production deployment was performed.
+- Application/browser QA was captured from application code SHA `9880845e818d9d5d5485a10f5db64b1c75ea3d50` on `design/achrili-unified-design-system`. Subsequent commits in this pass changed only documentation/evidence files; no application code changed. The current branch head is checked separately because documentation-only commits do not rerun the app behavior. PR #13 remains open and draft; no merge or production deployment was performed.
 - GitHub Actions run [41983841593](https://github.com/laidktif67-sketch/achrili/actions/runs/41983841593) on application SHA `9880845e818d9d5d5485a10f5db64b1c75ea3d50` completed successfully. The later docs-only head also passed GitHub Actions in run [41988142753](https://github.com/laidktif67-sketch/achrili/actions/runs/41988142753): both `build` and `postgres-migration-test` passed. The build job ran unit tests, built all HTML pages, type-checked the admin quote Edge Function, and checked its HTTP error contract. The database job applied the quote migration and passed PostgreSQL integration and concurrent quote-creation assertions.
 - In an isolated sandbox checked out at the same SHA, `npm test` passed **25/25**; `npm run build` passed and built all 11 HTML entry pages; `git diff --check` passed. This repository has no `package-lock.json`, so `npm ci` is not applicable; the isolated check used `npm install --no-package-lock`. No dependency or application files were changed by these checks.
 - Playwright generated **28 full-page screenshots** from the isolated local build: 11 routes at desktop (1365×900) and mobile (390×844) in Arabic/RTL, plus French/LTR captures at both sizes for the three pages that implement a language switch: authentication, product request, and profile. The product-request page's full-page captures completed in this run. Browser metrics reported no horizontal overflow at these captured widths, no route redirects in the screenshot run, and no page-level JavaScript errors. These are layout/locale smoke checks, not a complete visual or pixel-by-pixel review.
@@ -122,3 +122,8 @@ This is an incremental migration, not a claim that every screen already uses sha
 - [ ] RTL/LTR and responsive layouts work without overlap or unintended horizontal scroll.
 - [ ] Existing authentication, request, quote, and payment flows remain intact.
 - [ ] Build and tests pass; visual review covers key states and screen sizes.
+
+
+## Current verification artifact
+
+- Durable review index: [`docs/qa-screenshots/index.html`](./qa-screenshots/index.html). It embeds a labeled overview of all 28 captures and records what was and was not validated. Full-resolution originals remain temporary and should not be treated as retained evidence.
