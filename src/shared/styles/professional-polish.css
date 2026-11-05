@@ -470,3 +470,13 @@ body.home-page {
 @media (max-width: 380px) {
   .home-page .hero img { aspect-ratio: 1440 / 620; }
 }
+
+/* Reduced-motion override must come after all hover refinements. */
+@media (prefers-reduced-motion: reduce) {
+  .home-page .shop:hover,
+  .home-page .step:hover,
+  .home-page .round:hover {
+    transform: none !important;
+    transition: none !important;
+  }
+}
