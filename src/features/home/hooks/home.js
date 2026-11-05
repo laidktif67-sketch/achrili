@@ -1,3 +1,4 @@
+import '../../../shared/styles/professional-polish.css';
 const noticeBox = document.getElementById('notice');
 const productUrl = document.getElementById('productUrl');
 import { findSupportedShop, isValidProductUrl } from '../../product-request/model/product-request.js';
