@@ -112,3 +112,5 @@
   .home-page .hero img{animation:none}
   .home-page .round,.home-page .search,.home-page .search button,.home-page .shop,.home-page .step{transition:none}
 }
+
+.bottom a{border:0;background:none;color:#e1eaff;font-size:12px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;cursor:pointer}.bottom a span{display:grid;place-items:center;width:26px;height:26px}.bottom a span svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.bottom a.center{color:#ffab35}.bottom a.center span{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:var(--orange);color:white;margin-top:-25px;border:3px solid white;font-size:23px}.bottom a:focus-visible{outline:3px solid #ffb84d;outline-offset:3px}@media(max-width:600px){.bottom a{font-size:10px;min-width:48px}.bottom a.center span{width:44px;height:44px}}
