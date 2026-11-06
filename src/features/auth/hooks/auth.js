@@ -15,11 +15,38 @@ const words = {
 const t = key => words[lang][key] || key;
 function notify(message, kind='error'){const el=$('message');el.textContent=message;el.className='message '+kind;el.hidden=false;}
 function clear(){ $('message').hidden=true; $('message').textContent=''; }
+const heroImages = {
+ login: '/assets/achrili-login-hero.png',
+ signup: '/assets/achrili-registration-hero.png'
+};
+const heroPreloads = new Map();
+let heroRequest = 0;
+function preloadHero(src) {
+ if (!heroPreloads.has(src)) {
+  heroPreloads.set(src, new Promise((resolve, reject) => {
+   const image = new Image();
+   image.onload = () => resolve(src);
+   image.onerror = () => reject(new Error('Hero image failed to load: ' + src));
+   image.src = src;
+   if (image.complete && image.naturalWidth > 0) resolve(src);
+  }));
+ }
+ return heroPreloads.get(src);
+}
 function updateHeroImage(){
- const image = mode === 'signup' ? '/assets/achrili-registration-hero.png' : '/assets/achrili-login-hero.png';
- document.querySelectorAll('.auth-hero-image').forEach(el => {
-  // Do not reassign src on every render: doing so reloads the large image and makes it flash/disappear.
-  if (el.getAttribute('src') !== image) el.src = image;
+ const src = heroImages[mode === 'signup' ? 'signup' : 'login'];
+ const request = ++heroRequest;
+ const images = [...document.querySelectorAll('.auth-hero-image')];
+ // Keep the current hero visible until the replacement is fully loaded.
+ Promise.all([preloadHero(src)]).then(() => {
+  if (request !== heroRequest) return;
+  images.forEach(el => {
+   if (el.getAttribute('src') !== src) el.setAttribute('src', src);
+   el.classList.remove('hero-image-loading');
+  });
+ }).catch(() => {
+  // Preserve the last successfully displayed hero instead of replacing it with a broken image.
+  images.forEach(el => el.classList.remove('hero-image-loading'));
  });
 }
 function showPending(email){
