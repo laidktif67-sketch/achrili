@@ -17,7 +17,7 @@ export default function RequestScreen(){
   if(!isValidProductUrl(url.trim())){Alert.alert("رابط غير صالح","استخدم رابط HTTPS من متجر مدعوم.");return}
   const q=Number(quantity),digits=phone.replace(/\D/g,"");if(!Number.isInteger(q)||q<1||q>30){Alert.alert("الكمية غير صحيحة","الكمية يجب أن تكون بين 1 و30.");return}if(digits.length<9||digits.length>15){Alert.alert("رقم الهاتف","أدخل رقم هاتف صحيحاً مع مفتاح الدولة.");return}
   const rawPrice=productPrice.trim(),parsedPrice=rawPrice===""?null:Number(rawPrice);
-  if(rawPrice!==""&&(!/^\\d{1,10}(?:\\.\\d{1,2})?$/.test(rawPrice)||parsedPrice===null||!Number.isFinite(parsedPrice)||parsedPrice<0)){
+  if(rawPrice!==""&&(!/^\d{1,10}(?:\.\d{1,2})?$/.test(rawPrice)||parsedPrice===null||!Number.isFinite(parsedPrice)||parsedPrice<0)){
    Alert.alert("السعر غير صحيح","أدخل سعراً غير سالب بحد أقصى منزلتين عشريتين، أو اتركه فارغاً.");return
   }
   setBusy(true);try{
