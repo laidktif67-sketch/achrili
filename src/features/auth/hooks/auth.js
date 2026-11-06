@@ -17,7 +17,10 @@ function notify(message, kind='error'){const el=$('message');el.textContent=mess
 function clear(){ $('message').hidden=true; $('message').textContent=''; }
 function updateHeroImage(){
  const image = mode === 'signup' ? '/assets/achrili-registration-hero.png' : '/assets/achrili-login-hero.png';
- document.querySelectorAll('.auth-hero-image').forEach(el => { el.src = image; });
+ document.querySelectorAll('.auth-hero-image').forEach(el => {
+  // Do not reassign src on every render: doing so reloads the large image and makes it flash/disappear.
+  if (el.getAttribute('src') !== image) el.src = image;
+ });
 }
 function showPending(email){
  pendingEmail=email;$('pendingEmail').textContent=email;
