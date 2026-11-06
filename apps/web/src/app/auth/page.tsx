@@ -162,14 +162,12 @@ export default function AuthPage() {
   return (
     <main className={styles.root} dir="rtl">
       <header className={styles.mobileHero}>
-        <Link href="/" className={styles.logo}><span className={styles.logoMark}>A</span><span>AchriLi<small>اشريلي</small></span></Link>
-        <div className={styles.heroCopy}>
-          <span className={styles.heroEyebrow}>تسوّق من العالم بكل سهولة</span>
-          <h1>معك في كل خطوة</h1>
-          <p>من طلب المنتج إلى وصوله إليك</p>
-        </div>
-        <img className={styles.heroArt} src="/assets/achrili-main-hero.svg" alt="تسوّق عالمي مع AchriLi" />
-        <span className={styles.heroGlow} />
+        <img
+          className={styles.authBanner}
+          src={mode === "signup" ? "/assets/images/auth-signup-banner.png" : "/assets/images/auth-login-banner.png"}
+          alt={mode === "signup" ? "بانر إنشاء حساب AchriLi" : "بانر تسجيل الدخول إلى AchriLi"}
+          fetchPriority="high"
+        />
       </header>
 
       <section className={styles.panel} aria-labelledby="auth-title">
