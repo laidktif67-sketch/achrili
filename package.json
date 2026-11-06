@@ -1,15 +1,22 @@
 {
-  "name": "achrili",
-  "version": "1.0.0",
+  "name": "achrili-platform",
+  "version": "2.0.0",
   "private": true,
-  "type": "module",
+  "packageManager": "pnpm@10.20.0",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "node --test"
+    "dev": "turbo dev",
+    "dev:web": "pnpm --filter @achrili/web dev",
+    "dev:mobile": "pnpm --filter @achrili/mobile start",
+    "build": "turbo build",
+    "build:web": "pnpm --filter @achrili/web build",
+    "typecheck": "turbo typecheck",
+    "legacy:dev": "vite",
+    "legacy:build": "vite build",
+    "test:legacy": "node --test"
   },
   "devDependencies": {
+    "turbo": "^2.5.0",
+    "typescript": "^5.9.0",
     "vite": "^7.1.12"
   }
 }
