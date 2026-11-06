@@ -39,7 +39,7 @@ export default function ProductRequestPage(){
  const q=Number(form.quantity),digits=form.phone.replace(/\D/g,"");if(!Number.isInteger(q)||q<1||q>30){setNotice({message:"يجب أن تكون الكمية بين 1 و30.",kind:"error"});return}if(digits.length<9||digits.length>15){setNotice({message:"أدخل رقم هاتف صحيحاً مع مفتاح الدولة، مثل +213.",kind:"error"});return}if(!form.destination.trim()){setNotice({message:"أدخل وجهة التسليم.",kind:"error"});return}
  const rawPrice=form.price.trim();
  const enteredPrice=rawPrice===""?null:Number(rawPrice);
- if(rawPrice!==""&&(!/^\d{1,10}(?:\.\d{1,2})?$/.test(rawPrice)||!Number.isFinite(enteredPrice)||enteredPrice<0)){
+ if(rawPrice!==""&&(enteredPrice===null||!/^\d{1,10}(?:\.\d{1,2})?$/.test(rawPrice)||!Number.isFinite(enteredPrice)||enteredPrice<0)){
   setNotice({message:"أدخل سعراً صحيحاً بحد أقصى منزلتين عشريتين، أو اتركه فارغاً.",kind:"error"});return
  }
  setBusy(true);setNotice({message:"جارٍ إرسال الطلب...",kind:"info"});
