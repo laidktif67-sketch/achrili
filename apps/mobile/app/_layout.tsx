@@ -29,6 +29,7 @@ export default function RootLayout() {
       <Tabs.Screen name="index" options={{ title: "الرئيسية", tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>⌂</Text> }} />
       <Tabs.Screen name="request" options={{ title: "طلب جديد", tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>＋</Text> }} />
       <Tabs.Screen name="orders" options={{ title: "طلباتي", tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>▤</Text> }} />
+      <Tabs.Screen name="quotes" options={{ title: "العروض", tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>◇</Text> }} />
       <Tabs.Screen name="profile" options={{ title: "حسابي", tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>◉</Text> }} />
       <Tabs.Screen name="auth" options={{ href: null }} />
     </Tabs>
