@@ -37,9 +37,14 @@ export default function ProductRequestPage(){
  let url:URL;try{url=new URL(form.url.trim())}catch{setNotice({message:"أدخل رابط HTTPS صحيحاً من متجر مدعوم.",kind:"error"});return}
  const detected=url.protocol==="https:"&&!url.username&&!url.password&&!url.port&&url.href.length<=2048?findShop(url.hostname):null;if(!detected){setNotice({message:"الرابط غير صالح أو المتجر غير مدعوم.",kind:"error"});return}
  const q=Number(form.quantity),digits=form.phone.replace(/\D/g,"");if(!Number.isInteger(q)||q<1||q>30){setNotice({message:"يجب أن تكون الكمية بين 1 و30.",kind:"error"});return}if(digits.length<9||digits.length>15){setNotice({message:"أدخل رقم هاتف صحيحاً مع مفتاح الدولة، مثل +213.",kind:"error"});return}if(!form.destination.trim()){setNotice({message:"أدخل وجهة التسليم.",kind:"error"});return}
+ const rawPrice=form.price.trim();
+ const enteredPrice=rawPrice===""?null:Number(rawPrice);
+ if(rawPrice!==""&&(!/^\d{1,10}(?:\.\d{1,2})?$/.test(rawPrice)||!Number.isFinite(enteredPrice)||enteredPrice<0)){
+  setNotice({message:"أدخل سعراً صحيحاً بحد أقصى منزلتين عشريتين، أو اتركه فارغاً.",kind:"error"});return
+ }
  setBusy(true);setNotice({message:"جارٍ إرسال الطلب...",kind:"info"});
  try{const {data:s,error:se}=await supabase.auth.getSession();if(se||!s.session)throw Error("AUTH_REQUIRED");const u=s.session.user;if((u.user_metadata?.phone||"").trim()!==form.phone.trim()){const {error}=await supabase.auth.updateUser({data:{...u.user_metadata,phone:form.phone.trim()}});if(error)throw error}
- const {error}=await supabase.from("ProductRequest").insert({id:crypto.randomUUID(),customerId:u.id,productUrl:url.href,quantity:q,notes:form.notes.trim()||null,variant:form.variant.trim()||null,destination:form.destination.trim(),status:"SUBMITTED"});if(error)throw error;localStorage.removeItem(DRAFT_KEY);setForm({...initial,phone:form.phone});setNotice({message:"تم حفظ طلبك بنجاح. يمكنك متابعة حالته من صفحة طلباتك.",kind:"success"})
+ const {error}=await supabase.from("ProductRequest").insert({id:crypto.randomUUID(),customerId:u.id,productUrl:url.href,productPrice:enteredPrice,productCurrency:enteredPrice===null?null:form.currency,quantity:q,notes:form.notes.trim()||null,variant:form.variant.trim()||null,destination:form.destination.trim(),status:"SUBMITTED"});if(error)throw error;localStorage.removeItem(DRAFT_KEY);setForm({...initial,phone:form.phone});setNotice({message:"تم حفظ طلبك بنجاح. يمكنك متابعة حالته من صفحة طلباتك.",kind:"success"})
  }catch(err){setNotice({message:err instanceof Error&&err.message==="AUTH_REQUIRED"?"انتهت جلسة تسجيل الدخول. سجّل الدخول ثم أعد إرسال الطلب.":"تعذّر حفظ الطلب. تحقق من حسابك واتصالك ثم حاول مجدداً.",kind:"error"})}finally{setBusy(false)}
  }
 
