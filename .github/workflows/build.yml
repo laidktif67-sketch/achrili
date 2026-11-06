@@ -21,7 +21,7 @@ jobs:
       - name: Run unit tests
         run: npm test
       - name: Build all HTML pages
-        run: npm run build
+        run: npm run legacy:build
       - name: Set up Deno
         uses: denoland/setup-deno@v2
         with:
