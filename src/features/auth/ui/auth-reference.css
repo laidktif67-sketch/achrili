@@ -1,5 +1,9 @@
-/* Reference-inspired refinements for the supplied AchriLi mobile auth screens.
-   Keeps existing Supabase form behavior and the repository's shared design tokens. */
+/* Reference-inspired refinements. Keep hero assets stable while the next image preloads. */
+.auth-hero-image{opacity:1;transition:opacity .16s ease;}
+.auth-hero-image.hero-image-loading{opacity:1;}
+.auth-hero-banner{background:#e9deff;}
+.auth-hero-image-mobile{display:block;}
+@media (min-width:681px){.auth-hero-image-mobile{display:none;}}
 @media (max-width: 680px) {
   .panel {
     background: linear-gradient(180deg, #e8ddff 0%, #f8f5ff 42%, #f1eaff 100%);
