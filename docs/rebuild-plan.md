@@ -1,17 +1,30 @@
-# AchriLi rebuild plan
+# خطة الانتقال إلى بنية AchriLi الجديدة
 
-## Current approach
-- Preserve the existing Vite application and production Supabase project.
-- Introduce Next.js web and Expo mobile applications in a separate workspace.
-- Share domain types, validation schemas, and API client code through workspace packages.
-- Keep the current Supabase migrations and Edge Functions untouched until source/database drift is reconciled.
+## البنية المعتمدة
+- تطبيق الويب: `apps/web` باستخدام Next.js وTypeScript.
+- تطبيق الهاتف: `apps/mobile` باستخدام Expo وReact Native.
+- الحزم المشتركة: `packages/api` و`packages/shared` و`packages/validation`.
+- Supabase migrations وEdge Functions تبقى مستقلة عن تنظيف واجهات الويب والهاتف.
 
-## Migration gates
-1. Inventory existing pages, auth flows, request/quote/payment behavior, tests, and assets.
-2. Reconcile every production migration with version-controlled SQL before changing database structure.
-3. Compare the deployed `admin-quotes` Edge Function with its repository source and establish one deployable source of truth.
-4. Port one vertical slice at a time, beginning with authentication and product requests.
-5. Run CI and acceptance tests before any production cutover.
+## ما أُزيل من مسار التطبيق القديم
+- صفحات HTML المستقلة في جذر المستودع.
+- تشغيل وبناء Vite القديم وملف إعداداته.
+- أصول الواجهة القديمة من مجلد الجذر `assets/`؛ الأصول المستخدمة في الواجهة الجديدة موجودة داخل `apps/web/public/assets/`.
 
-## Environment
-Use local, untracked environment files. Never commit Supabase service-role keys or production secrets.
+## ما بقي مؤقتاً
+توجد ثلاثة ملفات منطق مجال قديمة تحت `src/features/*/model` لأن اختبارات المجال الحالية تعتمد عليها:
+- التسعير.
+- التحقق من روابط المنتجات والمتاجر.
+- قواعد الدفع.
+
+هذه ليست واجهة قديمة قابلة للتشغيل. انقل منطقها إلى الحزم المشتركة واكتب الاختبارات على المسارات الجديدة قبل حذفها.
+
+## بوابات الانتقال
+1. إكمال نقل منطق المجال والاختبارات من ملفات التوافق المتبقية.
+2. استكمال واجهات الويب والهاتف ومراجعة اتساق السلوك بينهما.
+3. مطابقة Supabase migrations وEdge Functions مع البيئة الفعلية قبل أي تغيير خلفي.
+4. تشغيل اختبارات CI والبناء وقبول الصفحات على الهاتف وسطح المكتب.
+5. لا تنفّذ قطع الإنتاج أو دمج PR أو تغييرات قاعدة البيانات دون موافقة صريحة.
+
+## الأمان
+استخدم ملفات بيئة محلية غير متتبعة. لا تضع مفاتيح الخدمة أو الأسرار في Git أو الواجهة الأمامية.

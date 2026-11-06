@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [main, 'refactor/**']
+    branches: [main, 'rebuild/**']
   pull_request:
     branches: [main]
 
@@ -16,12 +16,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - name: Install dependencies
         run: npm install
       - name: Run unit tests
         run: npm test
-      - name: Build all HTML pages
-        run: npm run legacy:build
+      - name: Type-check workspaces
+        run: npm run typecheck
+      - name: Build Next.js web app
+        run: npm run build:web
       - name: Set up Deno
         uses: denoland/setup-deno@v2
         with:

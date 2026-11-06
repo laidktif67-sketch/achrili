@@ -1,1 +1,23 @@
-{"name":"achrili-platform","version":"2.0.0","private":true,"packageManager":"npm@10.8.2","workspaces":["apps/*","packages/*"],"scripts":{"dev":"turbo dev","dev:web":"npm run dev --workspace=@achrili/web","dev:mobile":"npm run start --workspace=@achrili/mobile","build":"turbo build","build:web":"npm run build --workspace=@achrili/web","typecheck":"turbo typecheck","test":"node --test","legacy:dev":"vite","legacy:build":"vite build","test:legacy":"node --test"},"devDependencies":{"turbo":"^2.5.0","typescript":"^5.9.0","vite":"^7.1.12"}}
+{
+  "name": "achrili-platform",
+  "version": "2.0.0",
+  "private": true,
+  "packageManager": "npm@10.8.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:web": "npm run dev --workspace=@achrili/web",
+    "dev:mobile": "npm run start --workspace=@achrili/mobile",
+    "build": "turbo build",
+    "build:web": "npm run build --workspace=@achrili/web",
+    "typecheck": "turbo typecheck",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0",
+    "typescript": "^5.9.0"
+  }
+}
