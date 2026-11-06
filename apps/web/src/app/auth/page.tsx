@@ -71,17 +71,17 @@ export default function AuthPage() {
     event.preventDefault();
     if (busy) return;
     const cleanEmail = email.trim().toLowerCase();
-    const cleanPhone = phone.replace(/[\\s()-]/g, "");
+    const cleanPhone = phone.replace(/[\s()-]/g, "");
     if (mode === "login" && !cleanEmail) {
-      setNotice({ message: "أدخل بريدك الإلكتروني أو رقم هاتفك.", kind: "error" }); return;
+      setNotice({ message: "أدخل بريدك الإلكتروني.", kind: "error" }); return;
     }
     if ((mode === "signup" || mode === "reset") && !cleanEmail) {
       setNotice({ message: "أدخل بريدك الإلكتروني.", kind: "error" }); return;
     }
     if (mode === "signup") {
       if (name.trim().length < 2) { setNotice({ message: "اكتب اسمك الكامل.", kind: "error" }); return; }
-      if (!/^\\+?213[0-9]{9}$/.test(cleanPhone.replace(/^0/, "+213"))) {
-        setNotice({ message: "أدخل رقم هاتف جزائري صحيحاً مع رمز الدولة +213.", kind: "error" }); return;
+      if (!/^\+?213[0-9]{9}$/.test(cleanPhone.replace(/^0/, "+213"))) {
+        setNotice({ message: "أدخل رقم هاتف جزائري صحيحاً (مثال: 0550123456).", kind: "error" }); return;
       }
       if (!terms) { setNotice({ message: "يجب الموافقة على الشروط وسياسة الخصوصية.", kind: "error" }); return; }
     }
