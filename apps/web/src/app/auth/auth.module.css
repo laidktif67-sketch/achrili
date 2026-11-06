@@ -1,4 +1,4 @@
-:root{--purple:#5b13c8;--purple-dark:#321078;--purple-light:#f0e8ff;--ink:#21104f;--muted:#81769d;--line:#ded4f4}
+:global(:root){--purple:#5b13c8;--purple-dark:#321078;--purple-light:#f0e8ff;--ink:#21104f;--muted:#81769d;--line:#ded4f4}
 .root{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(440px,570px);background:radial-gradient(ellipse at 8% 5%,#f5efff 0,transparent 44%),linear-gradient(135deg,#fff 0%,#f7f2ff 100%);color:var(--ink);font-family:Alexandria,Tahoma,Arial,sans-serif}
 .mobileHero{position:relative;min-height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(34px,7vw,100px);background:radial-gradient(ellipse at 50% 38%,#fff 0%,#f0eaff 55%,#d9c2ff 100%)}
 .mobileHero:after{content:"";position:absolute;bottom:-90px;left:-8%;width:120%;height:210px;border-radius:50% 50% 0 0;background:linear-gradient(145deg,#9c4cf0,#4b0ba8 70%);box-shadow:0 -14px 45px #8c43df35}
