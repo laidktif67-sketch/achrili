@@ -49,7 +49,7 @@ export default function HomePage() {
     }
 
     setNotice({
-      message: "الرابط صالح مبدئياً من متجر " + shop.name + ". سننتقل إلى نموذج إرسال الطلب؛ لا يتم الشراء أو تأكيد السعر والشحن تلقائياً.",
+      message: "الرابط صالح مبدئياً من متجر " + shop + ". سننتقل إلى نموذج إرسال الطلب؛ لا يتم الشراء أو تأكيد السعر والشحن تلقائياً.",
       kind: "success"
     });
     router.push("/request?url=" + encodeURIComponent(url.href));
