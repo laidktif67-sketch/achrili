@@ -3,12 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { findSupportedShop, isValidProductUrl } from "@achrili/shared/domain/product-request";
 import { supabase } from "../../lib/supabase";
 import styles from "./request.module.css";
 
 const DRAFT_KEY="achrili-product-request-draft";
-const domains: Record<string,string[]>={Temu:["temu.com"],AliExpress:["aliexpress.com"],Amazon:["amazon.com","amazon.co.uk","amazon.fr","amazon.de","amazon.it","amazon.es","amazon.ca","amazon.ae"],SHEIN:["shein.com"],"eBay":["ebay.com","ebay.co.uk","ebay.fr","ebay.de"],Walmart:["walmart.com"],Etsy:["etsy.com"],ASOS:["asos.com"]};
-function findShop(host:string){const h=host.toLowerCase().replace(/^www\./,"");return Object.entries(domains).find(([,ds])=>ds.some(d=>h===d||h.endsWith("."+d)))?.[0]??null}
+function findShop(host: string) {
+  return findSupportedShop(host);
+}
 function dzd(v:number){return new Intl.NumberFormat("ar-DZ",{minimumFractionDigits:2,maximumFractionDigits:2}).format(v)+" دج"}
 type Notice={message:string;kind:"info"|"success"|"error"}|null;
 type FormState={url:string;price:string;currency:"USD"|"EUR";quantity:string;destination:string;phone:string;variant:string;notes:string};
@@ -35,7 +37,7 @@ export default function ProductRequestPage(){
  function change<K extends keyof FormState>(k:K,v:FormState[K]){setForm(f=>({...f,[k]:v}))}
  async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();if(busy)return;if(!user){setNotice({message:"يجب تسجيل الدخول أولاً قبل إرسال الطلب.",kind:"info"});router.push("/auth?next="+encodeURIComponent("/request"));return}
  let url:URL;try{url=new URL(form.url.trim())}catch{setNotice({message:"أدخل رابط HTTPS صحيحاً من متجر مدعوم.",kind:"error"});return}
- const detected=url.protocol==="https:"&&!url.username&&!url.password&&!url.port&&url.href.length<=2048?findShop(url.hostname):null;if(!detected){setNotice({message:"الرابط غير صالح أو المتجر غير مدعوم.",kind:"error"});return}
+ const detected=isValidProductUrl(url.href)?findShop(url.hostname):null;if(!detected){setNotice({message:"الرابط غير صالح أو المتجر غير مدعوم.",kind:"error"});return}
  const q=Number(form.quantity),digits=form.phone.replace(/\D/g,"");if(!Number.isInteger(q)||q<1||q>30){setNotice({message:"يجب أن تكون الكمية بين 1 و30.",kind:"error"});return}if(digits.length<9||digits.length>15){setNotice({message:"أدخل رقم هاتف صحيحاً مع مفتاح الدولة، مثل +213.",kind:"error"});return}if(!form.destination.trim()){setNotice({message:"أدخل وجهة التسليم.",kind:"error"});return}
  const rawPrice=form.price.trim();
  const enteredPrice=rawPrice===""?null:Number(rawPrice);
