@@ -49,7 +49,7 @@ function render(){
  const pendingVisible=!$('emailPending').hidden;
  $('title').innerHTML=t(reset?'resetTitle':newPass?'newTitle':signup?'signupTitle':'loginTitle');
  $('subtitle').textContent=t(reset?'resetSub':newPass?'newSub':signup?'signupSub':'loginSub');
- $('tabs').hidden=reset||newPass;$('loginTab').classList.toggle('active',mode==='login');$('signupTab').classList.toggle('active',signup);
+ $('tabs').hidden=reset||newPass||signup;$('loginTab').classList.toggle('active',mode==='login');$('signupTab').classList.toggle('active',signup);
  $('nameWrap').hidden=!signup;$('phoneWrap').hidden=!signup;$('confirmWrap').hidden=!(signup||newPass);$('termsWrap').hidden=!signup;
  $('forgot').hidden=signup||reset||newPass;$('passwordWrap').hidden=reset;
  $('identityLabel').textContent=reset||signup?t('email'):t('identity');
