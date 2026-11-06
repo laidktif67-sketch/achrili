@@ -10,9 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@achrili/api": "workspace:*",
-    "@achrili/shared": "workspace:*",
-    "@achrili/validation": "workspace:*",
+    "@achrili/api": "*",
+    "@achrili/shared": "*",
+    "@achrili/validation": "*",
     "expo": "~54.0.0",
     "expo-router": "~6.0.0",
     "react": "19.1.0",
