@@ -123,3 +123,71 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+
+/* 2026 refinement: resilient layouts, clearer form hierarchy and consistent surfaces. */
+.ds-root:not(.home-page) {
+  min-width: 320px;
+  overflow-wrap: anywhere;
+}
+.ds-root:not(.home-page) img,
+.ds-root:not(.home-page) svg,
+.ds-root:not(.home-page) video {
+  max-width: 100%;
+}
+.ds-root:not(.home-page) :where(main,section,article,form,fieldset) {
+  min-width: 0;
+}
+.ds-root:not(.home-page) :where(input,select,textarea,button) {
+  font: inherit;
+}
+.ds-root:not(.home-page) :where(button,a,.ds-button) {
+  -webkit-tap-highlight-color: transparent;
+}
+.ds-root:not(.home-page) :where(button,a):focus-visible {
+  border-radius: 8px;
+}
+.ds-root:not(.home-page) :where(input,select,textarea):disabled,
+.ds-root:not(.home-page) :where(button):disabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+.ds-root:not(.home-page) :where(.page,.ds-legal-page,.shell) {
+  max-width: 100%;
+}
+.ds-root:not(.home-page) :where(.heading,.intro,.hero,.section-head) {
+  min-width: 0;
+}
+.ds-root:not(.home-page) :where(.heading p,.intro p,.subtitle,.help-text,.hint) {
+  line-height: 1.9;
+  text-wrap: pretty;
+}
+.ds-root:not(.home-page) :where(.request-panel,.sidebar,.maincol>.panel,.ds-card,.faq article,.shell .card) {
+  box-shadow: 0 10px 30px rgb(7 31 92 / 5%);
+}
+.ds-root:not(.home-page) :where(.primary,.submit,.ds-button,.google) {
+  min-height: 46px;
+}
+.ds-root:not(.home-page) :where(.notice,[role="status"],[role="alert"]) {
+  overflow-wrap: anywhere;
+}
+.ds-root:not(.home-page) .ds-legal-page :where(ul,ol) {
+  padding-inline-start: 1.35rem;
+}
+.ds-root:not(.home-page) .ds-legal-page li { margin-block: .45rem; }
+@media(max-width:600px) {
+  .ds-root:not(.home-page) :where(.page,.ds-legal-page) {
+    max-width: 100%;
+  }
+  .ds-root:not(.home-page) :where(.heading) {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .ds-root:not(.home-page) :where(.request-panel,.sidebar,.maincol>.panel,.ds-card,.faq article) {
+    border-radius: 15px;
+  }
+  .ds-root:not(.home-page) :where(input,select,textarea) {
+    max-width: 100%;
+    font-size: 16px;
+  }
+}
