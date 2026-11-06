@@ -23,3 +23,92 @@
 .home-page .footer{padding-top:28px}
 @media(max-width:600px){.home-page .wrap{padding:10px 12px 100px}.home-page header{gap:10px;margin-bottom:14px}.home-page .hero{border-radius:16px}.home-page .section{margin-top:25px}.home-page .section-title{font-size:18px}.home-page .shops{gap:7px}.home-page .shop{min-height:100px}.home-page .service-note{align-items:flex-start;gap:10px;margin-top:22px;padding:13px}.home-page .service-note-icon{flex-basis:28px;width:28px;height:28px;font-size:16px}.home-page .service-note p{font-size:10px}.home-page .service-note p strong{font-size:12px}.home-page .service-note a{font-size:10px;white-space:normal}.home-page .footer{padding-top:22px}}
 @media(max-width:360px){.home-page .service-note{flex-wrap:wrap}.home-page .service-note p{flex-basis:calc(100% - 40px)}.home-page .service-note a{margin-right:38px}}
+
+
+/* AchriLi visual polish inspired by cinematic editorial landing pages. */
+.home-page{
+  background:
+    radial-gradient(ellipse at 8% 12%,rgba(255,174,71,.10),transparent 28rem),
+    radial-gradient(ellipse at 92% 24%,rgba(74,133,220,.12),transparent 30rem),
+    linear-gradient(180deg,#f3f7ff 0,#fff 34rem,#f8faff 100%);
+}
+.home-page .wrap{max-width:1080px}
+.home-page header{padding:5px 2px 12px}
+.home-page .brand-en{letter-spacing:-2px;text-shadow:0 3px 16px #10275412}
+.home-page .round{transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.home-page .round:hover{transform:translateY(-2px);border-color:#b9ccec;box-shadow:0 9px 20px #0a2b6418}
+.home-page .search{
+  position:relative;z-index:1;
+  border:1px solid #d4e0f3;
+  box-shadow:0 12px 30px #173d7510, inset 0 1px 0 #fff;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+.home-page .search:focus-within{border-color:#8eaddd;box-shadow:0 0 0 4px #dce9ff88,0 14px 30px #173d7512}
+.home-page .search button{background:linear-gradient(120deg,#ff9c2e,#f47b12);box-shadow:0 7px 18px #f58a1c38;transition:transform .2s ease,box-shadow .2s ease}
+.home-page .search button:hover{transform:translateY(-1px);box-shadow:0 10px 22px #f58a1c48}
+.home-page .hero{
+  position:relative;isolation:isolate;
+  border:1px solid #d7e3f5;
+  background:linear-gradient(135deg,#eaf2ff,#f8fbff 55%,#fff5e8);
+  box-shadow:0 22px 48px #153d7515,0 3px 8px #153d7508;
+}
+.home-page .hero:after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.28),transparent 40%,rgba(255,255,255,.16));
+}
+.home-page .hero img{transition:transform .7s cubic-bezier(.2,.7,.2,1);transform:scale(1.002)}
+.home-page .section-title{color:#102b61}
+.home-page .section-title:before,.home-page .section-title:after{height:2px;background:linear-gradient(90deg,#ffb65a,#f18a1d)}
+.home-page .shop{
+  position:relative;overflow:hidden;
+  background:linear-gradient(155deg,#fff 0%,#fbfcff 100%);
+  border-color:#e1e9f6;
+  box-shadow:0 5px 16px #183d7410;
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+}
+.home-page .shop:after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 0%,#eaf2ff 0,transparent 65%);
+  transition:opacity .22s ease;
+}
+.home-page .shop:hover,.home-page .shop:focus-visible{
+  transform:translateY(-4px);border-color:#c4d5ef;
+  box-shadow:0 14px 28px #153d7518;
+}
+.home-page .shop:hover:after,.home-page .shop:focus-visible:after{opacity:1}
+.home-page .logo{position:relative;z-index:1;background:#fff;box-shadow:0 5px 14px #153d750c}
+.home-page .step{
+  background:linear-gradient(145deg,#fff 0%,#f1f6ff 100%);
+  box-shadow:0 8px 22px #173d7509;
+  transition:transform .22s ease,box-shadow .22s ease;
+}
+.home-page .step:hover{transform:translateY(-3px);box-shadow:0 14px 28px #173d7514}
+.home-page .step-icon{color:#28539a}
+.home-page .service-note{
+  background:linear-gradient(110deg,#f5f8ff,#fff 70%,#fff8ef);
+  box-shadow:0 8px 22px #173d7508;
+}
+.home-page .bottom{
+  background:linear-gradient(110deg,#061b50,#0b2c70 55%,#102f70);
+  border-top:1px solid #ffffff22;
+  box-shadow:0 -10px 30px #09275a24;
+}
+.home-page .bottom .center span{box-shadow:0 6px 18px #ff8b1948}
+@media (hover:hover) and (min-width:700px){
+  .home-page .hero:hover img{transform:scale(1.012)}
+}
+@media(max-width:600px){
+  .home-page .wrap{padding-top:9px}
+  .home-page .hero{box-shadow:0 14px 30px #153d7512}
+  .home-page .shop{box-shadow:0 4px 12px #183d740b}
+  .home-page .step:hover{transform:none}
+  .home-page .bottom{backdrop-filter:blur(14px)}
+}
+@media(prefers-reduced-motion:no-preference){
+  .home-page .hero img{animation:achriliHeroSettle .9s ease-out both}
+  @keyframes achriliHeroSettle{from{opacity:.78;transform:scale(1.018)}to{opacity:1;transform:scale(1.002)}}
+}
+@media(prefers-reduced-motion:reduce){
+  .home-page .hero img{animation:none}
+  .home-page .round,.home-page .search,.home-page .search button,.home-page .shop,.home-page .step{transition:none}
+}
