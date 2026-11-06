@@ -1,29 +1,16 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, Pressable, View } from "react-native";
 import { useRouter } from "expo-router";
+import { isValidProductUrl } from "@achrili/shared/domain/product-request";
 
 const shops = ["Temu", "AliExpress", "Amazon", "SHEIN", "eBay", "Walmart", "Etsy", "ASOS"];
-const domains: Record<string, string[]> = {
-  Temu: ["temu.com"], AliExpress: ["aliexpress.com"],
-  Amazon: ["amazon.com", "amazon.co.uk", "amazon.fr", "amazon.de", "amazon.it", "amazon.es"],
-  SHEIN: ["shein.com"], "eBay": ["ebay.com", "ebay.co.uk", "ebay.fr"],
-  Walmart: ["walmart.com"], Etsy: ["etsy.com"], ASOS: ["asos.com"]
-};
-function supported(urlText: string) {
-  try {
-    const url = new URL(urlText.trim());
-    if (url.protocol !== "https:" || url.username || url.password || url.port) return false;
-    const host = url.hostname.toLowerCase().replace(/^www\./, "");
-    return Object.values(domains).flat().some((domain) => host === domain || host.endsWith("." + domain));
-  } catch { return false; }
-}
 
 export default function HomeScreen() {
   const router = useRouter();
   const [url, setUrl] = useState("");
   const [notice, setNotice] = useState("");
   function continueRequest() {
-    if (!supported(url)) { setNotice("أدخل رابط HTTPS صحيحاً من متجر مدعوم."); return; }
+    if (!isValidProductUrl(url.trim())) { setNotice("أدخل رابط HTTPS صحيحاً من متجر مدعوم."); return; }
     setNotice("");
     router.push("/request?url=" + encodeURIComponent(url.trim()));
   }
