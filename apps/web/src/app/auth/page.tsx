@@ -159,6 +159,7 @@ export default function AuthPage() {
 
   const title = mode === "login" ? "مرحباً بعودتك" : mode === "signup" ? "إنشاء حساب جديد" : mode === "reset" ? "نسيت كلمة المرور؟" : "تعيين كلمة مرور جديدة";
   const subtitle = mode === "login" ? "سجّل الدخول وتابع طلباتك بكل سهولة" : mode === "signup" ? "انضم إلى عائلة AchriLi واستمتع بتجربة تسوّق عالمية" : mode === "reset" ? "أدخل بريدك الإلكتروني لنرسل لك رابط الاستعادة" : "اختر كلمة مرور جديدة وآمنة لحسابك";
+  const redirectMessage = next === "/" ? null : next.startsWith("/quotes") ? "سجّل الدخول للوصول إلى طلباتك وعروض الأسعار." : next.startsWith("/profile") ? "سجّل الدخول لعرض ملفك الشخصي." : next.startsWith("/request") ? "سجّل الدخول لإرسال طلب المنتج وحفظه في حسابك." : "سجّل الدخول للمتابعة إلى الصفحة المطلوبة.";
 
   return (
     <main className={styles.root} dir="rtl">
@@ -181,6 +182,7 @@ export default function AuthPage() {
           <h2 id="auth-title">{title}</h2>
           <p>{subtitle}</p>
         </div>
+        {redirectMessage && <div className={styles.notice + " " + styles.info} role="status">{redirectMessage}</div>}
 
         {(mode === "login" || mode === "signup") && (
           <div className={styles.tabs} role="tablist" aria-label="نوع الحساب">
