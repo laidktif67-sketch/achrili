@@ -1,0 +1,27 @@
+name: Rebuild workspace checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "package.json"
+      - "turbo.json"
+      - "tsconfig.base.json"
+      - ".github/workflows/rebuild-workspace.yml"
+  push:
+    branches: ["rebuild/next-expo-monorepo"]
+
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm run build:web
