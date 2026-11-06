@@ -26,10 +26,14 @@ export default function PaymentAdminPage(){
  })();return()=>{active=false}},[]);
  async function loadMethods(){const {data,error}=await supabase.from("PaymentMethod").select("*").order("code");if(error)throw error;setMethods((data??[]) as Method[])}
  async function loadPayments(){
-  const {data,error}=await supabase.from("Payment").select("id,customerId,requestId,quoteId,paymentMethodId,amount,currency,status,proofPath,transactionReference,reviewNote,createdAt").order("createdAt",{ascending:false}).limit(100);
-  if(error)throw error;
-  const rows=(data??[]) as Omit<Payment,"methodName"|"proofUrl">[];
-  const names=new Map(methods.map(m=>[m.id,m.displayName]));
+  const [paymentResult,methodResult]=await Promise.all([
+   supabase.from("Payment").select("id,customerId,requestId,quoteId,paymentMethodId,amount,currency,status,proofPath,transactionReference,reviewNote,createdAt").order("createdAt",{ascending:false}).limit(100),
+   supabase.from("PaymentMethod").select("id,displayName")
+  ]);
+  if(paymentResult.error)throw paymentResult.error;
+  if(methodResult.error)throw methodResult.error;
+  const rows=(paymentResult.data??[]) as Omit<Payment,"methodName"|"proofUrl">[];
+  const names=new Map((methodResult.data??[]).map((m:any)=>[m.id,m.displayName]));
   const mapped=await Promise.all(rows.map(async p=>{const {data:signed}=await supabase.storage.from("payment-proofs").createSignedUrl(p.proofPath,300);return {...p,methodName:names.get(p.paymentMethodId)||p.paymentMethodId,proofUrl:signed?.signedUrl||null}}));
   setPayments(mapped);
  }
