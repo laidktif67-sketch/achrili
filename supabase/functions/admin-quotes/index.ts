@@ -75,7 +75,7 @@ Deno.serve(async (req) => {
 
     while (quotableRequests.length < 100) {
       const { data: rows, error } = await admin.from("ProductRequest")
-        .select("id,customerId,productUrl,productName,variant,quantity,notes,destination,status,createdAt")
+        .select("id,customerId,productUrl,productName,productPrice,productCurrency,variant,quantity,notes,destination,status,createdAt")
         .in("status", ["SUBMITTED", "QUOTED"])
         .order("createdAt", { ascending: true })
         .order("id", { ascending: true })

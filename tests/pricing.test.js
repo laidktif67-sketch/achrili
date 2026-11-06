@@ -4,7 +4,7 @@ import {
   calculateProductSubtotalDzd,
   convertCurrency,
   parsePricingSettings,
-} from '../src/features/pricing/model/pricing.js';
+} from '../packages/shared/src/domain/pricing.js';
 
 const settings = {
   usdToDzdRate: 260,
