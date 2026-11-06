@@ -3,9 +3,8 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as Crypto from "expo-crypto";
 import { supabase } from "../src/lib/supabase";
+import { isValidProductUrl } from "@achrili/shared/domain/product-request";
 
-const domains=["temu.com","aliexpress.com","amazon.com","amazon.co.uk","amazon.fr","amazon.de","shein.com","ebay.com","walmart.com","etsy.com","asos.com"];
-function validUrl(value:string){try{const u=new URL(value.trim());const h=u.hostname.toLowerCase().replace(/^www\./,"");return u.protocol==="https:"&&!u.username&&!u.password&&!u.port&&domains.some(d=>h===d||h.endsWith("."+d))}catch{return false}}
 
 export default function RequestScreen(){
  const router=useRouter();const params=useLocalSearchParams<{url?:string}>();
@@ -15,7 +14,7 @@ export default function RequestScreen(){
  useEffect(()=>{if(initialUrl)setUrl(initialUrl)},[initialUrl]);
  async function submit(){
   if(!user){router.replace("/auth?next=/request");return}
-  if(!validUrl(url)){Alert.alert("رابط غير صالح","استخدم رابط HTTPS من متجر مدعوم.");return}
+  if(!isValidProductUrl(url.trim())){Alert.alert("رابط غير صالح","استخدم رابط HTTPS من متجر مدعوم.");return}
   const q=Number(quantity),digits=phone.replace(/\D/g,"");if(!Number.isInteger(q)||q<1||q>30){Alert.alert("الكمية غير صحيحة","الكمية يجب أن تكون بين 1 و30.");return}if(digits.length<9||digits.length>15){Alert.alert("رقم الهاتف","أدخل رقم هاتف صحيحاً مع مفتاح الدولة.");return}
   setBusy(true);try{
    const {data:session,error:sessionError}=await supabase.auth.getSession();if(sessionError||!session.session)throw new Error("انتهت جلسة تسجيل الدخول.");
@@ -29,7 +28,7 @@ export default function RequestScreen(){
   <Text style={styles.eyebrow}>طلب جديد</Text><Text style={styles.title}>أرسل طلب المنتج</Text><Text style={styles.subtitle}>أكمل المعلومات التالية حتى نتمكن من مراجعة طلبك.</Text>
   <View style={styles.card}>
    {field("رابط المنتج *",url,setUrl,"https://...",{keyboardType:"url",autoCapitalize:"none",autoCorrect:false})}
-   <Text style={styles.hint}>{validUrl(url)?"تم التحقق مبدئياً من المتجر المدعوم.":"الرابط يجب أن يكون HTTPS من متجر مدعوم."}</Text>
+   <Text style={styles.hint}>{isValidProductUrl(url.trim())?"تم التحقق مبدئياً من المتجر المدعوم.":"الرابط يجب أن يكون HTTPS من متجر مدعوم."}</Text>
    {field("الكمية *",quantity,setQuantity,"1",{keyboardType:"number-pad"})}
    {field("وجهة التسليم",destination,setDestination,"Algeria")}
    {field("رقم الهاتف للتواصل *",phone,setPhone,"+213...",{keyboardType:"phone-pad"})}
