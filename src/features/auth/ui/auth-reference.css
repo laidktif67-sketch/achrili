@@ -106,3 +106,21 @@
     height: 46px;
   }
 }
+
+/* Reference fidelity fix: never crop the mobile hero just because the phone is short.
+   Let the page scroll rather than compressing the artwork and clipping the form. */
+@media (max-width:680px) {
+  .panel { overflow: visible !important; }
+  .auth-hero-banner { height: auto !important; max-height: none !important; }
+  .auth-hero-image-mobile {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    aspect-ratio: 709 / 500 !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+  }
+  .card { flex: 0 0 auto; }
+  .panel footer { color: #5b3a8c !important; text-shadow: none !important; }
+}
