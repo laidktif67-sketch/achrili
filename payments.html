@@ -71,7 +71,7 @@ init().catch(()=>note('حدث خطأ أثناء تحميل صفحة الدفع.'
 </head>
 <body class="ds-root"><header class="top"><a class="brand" href="index.html">Achri<span>Li</span></a><a href="quotes.html">طلباتي</a></header>
 <main class="page"><h1>الدفع وإثبات التحويل</h1><p class="muted">أرسل الإثبات بعد تنفيذ التحويل. رفع الإثبات لا يعني تأكيد استلام الأموال؛ يراجع المدير العملية يدويًا.</p>
-<div id="notice" class="notice" hidden></div><div id="quoteSummary" class="card" hidden></div>
+<div id="notice" class="notice" role="status" aria-live="polite" aria-atomic="true" hidden></div><div id="quoteSummary" class="card" hidden></div>
 <section class="card"><form id="form" hidden>
 <h2>اختر وسيلة الدفع</h2><div id="methods"></div>
 <label for="proof">إثبات الدفع (صورة أو PDF) *</label><input id="proof" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required>
