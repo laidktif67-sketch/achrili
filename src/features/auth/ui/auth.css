@@ -216,3 +216,14 @@ body{background:#f6f1ff;color:var(--ink)}
  .card{padding:18px 14px}
  .tabs button{font-size:11px}
 }
+
+
+/* Social sign-in choices: Google remains functional; Facebook and Apple are visual placeholders */
+.social-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:center}
+.social-buttons .google,.social-static{width:100%;min-width:0;height:52px;display:flex;align-items:center;justify-content:center;gap:9px;padding:0 9px;border:1px solid #e4dcf2;border-radius:15px;background:#fff;color:#20164d;box-shadow:0 4px 12px #37106b0a;font:700 12px inherit;cursor:pointer}
+.social-buttons .google b,.social-static b{font-family:Arial,sans-serif;font-size:25px;line-height:1}
+.social-buttons .google .social-google{color:#4285f4;font-weight:900}
+.social-static .social-facebook{color:#1877f2;font-size:29px}
+.social-static .social-apple{position:relative;color:#111;font-size:21px}
+.social-static span{white-space:nowrap}
+@media(max-width:380px){.social-buttons{gap:6px}.social-buttons .google,.social-static{gap:5px;padding:0 5px;font-size:11px}}
