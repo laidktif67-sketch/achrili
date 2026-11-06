@@ -1,0 +1,9 @@
+/* Public entry point for the AchriLi design system.
+ * Load after font declarations and before feature-specific styles.
+ * The primitives are opt-in (.ds-*) to prevent accidental legacy regressions.
+ */
+@import url("./design-tokens.css");
+@import url("./typography.css");
+@import url("./layouts.css");
+@import url("./components.css");
+@import url("./utilities.css");

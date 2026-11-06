@@ -1,0 +1,392 @@
+/* AchriLi experience refinement — first implementation pass.
+   Scoped to the homepage; existing order flows and business logic remain untouched. */
+:root {
+  --achrili-storefront-content: 1240px;
+  --achrili-focus: #ff941f;
+}
+body.home-page {
+  color: #14213a;
+  background:
+    radial-gradient(ellipse at 88% 0%, rgb(222 233 250 / 48%), transparent 34rem),
+    #f7f8fb;
+}
+.home-page .wrap {
+  width: min(100% - 56px, var(--achrili-storefront-content));
+  padding-top: 18px;
+}
+.home-page .site-header {
+  gap: clamp(18px, 2.6vw, 38px);
+  padding-bottom: 18px;
+  border-bottom-color: #e6eaf1;
+}
+.home-page .brand-en { letter-spacing: -1.6px; }
+.home-page .desktop-nav a {
+  font-size: 13px;
+  transition: color .18s ease;
+}
+.home-page .desktop-nav a:hover { color: var(--achrili-color-brand-800); }
+.home-page .hero {
+  border: 1px solid #dce5f2;
+  border-radius: 26px;
+  background: #e9f0fb;
+  box-shadow: 0 18px 44px rgb(7 31 92 / 8%);
+}
+.home-page .hero img { aspect-ratio: 1440 / 620; object-fit: contain; }
+.home-page .order-entry {
+  width: min(850px, calc(100% - 64px));
+  margin-top: -26px;
+  border-color: #e5eaf2;
+  box-shadow: 0 16px 38px rgb(16 39 84 / 10%);
+}
+.home-page .search {
+  border-color: #e3e9f2;
+  background: #f8faff;
+}
+.home-page .search button {
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgb(255 148 31 / 18%);
+}
+.home-page .section { margin-top: 50px; }
+.home-page .section-title {
+  font-size: clamp(21px, 2.1vw, 27px);
+  letter-spacing: -.55px;
+}
+.home-page .section-title::after { width: 32px; }
+.home-page .shops-intro { margin-bottom: 20px; }
+.home-page .shops { gap: 12px; }
+.home-page .shop {
+  min-height: 120px;
+  border-color: #e5eaf2;
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgb(16 39 84 / 3%);
+}
+.home-page .shop:hover {
+  transform: translateY(-2px);
+  border-color: #c9d8ee;
+  box-shadow: 0 12px 24px rgb(16 39 84 / 7%);
+}
+.home-page .logo { background: #f7f9fc; }
+.home-page .step {
+  border-color: #e5eaf2;
+  background: #fff;
+  box-shadow: 0 3px 12px rgb(16 39 84 / 3%);
+}
+.home-page .step:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgb(16 39 84 / 6%);
+}
+.home-page .service-note {
+  border-color: #e2e8f2;
+  background: #eef3fa;
+}
+.home-page :where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--achrili-focus);
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .home-page .wrap { width: 100%; padding: 8px 14px 100px; }
+  .home-page .site-header { gap: 10px; }
+  .home-page .hero { border-radius: 17px; }
+  .home-page .hero img { aspect-ratio: 1440 / 620; object-fit: contain; }
+  .home-page .order-entry { width: calc(100% - 16px); margin-top: -16px; }
+  .home-page .section { margin-top: 32px; }
+  .home-page .shops { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .home-page .shop { min-height: 96px; padding: 10px 4px; font-size: 11px; }
+  .home-page .steps { gap: 8px; }
+}
+@media (max-width: 420px) {
+  .home-page .shops { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-page .steps { grid-template-columns: 1fr; }
+  .home-page .step { min-height: 0; padding: 20px 14px 16px; }
+  .home-page .step-icon { margin-inline: 0; }
+  .home-page .step h3, .home-page .step p { text-align: start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-page .shop:hover, .home-page .step:hover { transform: none !important; }
+  .home-page .shop, .home-page .step, .home-page .desktop-nav a { transition: none !important; }
+}
+
+
+/* Visual refresh v2 — a deliberately stronger storefront hierarchy.
+   Presentation-only overrides, scoped to the homepage. */
+.home-page {
+  --storefront-ink: #102754;
+  --storefront-blue: #0b3478;
+  --storefront-orange: #ff8b19;
+  --storefront-line: #d9e4f4;
+  background: #f4f7fc;
+  color: var(--storefront-ink);
+}
+.home-page .wrap {
+  width: min(100% - 48px, 1200px);
+  padding-top: 24px;
+}
+.home-page .site-header {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 24px;
+  padding: 0 0 20px;
+  border-bottom: 1px solid #dce5f2;
+}
+.home-page .brand { text-align: start; }
+.home-page .brand-en { font-size: 36px; }
+.home-page .brand-ar { text-align: start; }
+.home-page .tag { text-align: start; }
+.home-page .desktop-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(12px, 2vw, 28px);
+}
+.home-page .desktop-nav a {
+  padding: 10px 0;
+  color: #465875;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.home-page .desktop-nav a.is-current {
+  color: var(--storefront-blue);
+  box-shadow: inset 0 -2px 0 var(--storefront-orange);
+}
+.home-page .header-actions { display: flex; gap: 8px; }
+.home-page .round {
+  width: 42px;
+  height: 42px;
+  border-color: #d8e2f0;
+  box-shadow: none;
+}
+.home-page .hero {
+  overflow: hidden;
+  border: 0;
+  border-radius: 28px;
+  background: linear-gradient(125deg, #09265e 0%, #10458f 58%, #e7f0ff 58%, #f5f8ff 100%);
+  box-shadow: 0 22px 48px rgb(10 38 88 / 15%);
+}
+.home-page .hero img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1440 / 620;
+  object-fit: contain;
+}
+.home-page .order-entry {
+  position: relative;
+  z-index: 1;
+  width: min(820px, calc(100% - 72px));
+  margin: -34px auto 0;
+  padding: 14px;
+  border: 1px solid #dce6f4;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 18px 46px rgb(9 38 94 / 14%);
+}
+.home-page .search {
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 8px 8px 8px 18px;
+  border: 1px solid #dce5f2;
+  border-radius: 15px;
+  background: #f7f9fd;
+  box-shadow: none;
+}
+.home-page .search input { min-height: 48px; font-size: 14px; }
+.home-page .search button {
+  min-height: 48px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: var(--storefront-orange);
+  color: #1c2b45;
+  font-size: 13px;
+  font-weight: 900;
+  box-shadow: 0 7px 16px rgb(255 139 25 / 24%);
+}
+.home-page .search-note {
+  margin: 0 8px 4px;
+  color: #64738b;
+  font-size: 12px;
+  text-align: center;
+}
+.home-page .section { margin-top: 54px; }
+.home-page .section-title {
+  margin-bottom: 12px;
+  color: var(--storefront-ink);
+  font-size: clamp(23px, 2.5vw, 30px);
+  font-weight: 900;
+  letter-spacing: -.6px;
+}
+.home-page .section-title::before,
+.home-page .section-title::after {
+  width: 30px;
+  height: 4px;
+  background: var(--storefront-orange);
+}
+.home-page .shops-intro {
+  margin: 0 auto 24px;
+  color: #65748c;
+  font-size: 14px;
+}
+.home-page .shops { gap: 14px; }
+.home-page .shop {
+  min-height: 140px;
+  gap: 14px;
+  border: 1px solid var(--storefront-line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgb(16 39 84 / 4%);
+  font-size: 14px;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.home-page .shop:hover {
+  transform: translateY(-4px);
+  border-color: #9eb9e2;
+  box-shadow: 0 16px 30px rgb(16 39 84 / 10%);
+}
+.home-page .logo {
+  width: 92px;
+  height: 56px;
+  border: 1px solid #e9eef6;
+  border-radius: 14px;
+  background: #fbfcff;
+  box-shadow: none;
+}
+.home-page .steps { gap: 16px; }
+.home-page .step {
+  min-height: 190px;
+  padding: 28px 18px 22px;
+  border: 1px solid var(--storefront-line);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 6px 20px rgb(16 39 84 / 4%);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.home-page .step:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 28px rgb(16 39 84 / 8%);
+}
+.home-page .num {
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: #fff0df;
+  color: #a34c00;
+}
+.home-page .step-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 14px;
+  padding: 10px;
+  border-radius: 15px;
+  background: #edf3ff;
+  color: var(--storefront-blue);
+}
+.home-page .step h3 { color: var(--storefront-ink); font-size: 16px; }
+.home-page .step p { color: #687891; font-size: 13px; }
+.home-page .service-note {
+  gap: 16px;
+  margin-top: 34px;
+  padding: 20px 22px;
+  border: 1px solid #dce6f4;
+  border-radius: 20px;
+  background: #eaf1fc;
+}
+.home-page .service-note-icon {
+  flex-basis: 40px;
+  width: 40px;
+  height: 40px;
+  background: #d6e5fc;
+  color: #0b3478;
+}
+.home-page .service-note p { color: #52647e; font-size: 13px; }
+.home-page .service-note p strong { color: var(--storefront-ink); font-size: 15px; }
+.home-page .service-note a {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--storefront-blue);
+}
+.home-page .footer { padding-top: 32px; color: #6a7890; }
+.home-page .footer-links a { color: var(--storefront-blue); }
+.home-page :where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid #ff9d32;
+  outline-offset: 3px;
+}
+@media (max-width: 900px) {
+  .home-page .wrap { width: min(100% - 32px, 760px); padding-top: 16px; }
+  .home-page .site-header { grid-template-columns: auto 1fr auto; gap: 14px; }
+  .home-page .brand-en { font-size: 30px; }
+  .home-page .desktop-nav { gap: 12px; }
+  .home-page .desktop-nav a { font-size: 12px; }
+  .home-page .hero { border-radius: 22px; }
+  .home-page .shops { gap: 10px; }
+  .home-page .shop { min-height: 124px; }
+}
+@media (max-width: 680px) {
+  .home-page .wrap { width: 100%; padding: 10px 14px 100px; }
+  .home-page .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+  }
+  .home-page .brand-en { font-size: 28px; }
+  .home-page .brand-ar { font-size: 13px; }
+  .home-page .tag { font-size: 8px; }
+  .home-page .desktop-nav {
+    order: 3;
+    flex: 1 0 100%;
+    justify-content: space-between;
+    gap: 8px;
+    overflow-x: auto;
+  }
+  .home-page .desktop-nav a { flex-shrink: 0; padding: 8px 0; font-size: 11px; }
+  .home-page .round { width: 38px; height: 38px; }
+  .home-page .hero { border-radius: 17px; }
+  .home-page .hero img { aspect-ratio: 1440 / 720; object-fit: contain; }
+  .home-page .order-entry {
+    width: calc(100% - 18px);
+    margin-top: -18px;
+    padding: 9px;
+    border-radius: 17px;
+  }
+  .home-page .search { display: flex; flex-direction: column; align-items: stretch; gap: 8px; padding: 8px; border-radius: 12px; }
+  .home-page .search input { width: 100%; min-height: 44px; font-size: 16px; }
+  .home-page .search button { width: 100%; min-height: 46px; }
+  .home-page .search-note { font-size: 10px; line-height: 1.8; }
+  .home-page .section { margin-top: 34px; }
+  .home-page .section-title { gap: 8px; font-size: 20px; }
+  .home-page .section-title::before, .home-page .section-title::after { width: 18px; }
+  .home-page .shops-intro { font-size: 12px; margin-bottom: 17px; }
+  .home-page .shops { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .home-page .shop { min-height: 112px; border-radius: 16px; font-size: 12px; }
+  .home-page .logo { width: 82px; height: 48px; }
+  .home-page .steps { grid-template-columns: 1fr; gap: 10px; }
+  .home-page .step { display: grid; grid-template-columns: 48px 1fr; align-items: center; column-gap: 13px; min-height: 0; padding: 16px; text-align: start; border-radius: 17px; }
+  .home-page .num { top: 10px; right: 10px; width: 24px; height: 24px; font-size: 12px; }
+  .home-page .step-icon { grid-row: span 2; width: 44px; height: 44px; margin: 0; }
+  .home-page .step h3 { font-size: 14px; text-align: start; }
+  .home-page .step p { font-size: 11px; text-align: start; margin-top: 2px; }
+  .home-page .service-note { flex-wrap: wrap; align-items: flex-start; margin-top: 24px; padding: 14px; border-radius: 16px; }
+  .home-page .service-note-icon { flex-basis: 30px; width: 30px; height: 30px; }
+  .home-page .service-note p { flex: 1 1 calc(100% - 46px); font-size: 11px; }
+  .home-page .service-note a { margin-inline-start: 44px; font-size: 11px; }
+  .home-page .footer { padding-top: 24px; font-size: 11px; }
+  .home-page .footer-links { gap: 8px 12px; }
+}
+@media (max-width: 360px) {
+  .home-page .wrap { padding-inline: 10px; }
+  .home-page .desktop-nav { gap: 10px; }
+  .home-page .desktop-nav a { font-size: 10px; }
+  .home-page .shop { min-height: 102px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-page .shop, .home-page .step { transition: none !important; }
+  .home-page .shop:hover, .home-page .step:hover { transform: none !important; }
+}

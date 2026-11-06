@@ -1,0 +1,193 @@
+/* AchriLi cross-page UX layer. Loaded after page styles so shared improvements are consistent. */
+.ds-root:not(.home-page) {
+  color: var(--achrili-color-ink);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+.ds-root:not(.home-page) :where(a,button,input,select,textarea,[tabindex]):focus-visible {
+  outline: 3px solid var(--achrili-color-accent-500);
+  outline-offset: 3px;
+}
+.ds-root:not(.home-page) :where(input,select,textarea) {
+  transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+.ds-root:not(.home-page) :where(input,select,textarea):focus {
+  border-color: var(--achrili-color-brand-700);
+  box-shadow: 0 0 0 4px rgb(16 60 139 / 10%);
+}
+.ds-root:not(.home-page) :where(.topbar,.top) {
+  position: relative;
+  z-index: 5;
+  min-height: 70px;
+  border-bottom-color: #e4eaf5;
+  box-shadow: 0 4px 18px rgb(7 31 92 / 3%);
+}
+.ds-root:not(.home-page) :where(.topbar,.top) a {
+  transition: color .18s ease, background-color .18s ease;
+}
+.ds-root:not(.home-page) :where(.toplinks a,.topbar>a:not(.brand),.top>a:not(.brand)) {
+  color: #53627e;
+  font-weight: 700;
+}
+.ds-root:not(.home-page) :where(.toplinks a:hover,.topbar>a:not(.brand):hover,.top>a:not(.brand):hover) {
+  color: var(--achrili-color-brand-900);
+}
+.ds-root:not(.home-page) .page {
+  width: min(100% - 40px, 1080px);
+  padding-top: 38px;
+  padding-bottom: 54px;
+}
+.ds-root:not(.home-page) :where(h1,h2,h3) {
+  letter-spacing: -.025em;
+  text-wrap: pretty;
+}
+.ds-root:not(.home-page) :where(.request-panel,.sidebar,.maincol>.panel,.ds-card,.faq article) {
+  border-color: #e2eaf6;
+  box-shadow: 0 8px 28px rgb(7 31 92 / 4%);
+}
+.ds-root:not(.home-page) :where(.request-panel,.maincol>.panel,.ds-card,.faq article) {
+  border-radius: 18px;
+}
+.ds-root:not(.home-page) :where(.primary,.submit,.ds-button) {
+  min-height: 46px;
+  border-radius: 11px;
+  font-weight: 800;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.ds-root:not(.home-page) :where(.primary,.submit,.ds-button):not(:disabled):hover {
+  filter: saturate(1.04);
+  box-shadow: 0 10px 22px rgb(7 31 92 / 12%);
+}
+.ds-root:not(.home-page) :where(.primary,.submit,.ds-button):not(:disabled):active {
+  transform: translateY(1px);
+}
+.ds-root:not(.home-page) .intro h1,
+.ds-root:not(.home-page) .heading h1,
+.ds-root:not(.home-page) .hero h1,
+.ds-root:not(.home-page) .visual h1 {
+  line-height: 1.45;
+  text-wrap: balance;
+}
+.ds-root:not(.home-page) .ds-legal-page {
+  width: min(100% - 40px, 820px);
+  margin: 40px auto 60px;
+  padding: clamp(24px, 5vw, 56px);
+  border: 1px solid #e2eaf6;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 16px 42px rgb(7 31 92 / 6%);
+  line-height: 1.95;
+}
+.ds-root:not(.home-page) .ds-page-title {
+  margin-top: 28px;
+  margin-bottom: 12px;
+  font-size: clamp(28px, 4vw, 38px);
+  line-height: 1.4;
+}
+.ds-root:not(.home-page) .ds-section-title {
+  margin-top: 30px;
+  padding-top: 18px;
+  border-top: 1px solid #e9eef7;
+  font-size: 18px;
+  line-height: 1.55;
+}
+.ds-root:not(.home-page) .ds-legal-page p { color: #4f5f79; font-size: 13px; }
+.ds-root:not(.home-page) .ds-legal-page a { font-weight: 700; text-underline-offset: 3px; }
+.ds-root:not(.home-page) .faq { display: grid; gap: 14px; }
+.ds-root:not(.home-page) .faq article { padding: 22px 24px; background: #fff; }
+.ds-root:not(.home-page) .faq article h2 { margin: 0 0 9px; font-size: 16px; line-height: 1.7; }
+.ds-root:not(.home-page) .faq article p { margin: 0; color: #5d6b83; font-size: 12px; line-height: 2; }
+.ds-root:not(.home-page) .notice { line-height: 1.9; }
+.ds-root:not(.home-page) .shell .panel { border-inline-start: 1px solid #edf1f8; }
+.ds-root:not(.home-page) .shell .card { border-color: #e6ecf6; box-shadow: 0 20px 60px rgb(16 45 100 / 8%); }
+.ds-root:not(.home-page) .shell .field input { min-height: 48px; border-radius: 12px; }
+.ds-root:not(.home-page) .shell .tabs { border: 1px solid #e9eef7; }
+.ds-root:not(.home-page) .shell .tabs button { min-height: 42px; }
+@media(max-width:760px) {
+  .ds-root:not(.home-page) .page { width: min(100% - 26px, 1080px); padding-top: 24px; padding-bottom: 36px; }
+  .ds-root:not(.home-page) :where(.topbar,.top) { min-height: 62px; }
+  .ds-root:not(.home-page) .ds-legal-page { width: calc(100% - 24px); margin: 18px auto 32px; padding: 22px 18px; border-radius: 18px; }
+  .ds-root:not(.home-page) .ds-page-title { font-size: 27px; }
+  .ds-root:not(.home-page) .ds-section-title { font-size: 16px; }
+  .ds-root:not(.home-page) .faq article { padding: 18px 16px; }
+  .ds-root:not(.home-page) .faq article h2 { font-size: 14px; }
+  .ds-root:not(.home-page) .shell { grid-template-columns: 1fr; min-height: 100svh; }
+  .ds-root:not(.home-page) .shell .visual { display: none; }
+  .ds-root:not(.home-page) .shell .panel { min-height: 100svh; padding: 82px 18px 24px; }
+  .ds-root:not(.home-page) .shell .mobile-head { position: absolute; top: 18px; inset-inline: 18px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .ds-root:not(.home-page) *, .ds-root:not(.home-page) *::before, .ds-root:not(.home-page) *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
+/* 2026 refinement: resilient layouts, clearer form hierarchy and consistent surfaces. */
+.ds-root:not(.home-page) {
+  min-width: 320px;
+  overflow-wrap: anywhere;
+}
+.ds-root:not(.home-page) img,
+.ds-root:not(.home-page) svg,
+.ds-root:not(.home-page) video {
+  max-width: 100%;
+}
+.ds-root:not(.home-page) :where(main,section,article,form,fieldset) {
+  min-width: 0;
+}
+.ds-root:not(.home-page) :where(input,select,textarea,button) {
+  font: inherit;
+}
+.ds-root:not(.home-page) :where(button,a,.ds-button) {
+  -webkit-tap-highlight-color: transparent;
+}
+.ds-root:not(.home-page) :where(button,a):focus-visible {
+  border-radius: 8px;
+}
+.ds-root:not(.home-page) :where(input,select,textarea):disabled,
+.ds-root:not(.home-page) :where(button):disabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+.ds-root:not(.home-page) :where(.page,.ds-legal-page,.shell) {
+  max-width: 100%;
+}
+.ds-root:not(.home-page) :where(.heading,.intro,.hero,.section-head) {
+  min-width: 0;
+}
+.ds-root:not(.home-page) :where(.heading p,.intro p,.subtitle,.help-text,.hint) {
+  line-height: 1.9;
+  text-wrap: pretty;
+}
+.ds-root:not(.home-page) :where(.request-panel,.sidebar,.maincol>.panel,.ds-card,.faq article,.shell .card) {
+  box-shadow: 0 10px 30px rgb(7 31 92 / 5%);
+}
+.ds-root:not(.home-page) :where(.primary,.submit,.ds-button,.google) {
+  min-height: 46px;
+}
+.ds-root:not(.home-page) :where(.notice,[role="status"],[role="alert"]) {
+  overflow-wrap: anywhere;
+}
+.ds-root:not(.home-page) .ds-legal-page :where(ul,ol) {
+  padding-inline-start: 1.35rem;
+}
+.ds-root:not(.home-page) .ds-legal-page li { margin-block: .45rem; }
+@media(max-width:600px) {
+  .ds-root:not(.home-page) :where(.page,.ds-legal-page) {
+    max-width: 100%;
+  }
+  .ds-root:not(.home-page) :where(.heading) {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .ds-root:not(.home-page) :where(.request-panel,.sidebar,.maincol>.panel,.ds-card,.faq article) {
+    border-radius: 15px;
+  }
+  .ds-root:not(.home-page) :where(input,select,textarea) {
+    max-width: 100%;
+    font-size: 16px;
+  }
+}

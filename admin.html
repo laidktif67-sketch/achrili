@@ -3,9 +3,31 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#071f5c">
+<link rel="stylesheet" href="/src/shared/styles/design-system.css">
 <title>إدارة الطلبات وعروض الأسعار | AchriLi</title>
 <style>
-:root{font-family:system-ui,sans-serif;color:#172744;background:#f5f7fb;--navy:#071f5c;--blue:#16458f;--line:#e2e8f0;--muted:#64748b}*{box-sizing:border-box}body{margin:0}.top{background:white;border-bottom:1px solid var(--line);padding:16px max(16px,calc((100% - 1050px)/2));display:flex;justify-content:space-between;align-items:center}.brand{font-size:20px;font-weight:800;color:var(--navy);text-decoration:none;direction:ltr}.brand span{color:#f59a23}.page{max-width:1050px;margin:auto;padding:24px 16px}h1{color:var(--navy)}.muted{color:var(--muted);font-size:13px;line-height:1.7}.notice,.card{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}.request{border-top:1px solid var(--line);padding:14px 0}.request:first-child{border-top:0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}label{display:block;font-size:13px;font-weight:650;margin:8px 0}input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:10px;font:inherit;background:#fff}textarea{min-height:85px}button{border:0;border-radius:9px;padding:10px 14px;background:var(--navy);color:white;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.5}button.secondary{background:#e8eef9;color:var(--navy)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.hidden{display:none!important}.pill{font-size:12px;background:#eef2ff;border-radius:99px;padding:4px 8px}.error{color:#a11}.success{color:#166534}@media(max-width:600px){.grid{grid-template-columns:1fr}.page{padding:16px 12px}}
+:root{font-family:var(--achrili-font-sans);color:var(--achrili-color-ink);background:var(--achrili-color-canvas)}
+*{box-sizing:border-box}body{margin:0;background:var(--achrili-color-canvas);font-family:var(--achrili-font-sans);color:var(--achrili-color-ink)}
+.top{background:var(--achrili-color-surface);border-bottom:1px solid var(--achrili-color-border);padding:16px max(16px,calc((100% - var(--achrili-content-width))/2));display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{font-size:22px;font-weight:800;color:var(--achrili-color-brand-900);text-decoration:none;direction:ltr;white-space:nowrap}.brand span{color:var(--achrili-color-accent-500)}
+.top .actions a{color:var(--achrili-color-brand-800);font-size:var(--achrili-text-sm);font-weight:700;text-decoration:none}
+.page{max-width:var(--achrili-content-width);margin:auto;padding:var(--achrili-space-6) var(--achrili-space-4) 5rem}
+h1,h2,h3{color:var(--achrili-color-brand-900);line-height:var(--achrili-leading-tight)}h1{font-size:clamp(1.5rem,3vw,var(--achrili-text-2xl));margin:0 0 8px}h2{font-size:var(--achrili-text-xl);margin:0 0 12px}h3{font-size:var(--achrili-text-lg)}
+.muted{color:var(--achrili-color-muted);font-size:var(--achrili-text-sm);line-height:var(--achrili-leading-relaxed)}
+.notice,.card{background:var(--achrili-color-surface);border:1px solid var(--achrili-color-border);border-radius:var(--achrili-radius-lg);padding:var(--achrili-space-5);margin:var(--achrili-space-4) 0;box-shadow:var(--achrili-shadow-xs)}
+.request{border-top:1px solid var(--achrili-color-border);padding:var(--achrili-space-4) 0}.request:first-child{border-top:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--achrili-space-4)}
+label{display:block;color:var(--achrili-color-ink);font-size:var(--achrili-text-sm);font-weight:var(--achrili-weight-semibold);margin:var(--achrili-space-3) 0 var(--achrili-space-2)}
+input,select,textarea{width:100%;min-width:0;min-height:var(--achrili-control-height);border:1px solid var(--achrili-color-border-strong);border-radius:var(--achrili-radius-md);padding:10px 12px;font:inherit;font-size:var(--achrili-text-sm);background:var(--achrili-color-surface);color:var(--achrili-color-ink)}
+textarea{min-height:100px;resize:vertical}
+button{min-height:var(--achrili-control-height);border:0;border-radius:var(--achrili-radius-md);padding:10px 16px;background:var(--achrili-color-brand-900);color:#fff;font:var(--achrili-weight-bold) var(--achrili-text-sm)/1.4 var(--achrili-font-sans);cursor:pointer}
+button:hover{background:var(--achrili-color-brand-800)}button:disabled{opacity:.55;cursor:not-allowed}button.secondary{background:var(--achrili-color-surface-soft);color:var(--achrili-color-brand-900);border:1px solid var(--achrili-color-border)}
+.actions{display:flex;align-items:center;gap:var(--achrili-space-2);flex-wrap:wrap;margin-top:var(--achrili-space-3)}
+.hidden{display:none!important}.pill{display:inline-flex;font-size:var(--achrili-text-xs);background:var(--achrili-color-surface-soft);color:var(--achrili-color-brand-800);border-radius:var(--achrili-radius-pill);padding:4px 10px;font-weight:700}
+.error{color:var(--achrili-color-danger)}.success{color:var(--achrili-color-success)}
+:where(a,button,input,select,textarea):focus-visible{outline:none;box-shadow:var(--achrili-focus-ring)}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.page{padding:var(--achrili-space-4) 12px 4rem}.notice,.card{padding:var(--achrili-space-4)}.top{padding:14px 12px;flex-wrap:wrap}.top .actions{margin:0}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 <script type="module">
 import { supabase } from '/src/shared/services/supabase/client.js';
@@ -67,24 +89,24 @@ $('sendQuoteForm').addEventListener('submit',async e=>{
 init().catch(err=>{ $('loading').classList.add('hidden');notice(err.message||'حدث خطأ أثناء التهيئة.','error')});
 </script>
 </head>
-<body>
+<body class="ds-root">
 <header class="top"><a class="brand" href="index.html">Achri<span>Li</span></a><div class="actions"><a href="payment-admin.html">إدارة الدفع</a><a href="profile.html">العودة للحساب</a></div></header>
-<main class="page">
+<main class="page ds-container">
 <h1>إدارة الطلبات وعروض الأسعار</h1>
 <p class="muted">لوحة أولية للموظف المخوّل. إنشاء العرض يحفظه كمسودة؛ الإرسال يغيّر الحالة فقط ولا يرسل رسالة خارجية.</p>
-<div id="loading" class="notice">جارٍ التحقق من الجلسة والصلاحيات...</div>
+<div id="loading" class="notice ds-alert">جارٍ التحقق من الجلسة والصلاحيات...</div>
 <div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
 <section id="workspace" class="hidden">
-<div class="card"><div class="actions"><h2 style="margin:0 auto 0 0">الطلبات القابلة للتسعير</h2><button id="refresh" type="button" class="secondary">تحديث القائمة</button></div><p id="requestsLoading" class="muted hidden">جارٍ تحميل الطلبات...</p><div id="requests"></div></div>
+<div class="card ds-card"><div class="actions"><h2 style="margin:0 auto 0 0">الطلبات القابلة للتسعير</h2><button id="refresh" type="button" class="secondary ds-button ds-button--secondary">تحديث القائمة</button></div><p id="requestsLoading" class="muted hidden">جارٍ تحميل الطلبات...</p><div id="requests"></div></div>
 <div class="card"><h2>إنشاء عرض سعر</h2><p class="muted">يُحتسب رسم الخدمة من إعدادات قاعدة البيانات، ولا يُقبل من النموذج. أدخل تكاليف مؤكدة فقط؛ لا تضع شحنًا أو جمارك تخمينية على أنها مؤكدة.</p>
 <form id="quoteForm">
 <label for="requestId">معرّف الطلب</label><input id="requestId" required maxlength="200" placeholder="اختر طلبًا من القائمة">
 <div class="grid"><div><label for="currency">عملة العرض</label><select id="currency"><option value="USD">USD — دولار أمريكي</option><option value="EUR">EUR — يورو</option><option value="DZD">DZD — دينار جزائري</option></select></div><div><label for="expiresAt">انتهاء صلاحية العرض (اختياري)</label><input id="expiresAt" type="datetime-local"></div>
 <div><label for="productCost">سعر المنتج</label><input id="productCost" type="number" min="0" step="0.01" required></div><div><label for="shippingCost">تكلفة الشحن المؤكدة</label><input id="shippingCost" type="number" min="0" step="0.01" required></div><div><label for="customsEstimate">الرسوم الجمركية (إن وجدت)</label><input id="customsEstimate" type="number" min="0" step="0.01" value="0"></div></div>
 <label for="notes">ملاحظات العميل</label><textarea id="notes" maxlength="4000" placeholder="مصدر السعر، تفاصيل الشحن، ما يشمله العرض..."></textarea>
-<div class="actions"><button id="createQuote" type="submit">إنشاء مسودة عرض</button></div>
+<div class="actions"><button class="ds-button" id="createQuote" type="submit">إنشاء مسودة عرض</button></div>
 </form></div>
-<div class="card"><h2>إرسال مسودة موجودة</h2><p class="muted">أدخل معرّف عرض بحالة DRAFT. التغيير إلى SENT لا يرسل بريدًا أو إشعارًا حتى تُضاف خدمة إشعارات.</p><form id="sendQuoteForm"><label for="quoteId">معرّف العرض</label><input id="quoteId" required maxlength="200"><div class="actions"><button id="sendQuote" type="submit">تغيير الحالة إلى SENT</button></div></form></div>
+<div class="card"><h2>إرسال مسودة موجودة</h2><p class="muted">أدخل معرّف عرض بحالة DRAFT. التغيير إلى SENT لا يرسل بريدًا أو إشعارًا حتى تُضاف خدمة إشعارات.</p><form id="sendQuoteForm"><label for="quoteId">معرّف العرض</label><input id="quoteId" required maxlength="200"><div class="actions"><button class="ds-button" id="sendQuote" type="submit">تغيير الحالة إلى SENT</button></div></form></div>
 </section>
 </main>
 </body></html>
