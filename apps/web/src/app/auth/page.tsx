@@ -163,11 +163,13 @@ export default function AuthPage() {
   return (
     <main className={styles.root} dir="rtl">
       <header className={styles.mobileHero}>
-        <img
+        <Image
           className={styles.authBanner}
           src={mode === "signup" ? "/assets/images/auth-signup-banner.png" : "/assets/images/auth-login-banner.png"}
           alt={mode === "signup" ? "بانر إنشاء حساب AchriLi" : "بانر تسجيل الدخول إلى AchriLi"}
-          fetchPriority="high"
+          fill
+          priority
+          sizes="(max-width: 900px) 100vw, 60vw"
         />
       </header>
 
