@@ -282,3 +282,34 @@ body{background:#f6f2ff;color:#21134f}
  .panel{background:radial-gradient(ellipse at 50% 10%,#eee5ff 0,transparent 45%),linear-gradient(160deg,#fff,#f6f1ff)}
  .card{border-color:#e9defb}
 }
+
+
+/* Reference-matched auth composition: compact hero, generous form card, trust footer */
+.auth-trust-strip{
+ width:100%;display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);align-items:center;
+ gap:12px;margin-top:22px;padding:14px 12px;border:1px solid #e5d8fb;border-radius:18px;
+ background:linear-gradient(110deg,#f1e8ff,#faf7ff 52%,#eee3ff);color:#32116e;
+}
+.trust-item{display:flex;align-items:center;justify-content:center;gap:9px;min-width:0}
+.trust-icon{width:37px;height:37px;flex:0 0 37px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,#6519d4,#3f0a9e);color:#fff;font-weight:900;font-size:22px;box-shadow:0 5px 12px #5b18c628}
+.trust-shield{clip-path:polygon(50% 0,90% 17%,87% 62%,50% 100%,13% 62%,10% 17%);border-radius:0}
+.trust-headset{font-size:25px;background:linear-gradient(145deg,#8d31f0,#4b0bb8)}
+.trust-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.trust-copy strong{font-size:10px;line-height:1.5;color:#35106f}
+.trust-copy small{font-size:8px;line-height:1.6;color:#78659c}
+.trust-divider{width:1px;height:42px;background:#c9afeF}
+.panel footer{position:relative;z-index:1}
+@media(max-width:680px){
+ .panel{position:relative;isolation:isolate;overflow:hidden}
+ .panel:after{content:"";position:absolute;z-index:-1;left:-8%;right:-8%;bottom:-45px;height:112px;
+  background:linear-gradient(165deg,#b37bff 0 16%,#7020df 17% 42%,#4510aa 43% 70%,#2c087d 71%);
+  clip-path:polygon(0 10%,18% 44%,42% 57%,66% 39%,84% 30%,100% 12%,100% 100%,0 100%);opacity:.96;pointer-events:none}
+ .auth-trust-strip{margin-top:17px;padding:12px 8px;gap:8px;border-radius:16px}
+ .trust-item{gap:7px}
+ .trust-icon{width:31px;height:31px;flex-basis:31px;border-radius:10px;font-size:19px}
+ .trust-copy strong{font-size:9px}
+ .trust-copy small{font-size:7px}
+ .trust-divider{height:38px}
+ .panel footer{margin-top:19px;padding:14px 0 22px;color:#fff;font-size:9px;text-shadow:0 1px 3px #2c087d66}
+}
+@media(max-width:380px){.auth-trust-strip{gap:5px;padding-inline:6px}.trust-copy strong{font-size:8px}.trust-copy small{font-size:7px}}
