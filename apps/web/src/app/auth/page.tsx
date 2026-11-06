@@ -96,10 +96,11 @@ export default function AuthPage() {
     setNotice({ message: "جارٍ تنفيذ العملية...", kind: "info" });
     try {
       if (mode === "login") {
-        const credentials = cleanEmail.includes("@")
-          ? { email: cleanEmail, password }
-          : { phone: cleanEmail.startsWith("+") ? cleanEmail : cleanEmail.startsWith("213") ? "+" + cleanEmail : "+213" + cleanEmail.replace(/^0/, ""), password };
-        const { error } = await supabase.auth.signInWithPassword(credentials);
+        if (!cleanEmail.includes("@")) {
+          setNotice({ message: "تسجيل الدخول برقم الهاتف يحتاج تفعيل Phone Auth وخدمة الرسائل في Supabase. استخدم البريد الإلكتروني حالياً.", kind: "error" });
+          return;
+        }
+        const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
         if (error) throw error;
         router.replace(next); return;
       }
@@ -197,7 +198,7 @@ export default function AuthPage() {
               <label className={styles.field}><span>رقم الهاتف <b>*</b></span><span className={styles.inputWrap + " " + styles.phoneWrap}><input type="tel" autoComplete="tel" required value={phone} onChange={e => setPhone(e.target.value)} placeholder="05 XX XX XX XX" /><span className={styles.country}>🇩🇿 +213</span><Icon name="phone" /></span></label>
             </>
           )}
-          {(mode === "login" || mode === "reset") && <label className={styles.field}><span>البريد الإلكتروني</span><span className={styles.inputWrap}><input type="text" inputMode="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} placeholder="البريد الإلكتروني أو رقم الهاتف" /><Icon name="mail" /></span></label>}
+          {(mode === "login" || mode === "reset") && <label className={styles.field}><span>البريد الإلكتروني</span><span className={styles.inputWrap}><input type="email" inputMode="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="البريد الإلكتروني" /><Icon name="mail" /></span></label>}
           {mode !== "reset" && <label className={styles.field}><span>{mode === "new-password" ? "كلمة المرور الجديدة" : "كلمة المرور"}{mode !== "login" && <b> *</b>}</span><span className={styles.inputWrap}><input type={showPassword ? "text" : "password"} autoComplete={mode === "login" ? "current-password" : "new-password"} required value={password} onChange={e => setPassword(e.target.value)} placeholder="8 أحرف على الأقل" /><button type="button" className={styles.iconButton} onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}><Icon name={showPassword ? "eyeOff" : "eye"} /></button><Icon name="lock" /></span></label>}
           {(mode === "signup" || mode === "new-password") && <label className={styles.field}><span>تأكيد كلمة المرور <b>*</b></span><span className={styles.inputWrap}><input type={showPassword ? "text" : "password"} autoComplete="new-password" required value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="أعد كتابة كلمة المرور" /><Icon name="lock" /></span></label>}
 
