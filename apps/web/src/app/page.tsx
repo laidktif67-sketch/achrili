@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
+import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 type Notice = { message: string; kind: "info" | "success" | "error" } | null;
@@ -61,7 +62,8 @@ export default function HomePage() {
   }
 
   return (
-    <main className="wrap home-page">
+    <div className="home-page">
+    <main className="wrap">
       <header>
         <button className="round" type="button" aria-label="الإشعارات" onClick={() => setNotice({ message: "لا توجد إشعارات جديدة حالياً.", kind: "info" })}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
@@ -157,5 +159,6 @@ export default function HomePage() {
         <a href="/auth"><span aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg></span>حسابي</a>
       </nav>
     </main>
+    </div>
   );
 }
