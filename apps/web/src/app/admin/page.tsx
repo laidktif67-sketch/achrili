@@ -163,7 +163,7 @@ export default function AdminPage() {
                 <p className={styles.meta}>المتجر: {request.shop || "غير معروف"} · الكمية: {request.quantity} · الوجهة: {request.destination || "—"}</p>
                 <div className={styles.sourcePrice}>
                   <span>السعر الذي أدخله الزبون</span>
-                  <strong>{request.productPrice === null || request.productPrice === undefined ? "لم يحدد سعراً" : money(request.productPrice, request.productCurrency || "—")}</strong>
+                  <strong>{request.productPrice == null ? "لم يحدد سعراً" : money(request.productPrice, request.productCurrency || "—")}</strong>
                 </div>
                 <p className={styles.meta}>هاتف الزبون: {request.customerPhone || "غير مسجل"}</p>
                 {request.variant && <p>المواصفات: {request.variant}</p>}
