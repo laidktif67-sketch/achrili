@@ -15,6 +15,10 @@ const words = {
 const t = key => words[lang][key] || key;
 function notify(message, kind='error'){const el=$('message');el.textContent=message;el.className='message '+kind;el.hidden=false;}
 function clear(){ $('message').hidden=true; $('message').textContent=''; }
+function updateHeroImage(){
+ const image = mode === 'signup' ? '/assets/achrili-registration-hero.png' : '/assets/achrili-login-hero.png';
+ document.querySelectorAll('.auth-hero-image').forEach(el => { el.src = image; });
+}
 function showPending(email){
  pendingEmail=email;$('pendingEmail').textContent=email;
  $('title').textContent=t('pendingTitle');$('subtitle').textContent=t('pendingText');
@@ -31,6 +35,7 @@ function normalizedPhone(value){let p=value.trim().replace(/[\s().-]/g,'');if(p.
 function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
 function setMode(next){mode=next;const params=new URLSearchParams();if(next!=='login')params.set('mode',next);if(['profile.html','request.html'].includes(requestedNext))params.set('next',requestedNext);const query=params.toString();history.replaceState({},'','auth.html'+(query?'?'+query:''));render();}
 function render(){
+ updateHeroImage();
  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
  document.querySelectorAll('.eye').forEach(button=>{const visible=$(button.dataset.target)?.type==='text';button.setAttribute('aria-label',visible?(lang==='ar'?'إخفاء كلمة المرور':'Masquer le mot de passe'):(lang==='ar'?'إظهار كلمة المرور':'Afficher le mot de passe'));});
  document.querySelectorAll('[data-t]').forEach(el=>{const k=el.dataset.t;if(words[lang][k]){if(k==='hero')el.innerHTML=words[lang][k];else el.textContent=words[lang][k];}});
