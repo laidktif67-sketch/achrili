@@ -8,14 +8,14 @@ import { findSupportedShop, isValidProductUrl } from "@achrili/shared/domain/pro
 type Notice = { message: string; kind: "info" | "success" | "error" } | null;
 
 const shops = [
-  { name: "Temu", file: "temu.svg", domains: ["temu.com"] },
-  { name: "AliExpress", file: "aliexpress.svg", domains: ["aliexpress.com"] },
-  { name: "Amazon", file: "amazon.svg", domains: ["amazon.com", "amazon.co.uk", "amazon.de", "amazon.fr", "amazon.it", "amazon.es"] },
-  { name: "SHEIN", file: "shein.svg", domains: ["shein.com"] },
-  { name: "eBay", file: "ebay.svg", domains: ["ebay.com"] },
-  { name: "Walmart", file: "walmart.svg", domains: ["walmart.com"] },
-  { name: "Etsy", file: "etsy.svg", domains: ["etsy.com"] },
-  { name: "ASOS", file: "asos.svg", domains: ["asos.com"] }
+  { name: "Temu", file: "temu.svg" },
+  { name: "AliExpress", file: "aliexpress.svg" },
+  { name: "Amazon", file: "amazon.svg" },
+  { name: "SHEIN", file: "shein.svg" },
+  { name: "eBay", file: "ebay.svg" },
+  { name: "Walmart", file: "walmart.svg" },
+  { name: "Etsy", file: "etsy.svg" },
+  { name: "ASOS", file: "asos.svg" }
 ];
 
 function detectShop(hostname: string) {
