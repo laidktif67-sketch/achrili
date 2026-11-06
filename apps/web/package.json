@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@achrili/api": "workspace:*",
-    "@achrili/shared": "workspace:*",
-    "@achrili/validation": "workspace:*",
+    "@achrili/api": "*",
+    "@achrili/shared": "*",
+    "@achrili/validation": "*",
     "next": "^15.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
