@@ -137,8 +137,8 @@ html[dir=ltr] .phone>span{border-right:1px solid var(--line);border-left:0}
 .auth-hero-image-desktop{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;border-radius:0;z-index:0}
 .visual{isolation:isolate}
 .visual:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#06174710 30%,#0617478c 100%);pointer-events:none}
-.visual>*:not(.auth-hero-image){position:relative;z-index:1}
-.visual .auth-hero-image-desktop{z-index:-1}
+.visual>*:not(.auth-hero-image){position:relative;z-index:2}
+.visual .auth-hero-image-desktop{z-index:0}.visual>.brand,.visual>.visual-copy,.visual>.parcel-wrap,.visual>.visual-foot{display:none}.visual:before{z-index:1;opacity:.15}.visual:after{z-index:1}
 .auth-hero-banner{display:none;width:min(100%,520px);margin:0 auto 22px}
 @media(max-width:680px){.auth-hero-banner{display:block}.auth-hero-image-mobile{box-shadow:0 12px 28px #102d6418}.mobile-head{margin-top:0}}
 @media(prefers-reduced-motion:reduce){.auth-hero-image{scroll-behavior:auto}}
