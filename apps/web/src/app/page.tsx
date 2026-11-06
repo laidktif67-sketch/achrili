@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { findSupportedShop, isValidProductUrl } from "@achrili/shared/domain/product-request";
 
 type Notice = { message: string; kind: "info" | "success" | "error" } | null;
 
@@ -18,8 +19,7 @@ const shops = [
 ];
 
 function detectShop(hostname: string) {
-  const host = hostname.toLowerCase().replace(/^www\./, "");
-  return shops.find((shop) => shop.domains.some((domain) => host === domain || host.endsWith("." + domain)));
+  return findSupportedShop(hostname);
 }
 
 export default function HomePage() {
@@ -37,13 +37,7 @@ export default function HomePage() {
       return;
     }
 
-    if (
-      url.protocol !== "https:" ||
-      url.username ||
-      url.password ||
-      url.port ||
-      url.href.length > 2048
-    ) {
+    if (!isValidProductUrl(url.href)) {
       setNotice({ message: "استخدم رابط HTTPS مباشر من متجر مدعوم، دون بيانات دخول أو منفذ مخصص.", kind: "error" });
       return;
     }
