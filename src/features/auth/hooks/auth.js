@@ -42,6 +42,7 @@ function render(){
  document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
  document.querySelectorAll('.eye').forEach(button=>{const visible=$(button.dataset.target)?.type==='text';button.setAttribute('aria-label',visible?(lang==='ar'?'إخفاء كلمة المرور':'Masquer le mot de passe'):(lang==='ar'?'إظهار كلمة المرور':'Afficher le mot de passe'));});
  document.querySelectorAll('[data-t]').forEach(el=>{const k=el.dataset.t;if(words[lang][k]){if(k==='hero')el.innerHTML=words[lang][k];else el.textContent=words[lang][k];}});
+ document.querySelectorAll('[data-trust-ar]').forEach(el=>{el.textContent=lang==='ar'?el.dataset.trustAr:el.dataset.trustFr;});
  $('termsWrap').querySelector('span').innerHTML=lang==='ar'?'أوافق على <a href="terms.html">الشروط</a> و<a href="privacy.html">سياسة الخصوصية</a>.':'J’accepte les <a href="terms.html">conditions</a> et la <a href="privacy.html">politique de confidentialité</a>.';
  $('lang').textContent=lang==='ar'?'FR':'عربي';$('langDesk').textContent=lang==='ar'?'FR':'عربي';
  const signup=mode==='signup',reset=mode==='reset',newPass=mode==='new-password';
@@ -57,6 +58,7 @@ function render(){
  $('password').autocomplete=signup||newPass?'new-password':'current-password';$('password').required=!reset;$('confirm').required=signup||newPass;$('name').required=signup;$('terms').required=signup;
  $('submit').querySelector('span').textContent=t(reset?'resetBtn':newPass?'newBtn':signup?'signupBtn':'loginBtn');
  $('divider').hidden=reset||newPass;$('google').hidden=reset||newPass;
+ $('authTrustStrip').hidden=reset||newPass;
  $('switchText').hidden=reset||newPass;
  $('switchText').innerHTML=(signup?t('hasAccount'):t('noAccount'))+' <button class="link" id="switch">'+(signup?t('login'):t('signup'))+'</button>';
  $('switch').addEventListener('click',()=>setMode(signup?'login':'signup'));
