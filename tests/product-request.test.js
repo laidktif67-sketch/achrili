@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { findSupportedShop, isValidProductUrl } from '../src/features/product-request/model/product-request.js';
+import { findSupportedShop, isValidProductUrl } from '../packages/shared/src/domain/product-request.js';
 
 test('matches supported store root domains and subdomains', () => {
   assert.equal(findSupportedShop('amazon.com'), 'Amazon');

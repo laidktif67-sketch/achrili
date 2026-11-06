@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { canEnablePaymentMethod, isAllowedProofFile, isValidBep20Address, PAYMENT_METHODS } from '../src/features/payments/model/payment.js';
+import { canEnablePaymentMethod, isAllowedProofFile, isValidBep20Address, PAYMENT_METHODS } from '../packages/shared/src/domain/payment.js';
 
 test('CCP method cannot be enabled without holder and account identifier', () => {
   assert.equal(canEnablePaymentMethod({ code: PAYMENT_METHODS.CCP_TRANSFER, accountHolder: '', accountIdentifier: '' }), false);
